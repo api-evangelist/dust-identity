@@ -1,0 +1,950 @@
+generated: '2026-08-12'
+method: derived
+status: candidate
+source: openapi/dust-identity-apid-openapi.yml
+note: 'DUST publishes NO MCP server. This is a candidate tool surface derived one-to-one from the operations
+  in the published OpenAPI 3.1 spec, not something the provider hosts. It is recorded as a candidate only;
+  no MCPServer pointer is wired into apis.yml, because that pointer would assert the provider serves an
+  MCP endpoint and it does not. Probes on 2026-08-12: POST tools/list to https://apid.dustid.io/mcp ->
+  404, https://apid.dustid.io/api/mcp -> 404, https://docs.dustid.io/mcp -> 404; https://mcp.dustid.io/
+  does not resolve. Neither the documentation nor llms.txt mentions Model Context Protocol. What DUST
+  ships for agents instead is two provider-authored Agent Skills (see skills/) and an llms.txt index.'
+server:
+  published: false
+  name: null
+  transport: null
+  url: null
+probes:
+- url: https://apid.dustid.io/mcp
+  method: POST tools/list
+  status: 404
+- url: https://apid.dustid.io/api/mcp
+  method: POST tools/list
+  status: 404
+- url: https://docs.dustid.io/mcp
+  method: POST tools/list
+  status: 404
+- url: https://mcp.dustid.io/
+  method: POST tools/list
+  status: 0
+  note: DNS does not resolve
+agent_surface_actually_published:
+  llms_txt: llms/dust-identity-llms.txt
+  agent_skills: skills/_index.yml
+  openapi: openapi/dust-identity-apid-openapi.yml
+tool_inputs_note: Each candidate tool would inherit its real inputSchema from the backing operation's
+  parameters and requestBody in the OpenAPI. No schemas are copied here; the spec is the source of truth.
+coverage:
+  operations_total: 177
+  candidate_tools: 177
+  categories: 23
+categories:
+  Threads: 30
+  Fabric: 25
+  Transfers: 18
+  Connections: 14
+  Bundles: 12
+  Files: 11
+  Certificates: 9
+  Org Admin: 7
+  Tags: 7
+  Sharing: 6
+  Thread Relations: 6
+  Auth: 4
+  Certificate Forms: 4
+  Templates: 4
+  Thread Links: 4
+  Slices: 3
+  System: 3
+  Users: 3
+  Organizations: 2
+  Teams: 2
+  Events: 1
+  Metrics: 1
+  Notifications: 1
+tools:
+- name: AuthJWKS
+  description: Get JWKS
+  category: Auth
+  source_operation: openapi/dust-identity-apid-openapi.yml#AuthJWKS
+  http: GET /api/auth/jwks
+- name: AuthToken
+  description: Get auth token
+  category: Auth
+  source_operation: openapi/dust-identity-apid-openapi.yml#AuthToken
+  http: GET /api/auth/token
+- name: get_me
+  description: Current user
+  category: Auth
+  source_operation: openapi/dust-identity-apid-openapi.yml#get_me
+  http: GET /api/v1/me
+- name: get_me_feature_flags
+  description: Current feature flags
+  category: Auth
+  source_operation: openapi/dust-identity-apid-openapi.yml#get_me_feature_flags
+  http: GET /api/v1/me/feature-flags
+- name: bundles.add
+  description: Add a thread to the bundle
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.add
+  http: POST /api/v1/bundles/{bundle_id}/add
+- name: bundles.count
+  description: Count bundles
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.count
+  http: GET /api/v1/bundles/count
+- name: bundles.create
+  description: Create a thread bundle
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.create
+  http: POST /api/v1/bundles
+- name: bundles.get
+  description: Get bundle
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.get
+  http: GET /api/v1/bundles/{bundle_id}
+- name: bundles.get_children
+  description: List visible child bundles
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.get_children
+  http: GET /api/v1/bundles/children
+- name: bundles.list
+  description: List bundles with cursor pagination
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.list
+  http: GET /api/v1/bundles
+- name: bundles.move_to
+  description: Move threads to a bundle
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.move_to
+  http: PATCH /api/v1/bundles/{bundle_id}/move
+- name: bundles.remove
+  description: Delete a bundle
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.remove
+  http: DELETE /api/v1/bundles/{bundle_id}
+- name: bundles.remove_thread
+  description: Remove a thread from a category bundle
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.remove_thread
+  http: DELETE /api/v1/bundles/{bundle_id}/threads/{thread_id}
+- name: bundles.set_children
+  description: Set bundle children
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.set_children
+  http: PATCH /api/v1/bundles/{bundle_id}/children
+- name: bundles.set_parent
+  description: Set bundle parent
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.set_parent
+  http: PATCH /api/v1/bundles/parent
+- name: bundles.update
+  description: Update a bundle
+  category: Bundles
+  source_operation: openapi/dust-identity-apid-openapi.yml#bundles.update
+  http: PATCH /api/v1/bundles/{bundle_id}
+- name: certificate_forms.create
+  description: Create a Certificate Form.
+  category: Certificate Forms
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificate_forms.create
+  http: POST /api/v1/certificate-forms
+- name: certificate_forms.get
+  description: Get a Certificate Form.
+  category: Certificate Forms
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificate_forms.get
+  http: GET /api/v1/certificate-forms/{formId}
+- name: certificate_forms.list
+  description: List Certificate Forms.
+  category: Certificate Forms
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificate_forms.list
+  http: GET /api/v1/certificate-forms
+- name: certificate_forms.update
+  description: Update a Certificate Form.
+  category: Certificate Forms
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificate_forms.update
+  http: PATCH /api/v1/certificate-forms/{formId}
+- name: certificates.generate
+  description: Generate (issue) a single Certificate.
+  category: Certificates
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificates.generate
+  http: POST /api/v1/certificates/generate
+- name: certificates.get
+  description: Get a Certificate.
+  category: Certificates
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificates.get
+  http: GET /api/v1/certificates/{certificateId}
+- name: certificates.list
+  description: List a Thread's Certificates.
+  category: Certificates
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificates.list
+  http: GET /api/v1/certificates
+- name: certificates.preflight
+  description: Preflight a Certificate Form against a Thread.
+  category: Certificates
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificates.preflight
+  http: POST /api/v1/certificates/preflight
+- name: certificates.preflight_batch
+  description: Batch preflight (read-only) for the Dice batch workflow.
+  category: Certificates
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificates.preflight_batch
+  http: POST /api/v1/certificates/preflight/batch
+- name: certificates.preview_form
+  description: Render a Certificate Form preview with placeholder data.
+  category: Certificates
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificates.preview_form
+  http: POST /api/v1/certificates/preview-form
+- name: certificates.preview_form_for_thread
+  description: Render a Certificate Form preview resolved against a Thread.
+  category: Certificates
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificates.preview_form_for_thread
+  http: POST /api/v1/certificates/preview-form-thread
+- name: certificates.resolve_form_values
+  description: Resolve a Certificate Form's bindings against a Thread (values only, no PDF).
+  category: Certificates
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificates.resolve_form_values
+  http: POST /api/v1/certificates/resolve-form-values
+- name: certificates.void
+  description: Void a Certificate.
+  category: Certificates
+  source_operation: openapi/dust-identity-apid-openapi.yml#certificates.void
+  http: POST /api/v1/certificates/void
+- name: connections.accept
+  description: Accept a connection
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.accept
+  http: PATCH /api/v1/connections/accept
+- name: connections.amend_accept
+  description: Accept a pending connection amendment
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.amend_accept
+  http: PATCH /api/v1/connections/amend/accept
+- name: connections.amend_cancel
+  description: Cancel a pending connection amendment
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.amend_cancel
+  http: PATCH /api/v1/connections/amend/cancel
+- name: connections.amend_confirm
+  description: Confirm an accepted connection amendment
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.amend_confirm
+  http: PATCH /api/v1/connections/amend/confirm
+- name: connections.amend_propose
+  description: Propose a connection direction amendment
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.amend_propose
+  http: POST /api/v1/connections/amend/propose
+- name: connections.cancel
+  description: Cancel a connection
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.cancel
+  http: PATCH /api/v1/connections/cancel
+- name: connections.confirm
+  description: Confirm a connection
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.confirm
+  http: PATCH /api/v1/connections/confirm
+- name: connections.create
+  description: Create a connection
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.create
+  http: POST /api/v1/connections
+- name: connections.delete
+  description: Delete a connection
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.delete
+  http: DELETE /api/v1/connections/{code}
+- name: connections.get
+  description: Get a connection
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.get
+  http: GET /api/v1/connections/{code}
+- name: connections.list
+  description: List connections
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.list
+  http: GET /api/v1/connections
+- name: connections.pause
+  description: Pause a connection
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.pause
+  http: PATCH /api/v1/connections/pause
+- name: connections.reject
+  description: Reject a connection
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.reject
+  http: PATCH /api/v1/connections/reject
+- name: connections.resume
+  description: Resume a paused connection
+  category: Connections
+  source_operation: openapi/dust-identity-apid-openapi.yml#connections.resume
+  http: PATCH /api/v1/connections/resume
+- name: events.list
+  description: List events
+  category: Events
+  source_operation: openapi/dust-identity-apid-openapi.yml#events.list
+  http: GET /api/v1/events
+- name: fabric.accept_notification
+  description: Accept a Fabric notification
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.accept_notification
+  http: POST /api/v1/fabric/notifications/{notification_id}/accept
+- name: fabric.adopt_disclosed_asset
+  description: Adopt a disclosed datum into the destination thread
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.adopt_disclosed_asset
+  http: POST /api/v1/fabric/links/{consumer_link_id}/disclosure/sources/{source_link_id}/sync/adopt
+- name: fabric.adopt_disclosed_assets
+  description: Adopt several disclosed datums atomically
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.adopt_disclosed_assets
+  http: POST /api/v1/fabric/links/{consumer_link_id}/disclosure/sources/{source_link_id}/sync/adopt-batch
+- name: fabric.advance_cursor
+  description: Advance Fabric event cursor
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.advance_cursor
+  http: POST /api/v1/fabric/threads/{thread_id}/cursor/advance
+- name: fabric.decline_disclosed_asset
+  description: Decline (skip) a disclosed datum
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.decline_disclosed_asset
+  http: POST /api/v1/fabric/links/{consumer_link_id}/disclosure/sources/{source_link_id}/sync/decline
+- name: fabric.disclosure_push
+  description: Disclosure Push
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.disclosure_push
+  http: POST /api/v1/fabric/threads/{thread_id}/disclosure/push
+- name: fabric.dismiss_notifications
+  description: Dismiss pending Fabric notifications for the given threads
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.dismiss_notifications
+  http: POST /api/v1/fabric/notifications/dismiss
+- name: fabric.graph
+  description: Visible Fabric Graph for a thread
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.graph
+  http: GET /api/v1/fabric/threads/{thread_id}/graph
+- name: fabric.hide_disclosed_asset_local_copy
+  description: Hide the local copy of a withdrawn disclosed datum
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.hide_disclosed_asset_local_copy
+  http: POST /api/v1/fabric/links/{consumer_link_id}/disclosure/sources/{source_link_id}/sync/hide-local-copy
+- name: fabric.link_assembly
+  description: Frozen Assembly Parts for a Fabric Link version
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.link_assembly
+  http: GET /api/v1/fabric/links/{link_id}/assembly
+- name: fabric.link_context
+  description: Current disclosed data for a Fabric Link
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.link_context
+  http: GET /api/v1/fabric/links/{link_id}/context
+- name: fabric.link_events
+  description: Fabric Event Views for a Fabric Link
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.link_events
+  http: GET /api/v1/fabric/links/{link_id}/events
+- name: fabric.link_resource_content
+  description: Disclosed resource content for a Fabric Link
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.link_resource_content
+  http: GET /api/v1/fabric/links/{link_id}/resources/{res_id}/content
+- name: fabric.link_timeline
+  description: Disclosure revision timeline for a Fabric Link
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.link_timeline
+  http: GET /api/v1/fabric/links/{link_id}/timeline
+- name: fabric.list_notifications
+  description: List Fabric notifications for the downstream owner
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.list_notifications
+  http: GET /api/v1/fabric/notifications
+- name: fabric.preview_cursor_advance
+  description: Preview Fabric event cursor advancement
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.preview_cursor_advance
+  http: POST /api/v1/fabric/threads/{thread_id}/cursor/preview
+- name: fabric.preview_disclosure_change
+  description: Preview a disclosure revision or redaction
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.preview_disclosure_change
+  http: POST /api/v1/fabric/threads/{thread_id}/disclosure/preview
+- name: fabric.preview_disclosure_push
+  description: Preview a Disclosure Push
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.preview_disclosure_push
+  http: POST /api/v1/fabric/threads/{thread_id}/disclosure/push/preview
+- name: fabric.preview_link_disclosure_sync
+  description: Review a source link's disclosed state for adoption
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.preview_link_disclosure_sync
+  http: GET /api/v1/fabric/links/{consumer_link_id}/disclosure/sources/{source_link_id}/sync
+- name: fabric.preview_notification_decision
+  description: Preview accepting a Fabric notification
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.preview_notification_decision
+  http: POST /api/v1/fabric/notifications/{notification_id}/preview
+- name: fabric.redact_disclosure
+  description: Redact disclosed Fabric assets
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.redact_disclosure
+  http: POST /api/v1/fabric/threads/{thread_id}/disclosure/redact
+- name: fabric.reject_notification
+  description: Reject a Fabric notification
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.reject_notification
+  http: POST /api/v1/fabric/notifications/{notification_id}/reject
+- name: fabric.revise_disclosure
+  description: Revise Fabric Disclosure
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.revise_disclosure
+  http: POST /api/v1/fabric/threads/{thread_id}/disclosure/revise
+- name: fabric.source_thread_context
+  description: Source-side context for a Fabric disclosure push
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.source_thread_context
+  http: GET /api/v1/fabric/threads/{thread_id}/disclosure/push/context
+- name: fabric.thread_versions
+  description: Fabric Thread Versions for a thread
+  category: Fabric
+  source_operation: openapi/dust-identity-apid-openapi.yml#fabric.thread_versions
+  http: GET /api/v1/fabric/threads/{thread_id}/versions
+- name: files.create_finalize
+  description: Finalize uploaded resources
+  category: Files
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.create_finalize
+  http: POST /api/v1/files/finalize
+- name: files.download
+  description: Download a file
+  category: Files
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.download
+  http: GET /api/v1/files/{resource_id}/download
+- name: files.get_signed_urls
+  description: Get signed URLs
+  category: Files
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.get_signed_urls
+  http: POST /api/v1/files/urls
+- name: files.get_verification_latest
+  description: Get latest verification
+  category: Files
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.get_verification_latest
+  http: GET /api/v1/files/verification/{resource_id}/{thread_id}
+- name: files.list
+  description: Search Resources
+  category: Files
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.list
+  http: GET /api/v1/files
+- name: files.metrics
+  description: File verification metrics
+  category: Files
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.metrics
+  http: GET /api/v1/files/metrics
+- name: files.search
+  description: Search Resources
+  category: Files
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.search
+  http: GET /api/v1/files/search
+- name: files.search_signatures
+  description: Search resource signatures
+  category: Files
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.search_signatures
+  http: GET /api/v1/files/signatures
+- name: files.start_verification
+  description: Start verification
+  category: Files
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.start_verification
+  http: POST /api/v1/files/verification/{resource_id}/{thread_id}/start
+- name: files.update_verification
+  description: Update file verification
+  category: Files
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.update_verification
+  http: PATCH /api/v1/files/verification/{resource_id}/{thread_id}
+- name: files.upload
+  description: Upload a file
+  category: Files
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.upload
+  http: POST /api/v1/files
+- name: metrics.Summary
+  description: Get summary count metrics
+  category: Metrics
+  source_operation: openapi/dust-identity-apid-openapi.yml#metrics.Summary
+  http: GET /api/v1/summary
+- name: notifications.list
+  description: List notifications
+  category: Notifications
+  source_operation: openapi/dust-identity-apid-openapi.yml#notifications.list
+  http: GET /api/v1/notifications
+- name: org.teams.create
+  description: Create one or more teams
+  category: Org Admin
+  source_operation: openapi/dust-identity-apid-openapi.yml#org.teams.create
+  http: POST /api/v1/org/teams
+- name: org.teams.delete
+  description: Delete a team
+  category: Org Admin
+  source_operation: openapi/dust-identity-apid-openapi.yml#org.teams.delete
+  http: DELETE /api/v1/org/teams/{team_id}
+- name: org.teams.list
+  description: List all teams in the organization
+  category: Org Admin
+  source_operation: openapi/dust-identity-apid-openapi.yml#org.teams.list
+  http: GET /api/v1/org/teams
+- name: org.teams.members_delete
+  description: Remove memberships
+  category: Org Admin
+  source_operation: openapi/dust-identity-apid-openapi.yml#org.teams.members_delete
+  http: DELETE /api/v1/org/teams/members
+- name: org.teams.members_list
+  description: List memberships
+  category: Org Admin
+  source_operation: openapi/dust-identity-apid-openapi.yml#org.teams.members_list
+  http: GET /api/v1/org/teams/members
+- name: org.teams.members_upsert
+  description: Add/Update memberships
+  category: Org Admin
+  source_operation: openapi/dust-identity-apid-openapi.yml#org.teams.members_upsert
+  http: POST /api/v1/org/teams/members
+- name: org.teams.update
+  description: Update a team
+  category: Org Admin
+  source_operation: openapi/dust-identity-apid-openapi.yml#org.teams.update
+  http: PATCH /api/v1/org/teams/{team_id}
+- name: orgs.accept_invite
+  description: Accept an organization invitation
+  category: Organizations
+  source_operation: openapi/dust-identity-apid-openapi.yml#orgs.accept_invite
+  http: POST /api/v1/orgs/invites/accept
+- name: orgs.list_invites
+  description: List organization invites
+  category: Organizations
+  source_operation: openapi/dust-identity-apid-openapi.yml#orgs.list_invites
+  http: GET /api/v1/orgs/invites
+- name: sharing.access_summary
+  description: Effective access summary for a thread or bundle
+  category: Sharing
+  source_operation: openapi/dust-identity-apid-openapi.yml#sharing.access_summary
+  http: GET /api/v1/sharing/access-summary
+- name: sharing.add
+  description: Share a bundle or thread
+  category: Sharing
+  source_operation: openapi/dust-identity-apid-openapi.yml#sharing.add
+  http: POST /api/v1/sharing
+- name: sharing.list
+  description: List sharing relationships
+  category: Sharing
+  source_operation: openapi/dust-identity-apid-openapi.yml#sharing.list
+  http: GET /api/v1/sharing
+- name: sharing.partner_inventory
+  description: Per-partner sharing inventory
+  category: Sharing
+  source_operation: openapi/dust-identity-apid-openapi.yml#sharing.partner_inventory
+  http: GET /api/v1/sharing/partner-inventory
+- name: sharing.remove
+  description: Remove sharing relationships
+  category: Sharing
+  source_operation: openapi/dust-identity-apid-openapi.yml#sharing.remove
+  http: DELETE /api/v1/sharing
+- name: sharing.update
+  description: Update a sharing relationship
+  category: Sharing
+  source_operation: openapi/dust-identity-apid-openapi.yml#sharing.update
+  http: PATCH /api/v1/sharing/{tuple_id}
+- name: slice.create
+  description: Slice a thread (same-team derivation)
+  category: Slices
+  source_operation: openapi/dust-identity-apid-openapi.yml#slice.create
+  http: POST /api/v1/slices
+- name: slice.create_many
+  description: Slice a thread into many derived threads in one operation
+  category: Slices
+  source_operation: openapi/dust-identity-apid-openapi.yml#slice.create_many
+  http: POST /api/v1/slices/batch
+- name: slice.get
+  description: Get a Slice with its Fabric Links
+  category: Slices
+  source_operation: openapi/dust-identity-apid-openapi.yml#slice.get
+  http: GET /api/v1/slices/{slice_id}
+- name: get_health
+  description: Health check
+  category: System
+  source_operation: openapi/dust-identity-apid-openapi.yml#get_health
+  http: GET /healthz
+- name: get_liveness
+  description: Liveness check
+  category: System
+  source_operation: openapi/dust-identity-apid-openapi.yml#get_liveness
+  http: GET /livez
+- name: get_readiness
+  description: Readiness check
+  category: System
+  source_operation: openapi/dust-identity-apid-openapi.yml#get_readiness
+  http: GET /readyz
+- name: tags.bind
+  description: Bind a tag identifier.
+  category: Tags
+  source_operation: openapi/dust-identity-apid-openapi.yml#tags.bind
+  http: POST /api/v1/tags/bind
+- name: tags.extract
+  description: Extract a tag identifier.
+  category: Tags
+  source_operation: openapi/dust-identity-apid-openapi.yml#tags.extract
+  http: POST /api/v1/tags/extract
+- name: tags.identify
+  description: Identify a thread
+  category: Tags
+  source_operation: openapi/dust-identity-apid-openapi.yml#tags.identify
+  http: POST /api/v1/tags/identify
+- name: tags.set_text
+  description: Set the text on a tag.
+  category: Tags
+  source_operation: openapi/dust-identity-apid-openapi.yml#tags.set_text
+  http: POST /api/v1/tags/text
+- name: tags.unbind
+  description: Unbind a tag from a thread.
+  category: Tags
+  source_operation: openapi/dust-identity-apid-openapi.yml#tags.unbind
+  http: POST /api/v1/tags/unbind
+- name: tags.update
+  description: Update identifier lifecycle state.
+  category: Tags
+  source_operation: openapi/dust-identity-apid-openapi.yml#tags.update
+  http: POST /api/v1/tags/update
+- name: tags.verify
+  description: Verify one or more tags
+  category: Tags
+  source_operation: openapi/dust-identity-apid-openapi.yml#tags.verify
+  http: POST /api/v1/tags/verify
+- name: teams.list
+  description: List teams
+  category: Teams
+  source_operation: openapi/dust-identity-apid-openapi.yml#teams.list
+  http: GET /api/v1/teams
+- name: teams.list_connected
+  description: List connected teams
+  category: Teams
+  source_operation: openapi/dust-identity-apid-openapi.yml#teams.list_connected
+  http: GET /api/v1/teams/connected
+- name: templates.create
+  description: Create a thread template
+  category: Templates
+  source_operation: openapi/dust-identity-apid-openapi.yml#templates.create
+  http: POST /api/v1/templates
+- name: templates.get
+  description: Get a thread template
+  category: Templates
+  source_operation: openapi/dust-identity-apid-openapi.yml#templates.get
+  http: GET /api/v1/templates/{templateId}
+- name: templates.list
+  description: List thread templates
+  category: Templates
+  source_operation: openapi/dust-identity-apid-openapi.yml#templates.list
+  http: GET /api/v1/templates
+- name: templates.update
+  description: Update a thread template
+  category: Templates
+  source_operation: openapi/dust-identity-apid-openapi.yml#templates.update
+  http: PATCH /api/v1/templates/{templateId}
+- name: thread_links.available_threads
+  description: List available threads for linking
+  category: Thread Links
+  source_operation: openapi/dust-identity-apid-openapi.yml#thread_links.available_threads
+  http: GET /api/v1/links/available-threads
+- name: thread_links.create
+  description: Create thread links
+  category: Thread Links
+  source_operation: openapi/dust-identity-apid-openapi.yml#thread_links.create
+  http: POST /api/v1/links
+- name: thread_links.delete
+  description: Unlink two threads
+  category: Thread Links
+  source_operation: openapi/dust-identity-apid-openapi.yml#thread_links.delete
+  http: DELETE /api/v1/links/{link_id}
+- name: thread_links.list
+  description: List thread links
+  category: Thread Links
+  source_operation: openapi/dust-identity-apid-openapi.yml#thread_links.list
+  http: GET /api/v1/links
+- name: relations.create
+  description: Create relation definition
+  category: Thread Relations
+  source_operation: openapi/dust-identity-apid-openapi.yml#relations.create
+  http: POST /api/v1/relations
+- name: relations.delete
+  description: Delete relation definition
+  category: Thread Relations
+  source_operation: openapi/dust-identity-apid-openapi.yml#relations.delete
+  http: DELETE /api/v1/relations/{relation_id}
+- name: relations.get
+  description: Get relation definition
+  category: Thread Relations
+  source_operation: openapi/dust-identity-apid-openapi.yml#relations.get
+  http: GET /api/v1/relations/{relation_id}
+- name: relations.get_link_counts
+  description: Get relation link counts
+  category: Thread Relations
+  source_operation: openapi/dust-identity-apid-openapi.yml#relations.get_link_counts
+  http: POST /api/v1/relations/count
+- name: relations.list
+  description: List relation definitions
+  category: Thread Relations
+  source_operation: openapi/dust-identity-apid-openapi.yml#relations.list
+  http: GET /api/v1/relations
+- name: relations.update
+  description: Update relation definition
+  category: Thread Relations
+  source_operation: openapi/dust-identity-apid-openapi.yml#relations.update
+  http: PATCH /api/v1/relations/{relation_id}
+- name: assembly.attach_part
+  description: Attach a Part to an assembly Thread
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#assembly.attach_part
+  http: POST /api/v1/assemblies/{assembly_id}/parts
+- name: assembly.children
+  description: List the direct Parts of an assembly Thread
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#assembly.children
+  http: GET /api/v1/assemblies/{assembly_id}/parts
+- name: assembly.convert
+  description: Convert a Thread between unit and assembly kind
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#assembly.convert
+  http: PATCH /api/v1/assemblies/{assembly_id}/kind
+- name: assembly.detach_part
+  description: Detach a Part from an assembly Thread
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#assembly.detach_part
+  http: DELETE /api/v1/assemblies/{assembly_id}/parts
+- name: assembly.list
+  description: List the assembly Threads the caller can view
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#assembly.list
+  http: GET /api/v1/assemblies
+- name: assembly.rolled_up_parts
+  description: List transitive Parts for an assembly Thread
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#assembly.rolled_up_parts
+  http: GET /api/v1/assemblies/{assembly_id}/rolled-up-parts
+- name: assembly.set_part_protection
+  description: Set Part protection relation
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#assembly.set_part_protection
+  http: PATCH /api/v1/assemblies/{assembly_id}/parts/protection
+- name: assembly.set_thread_field
+  description: Set or clear a thread-valued assembly field
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#assembly.set_thread_field
+  http: PUT /api/v1/assemblies/{assembly_id}/thread-fields
+- name: files.get
+  description: Get a file resource for a Thread
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.get
+  http: GET /api/v1/threads/{thread_id}/files/{res_id}
+- name: files.update
+  description: Update a thread resource
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#files.update
+  http: POST /api/v1/threads/{thread_id}/files/{res_id}
+- name: imports.commit
+  description: Commit an Assembly Import Package all-or-nothing
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#imports.commit
+  http: POST /api/v1/imports/commit
+- name: imports.plan
+  description: Dry-run an Assembly Import Package into an Import Plan
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#imports.plan
+  http: POST /api/v1/imports/plan
+- name: thread_links.list_for_thread
+  description: List thread links
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#thread_links.list_for_thread
+  http: GET /api/v1/threads/{thread_id}/links
+- name: threads.archive
+  description: Archive a set of threads.
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.archive
+  http: PATCH /api/v1/threads/archive
+- name: threads.archive_restore
+  description: Restore archived threads.
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.archive_restore
+  http: PATCH /api/v1/threads/restore
+- name: threads.check_permissions
+  description: Get user permissions on threads.
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.check_permissions
+  http: POST /api/v1/threads/permissions
+- name: threads.count
+  description: Count threads with optional filters.
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.count
+  http: GET /api/v1/threads/count
+- name: threads.create
+  description: Create one or more threads
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.create
+  http: POST /api/v1/threads
+- name: threads.get
+  description: Get thread data.
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.get
+  http: GET /api/v1/threads/{thread_id}
+- name: threads.get_archived_data
+  description: List archived thread field data
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.get_archived_data
+  http: GET /api/v1/threads/{thread_id}/data/archived
+- name: threads.list
+  description: List threads with cursor pagination.
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.list
+  http: GET /api/v1/threads
+- name: threads.list_access_contexts
+  description: List access contexts for threads.
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.list_access_contexts
+  http: GET /api/v1/threads/{thread_id}/access
+- name: threads.list_files
+  description: List resources for a Thread
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.list_files
+  http: GET /api/v1/threads/{thread_id}/files
+- name: threads.list_shared
+  description: Thread shared with
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.list_shared
+  http: GET /api/v1/threads/{thread_id}/shared
+- name: threads.presence
+  description: Heartbeat presence and list the current viewers of a thread
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.presence
+  http: POST /api/v1/threads/{thread_id}/presence
+- name: threads.restore_data
+  description: Restore archived thread field data
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.restore_data
+  http: POST /api/v1/threads/{thread_id}/data/restore
+- name: threads.set_thumbnail
+  description: Set thread's thumbnail
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.set_thumbnail
+  http: PATCH /api/v1/threads/{thread_id}/thumbnail
+- name: threads.update
+  description: Update thread field data
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.update
+  http: POST /api/v1/threads/{thread_id}
+- name: threads.update_data
+  description: Update thread field data
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.update_data
+  http: POST /api/v1/threads/{thread_id}/data
+- name: threads.upload_thumbnail
+  description: Upload thread thumbnail.
+  category: Threads
+  source_operation: openapi/dust-identity-apid-openapi.yml#threads.upload_thumbnail
+  http: POST /api/v1/threads/{thread_id}/thumbnail
+- name: transfer.abandon
+  description: Abandon a failed Transfer
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.abandon
+  http: POST /api/v1/transfers/{transfer_id}/abandon
+- name: transfer.add_item
+  description: Add a Manifest Item to a draft Transfer
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.add_item
+  http: POST /api/v1/transfers/{transfer_id}/items
+- name: transfer.cancel
+  description: Cancel a draft, sent, or change-requested Transfer
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.cancel
+  http: POST /api/v1/transfers/{transfer_id}/cancel
+- name: transfer.create
+  description: Create a draft Transfer
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.create
+  http: POST /api/v1/transfers
+- name: transfer.finalize
+  description: Respond to a received Transfer (accept / reject / request changes)
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.finalize
+  http: POST /api/v1/transfers/{transfer_id}/respond
+- name: transfer.get
+  description: Get a Transfer with its Fabric Manifest items
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.get
+  http: GET /api/v1/transfers/{transfer_id}
+- name: transfer.list
+  description: List transfers for the active team (status views or mail-box)
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.list
+  http: GET /api/v1/transfers
+- name: transfer.post_message
+  description: Post a message on a Transfer's conversation
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.post_message
+  http: POST /api/v1/transfers/{transfer_id}/messages
+- name: transfer.preview
+  description: Authoritative Transfer Preview for a sent Transfer
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.preview
+  http: GET /api/v1/transfers/{transfer_id}/preview
+- name: transfer.preview_graph
+  description: Pre-acceptance provenance graph for a sent Transfer
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.preview_graph
+  http: GET /api/v1/transfers/{transfer_id}/preview/graph
+- name: transfer.preview_resource_content
+  description: Offered Resource content for a Transfer Preview
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.preview_resource_content
+  http: GET /api/v1/transfers/{transfer_id}/preview/resources/{res_id}/content
+- name: transfer.preview_thread_events
+  description: Disclosed transaction history for an offered Thread
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.preview_thread_events
+  http: GET /api/v1/transfers/{transfer_id}/preview/threads/{source_thread_id}/events
+- name: transfer.remove_item
+  description: Remove a Manifest Item from a draft Transfer
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.remove_item
+  http: DELETE /api/v1/transfers/{transfer_id}/items/{item_id}
+- name: transfer.retry
+  description: Retry a failed Transfer
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.retry
+  http: POST /api/v1/transfers/{transfer_id}/retry
+- name: transfer.send
+  description: Send a draft Transfer to a receiving team
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.send
+  http: POST /api/v1/transfers/{transfer_id}/send
+- name: transfer.set_primary_thread
+  description: Set the primary Thread of a draft Transfer
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.set_primary_thread
+  http: PUT /api/v1/transfers/{transfer_id}/primary-thread
+- name: transfer.start_from_prior_manifest
+  description: Start a new shipment from a stopped shipment's manifest
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.start_from_prior_manifest
+  http: POST /api/v1/transfers/{transfer_id}/start-from-prior-manifest
+- name: transfer.update_item
+  description: Update a Manifest Item on a draft Transfer
+  category: Transfers
+  source_operation: openapi/dust-identity-apid-openapi.yml#transfer.update_item
+  http: PATCH /api/v1/transfers/{transfer_id}/items/{item_id}
+- name: users.get
+  description: Get a user's profile
+  category: Users
+  source_operation: openapi/dust-identity-apid-openapi.yml#users.get
+  http: GET /api/v1/users/{user_id}
+- name: users.get_profile
+  description: Get current profile
+  category: Users
+  source_operation: openapi/dust-identity-apid-openapi.yml#users.get_profile
+  http: GET /api/v1/users/profile
+- name: users.update_profile
+  description: Update profile
+  category: Users
+  source_operation: openapi/dust-identity-apid-openapi.yml#users.update_profile
+  http: PATCH /api/v1/users/profile

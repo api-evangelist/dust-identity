@@ -1,0 +1,1383 @@
+generated: '2026-08-12'
+method: searched
+source: https://docs.dustid.io/llms-full.txt
+also_from:
+- https://docs.dustid.io/llms.txt
+- openapi/_original/dust-identity-apid-openapi-original.json
+note: 'The published OpenAPI 3.1 spec carries ZERO examples — no `example` or `examples` keyword appears
+  anywhere in its 177 operations, 493 error responses or 285 component schemas, and components.examples
+  is empty. Every worked example DUST publishes lives in the prose documentation instead. This artifact
+  harvests those verbatim from the provider''s own machine-readable docs bundle (llms-full.txt, the complete
+  docs site as one document, generated at build time from the same source as the HTML) and binds each
+  one back to the operationId it exercises, so an agent reading the spec alone is not left without a single
+  call to copy. Nothing here is authored by API Evangelist: the `code` fields are DUST''s published text,
+  dedented but otherwise unaltered. The bindings are ours, derived by matching the request path and inferred
+  HTTP method against the spec''s paths[].'
+upstream_gap:
+  issue: examples-absent-from-spec
+  detail: A consumer generating a client or feeding the spec to an agent gets no request or response sample.
+    Moving even the quickstart bodies into the spec as `examples` would be a small change with a large
+    effect on machine consumers, and DUST already has the material written.
+  spec_example_count: 0
+  docs_example_count: 66
+summary:
+  total_examples: 66
+  pages: 11
+  bound_to_operation: 23
+  unbound: 43
+  unbound_note: Client-side scanning, React component and setup snippets that do not call a REST operation,
+    plus response-shape payloads shown without their request.
+  languages:
+    bash: 28
+    ts: 22
+    json: 6
+    http: 4
+    text: 1
+    tsx: 4
+    css: 1
+  operations_covered: 15
+  operations_total: 177
+  operation_coverage_pct: 8.5
+  operations:
+  - AuthJWKS
+  - AuthToken
+  - files.create_finalize
+  - files.upload
+  - get_me
+  - sharing.add
+  - tags.bind
+  - tags.extract
+  - tags.identify
+  - tags.verify
+  - threads.check_permissions
+  - threads.create
+  - threads.get
+  - threads.list
+  - threads.update
+pages:
+- page: Authentication and API keys
+  url: https://docs.dustid.io/api/authentication/
+  example_count: 10
+  examples:
+  - section: Exchange the key for a bearer token
+    kind: curl-request
+    language: bash
+    operations:
+    - AuthToken
+    http:
+    - GET /api/auth/token
+    binding_confidence: high
+    code: |-
+      curl -fsS "https://apid.dustid.io/api/auth/token" \
+        -H "x-api-key: $DUST_API_KEY"
+  - section: Exchange the key for a bearer token
+    kind: typescript
+    language: ts
+    operations:
+    - AuthToken
+    http:
+    - GET /api/auth/token
+    binding_confidence: high
+    code: |-
+      const response = await fetch("https://apid.dustid.io/api/auth/token", {
+        headers: { "x-api-key": process.env.DUST_API_KEY! },
+      });
+      const { token, expiresIn } = await response.json();
+  - section: Exchange the key for a bearer token
+    kind: json-payload
+    language: json
+    code: '{ "token": "eyJhbGciOi...", "expiresIn": 900, "expiresAt": "2026-07-14T22:40:00.000Z" }'
+  - section: OAuth2 client_credentials
+    kind: curl-request
+    language: bash
+    code: |-
+      curl -fsS "https://authd.dustid.io/api/auth/dust/service-accounts/token" \
+        -d grant_type=client_credentials \
+        -d client_id="$DUST_CLIENT_ID" \
+        -d client_secret="$DUST_CLIENT_SECRET"
+  - section: OAuth2 client_credentials
+    kind: json-payload
+    language: json
+    code: '{ "access_token": "eyJhbGciOi...", "token_type": "Bearer", "expires_in": 900 }'
+  - section: Use the bearer token
+    kind: http-exchange
+    language: http
+    code: 'Authorization: Bearer <token>'
+  - section: Use the bearer token
+    kind: curl-request
+    language: bash
+    operations:
+    - get_me
+    http:
+    - GET /api/v1/me
+    binding_confidence: high
+    code: |-
+      curl -fsS "https://apid.dustid.io/api/v1/me" \
+        -H "Authorization: Bearer $DUST_TOKEN"
+  - section: Token expiry and refresh
+    kind: typescript
+    language: ts
+    operations:
+    - AuthToken
+    http:
+    - GET /api/auth/token
+    binding_confidence: high
+    code: |-
+      let cached: { token: string; refreshAfter: number } | null = null;
+
+
+      async function getToken(): Promise<string> {
+        if (cached && Date.now() < cached.refreshAfter) return cached.token;
+        const res = await fetch("https://apid.dustid.io/api/auth/token", {
+          headers: { "x-api-key": process.env.DUST_API_KEY! },
+        });
+        if (!res.ok) throw new Error(`token exchange failed: ${res.status}`);
+        const { token, expiresIn } = await res.json();
+        // refresh 60s before expiry, never cache a token for less than 5s
+        cached = { token, refreshAfter: Date.now() + Math.max(expiresIn - 60, 5) * 1000 };
+        return token;
+      }
+
+
+      async function apiFetch(url: string, init: RequestInit = {}): Promise<Response> {
+        const call = async () => {
+          // new Headers() handles every HeadersInit shape (plain object, Headers,
+          // tuple array) — an object spread would silently drop the latter two.
+          const headers = new Headers(init.headers);
+          headers.set("Authorization", `Bearer ${await getToken()}`);
+          return fetch(url, { ...init, headers });
+        };
+        let res = await call();
+        if (res.status === 401) {
+          cached = null; // token revoked or expired early — refresh once and retry
+          res = await call();
+        }
+        return res;
+      }
+  - section: Declared actor attribution
+    kind: http-exchange
+    language: http
+    code: 'Dust-Ctx-Declared-Actor: {"id": "JDOE", "system": "SAP", "displayName": "Jane Doe"}'
+  - section: How tokens are verified
+    kind: text
+    language: text
+    operations:
+    - AuthJWKS
+    http:
+    - GET /api/auth/jwks
+    binding_confidence: high
+    code: GET https://apid.dustid.io/api/auth/jwks
+- page: 'Request conventions: context headers, errors, localization'
+  url: https://docs.dustid.io/api/conventions/
+  example_count: 5
+  examples:
+  - section: Context headers
+    kind: curl-request
+    language: bash
+    operations:
+    - threads.list
+    http:
+    - GET /api/v1/threads
+    binding_confidence: high
+    code: |-
+      curl -fsS "https://apid.dustid.io/api/v1/threads" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -H "Dust-Ctx-Team-Id: $DUST_TEAM_ID"
+  - section: Localization
+    kind: http-exchange
+    language: http
+    code: 'Dust-Ctx-Locale: zh-CN'
+  - section: Errors
+    kind: json-payload
+    language: json
+    code: |-
+      {
+        "code": "UNAUTHORIZED",
+        "message": "You are not authorized to perform this action",
+        "status": 401,
+        "detail": { }
+      }
+  - section: Pagination
+    kind: curl-request
+    language: bash
+    operations:
+    - threads.list
+    http:
+    - GET /api/v1/threads
+    binding_confidence: high
+    code: |-
+      # First page
+      curl -fsS "https://apid.dustid.io/api/v1/threads?pageSize=50" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID"
+
+
+      # Follow the cursor
+      curl -fsS "https://apid.dustid.io/api/v1/threads?pageSize=50&cursor=$NEXT" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID"
+  - section: Pagination
+    kind: json-payload
+    language: json
+    code: |-
+      {
+        "threads": [ ... ],
+        "next": "eyJjcmVhdGVkQXQiOi...",
+        "prev": "eyJjcmVhdGVkQXQiOi..."
+      }
+- page: Files API guide
+  url: https://docs.dustid.io/api/files/
+  example_count: 5
+  examples:
+  - section: Simple upload
+    kind: curl-request
+    language: bash
+    operations:
+    - files.upload
+    http:
+    - POST /api/v1/files
+    binding_confidence: high
+    code: |-
+      curl -fsS "$APID_URL/api/v1/files" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -F "file=@inspection-report.pdf" \
+        -F "threadId=$THREAD_ID"
+  - section: Simple upload
+    kind: typescript
+    language: ts
+    code: |-
+      const resources = await client.files.upload({
+        file,               // a File
+        threadId,           // optional: attach to a Thread
+        // fieldId,         // optional: attach as a field value
+        // isPrivate: true, // optional
+      });
+  - section: Resumable upload (tus)
+    kind: curl-request
+    language: bash
+    code: |-
+      curl -i -X POST "$APID_URL/api/v1/files/upload" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -H "Tus-Resumable: 1.0.0" \
+        -H "Upload-Length: 52428800" \
+        -H "Upload-Metadata: filename $(printf 'video.mp4' | base64)"
+      # → 201 Created
+      # → Location: …/api/v1/files/upload/<upload-id>
+  - section: Resumable upload (tus)
+    kind: curl-request
+    language: bash
+    code: |-
+      curl -i -X PATCH "$APID_URL/api/v1/files/upload/$UPLOAD_ID" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -H "Tus-Resumable: 1.0.0" \
+        -H "Upload-Offset: 0" \
+        -H "Content-Type: application/offset+octet-stream" \
+        --data-binary @video.mp4
+  - section: Resumable upload (tus)
+    kind: curl-request
+    language: bash
+    operations:
+    - files.create_finalize
+    http:
+    - POST /api/v1/files/finalize
+    binding_confidence: high
+    code: |-
+      curl -fsS "$APID_URL/api/v1/files/finalize" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "threadId": "'"$THREAD_ID"'",
+          "requests": [
+            { "resId": "'"$UPLOAD_ID"'", "filename": "video.mp4", "size": 52428800 }
+          ]
+        }'
+- page: Identifiers API guide
+  url: https://docs.dustid.io/api/identifiers/
+  example_count: 7
+  examples:
+  - section: Extract a DUST capture
+    kind: curl-request
+    language: bash
+    operations:
+    - tags.extract
+    http:
+    - POST /api/v1/tags/extract
+    binding_confidence: high
+    code: |-
+      curl -fsS "$APID_URL/api/v1/tags/extract" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -F "data=@scan.jpeg" \
+        -F 'options={"enrollmentSessionId":"3d5e…"}'
+  - section: Bind an identifier to a Thread
+    kind: curl-request
+    language: bash
+    operations:
+    - tags.bind
+    http:
+    - POST /api/v1/tags/bind
+    binding_confidence: high
+    code: |-
+      curl -fsS "$APID_URL/api/v1/tags/bind" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -F "threadId=$THREAD_ID" \
+        -F "tagType=DUST" \
+        -F "tagDescription=Inbound receiving scan" \
+        -F "data=@scan.jpeg" \
+        -F 'options={"enrollmentSessionId":"3d5e…"}'
+  - section: Bind an identifier to a Thread
+    kind: curl-request
+    language: bash
+    operations:
+    - tags.bind
+    http:
+    - POST /api/v1/tags/bind
+    binding_confidence: high
+    code: |-
+      curl -fsS "$APID_URL/api/v1/tags/bind" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -F "threadId=$THREAD_ID" \
+        -F "tagType=QR" \
+        -F "data=https://example.com/item/SZ3J-11-ZJ17"
+  - section: Bind an identifier to a Thread
+    kind: curl-request
+    language: bash
+    operations:
+    - tags.bind
+    http:
+    - POST /api/v1/tags/bind
+    binding_confidence: high
+    code: |-
+      # Reuse a fingerprint from a prior /extract — no image re-upload
+      curl -fsS "$APID_URL/api/v1/tags/bind" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -F "threadId=$THREAD_ID" \
+        -F "tagType=DUST" \
+        -F "fingerprintId=$FINGERPRINT_ID"
+  - section: Identify a Thread from a scan
+    kind: curl-request
+    language: bash
+    operations:
+    - tags.identify
+    http:
+    - POST /api/v1/tags/identify
+    binding_confidence: high
+    code: |-
+      curl -fsS "$APID_URL/api/v1/tags/identify" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -F "tagType=DUST" \
+        -F "data=@scan.jpeg" \
+        -F 'searchTeamIds=["'"$TEAM_ID"'"]'
+  - section: Identify a Thread from a scan
+    kind: typescript
+    language: ts
+    code: |-
+      const result = await client.tags.identify({
+        tagType: "DUST",
+        data: scanBlob,
+        searchTeamIds: [teamId],
+      });
+  - section: Verify a scan against a Thread
+    kind: curl-request
+    language: bash
+    operations:
+    - tags.verify
+    http:
+    - POST /api/v1/tags/verify
+    binding_confidence: high
+    code: |-
+      curl -fsS "$APID_URL/api/v1/tags/verify" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -F "threadId=$THREAD_ID" \
+        -F "tagType=DUST" \
+        -F "data=@scan.jpeg" \
+        -F 'tags=["'"$TAG_ID"'"]'
+- page: API quickstart
+  url: https://docs.dustid.io/api/quickstart/
+  example_count: 8
+  examples:
+  - section: Exchange your API key for a bearer token
+    kind: curl-request
+    language: bash
+    operations:
+    - AuthToken
+    http:
+    - GET /api/auth/token
+    binding_confidence: high
+    code: |-
+      export APID_URL="https://apid.dustid.io"
+      export DUST_API_KEY="your-service-account-key"
+
+
+      export DUST_TOKEN="$(
+        curl -fsS "$APID_URL/api/auth/token" \
+          -H "x-api-key: $DUST_API_KEY" | jq -r '.token'
+      )"
+  - section: Exchange your API key for a bearer token
+    kind: typescript
+    language: ts
+    operations:
+    - AuthToken
+    http:
+    - GET /api/auth/token
+    binding_confidence: high
+    code: |-
+      const apidUrl = "https://apid.dustid.io";
+
+
+      const tokenResponse = await fetch(`${apidUrl}/api/auth/token`, {
+        headers: { "x-api-key": process.env.DUST_API_KEY! },
+      });
+      const { token } = await tokenResponse.json();
+  - section: Find your organization and team context
+    kind: curl-request
+    language: bash
+    operations:
+    - get_me
+    http:
+    - GET /api/v1/me
+    binding_confidence: high
+    code: |-
+      curl -fsS "$APID_URL/api/v1/me" \
+        -H "Authorization: Bearer $DUST_TOKEN"
+  - section: Find your organization and team context
+    kind: shell
+    language: bash
+    code: |-
+      export DUST_ORG_ID="<organization id from /api/v1/me>"
+      # Optional: export DUST_TEAM_ID="<team id from /api/v1/me>" if you want a non-root team.
+  - section: Create a thread
+    kind: curl-request
+    language: bash
+    operations:
+    - threads.create
+    http:
+    - POST /api/v1/threads
+    binding_confidence: high
+    code: |-
+      curl -fsS "$APID_URL/api/v1/threads" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "type": "single",
+          "thread": {
+            "name": "Tire SZ3J-11-ZJ17",
+            "description": "Production asset"
+          },
+          "data": [
+            { "name": "Serial Number", "type": "text",   "value": { "text": "SZ3J-11-ZJ17" } },
+            { "name": "Max PSI",       "type": "number", "value": { "number": 51 } }
+          ]
+        }'
+  - section: Create a thread
+    kind: typescript
+    language: ts
+    code: |-
+      import { ApidClient } from "@dustid/apid-client";
+
+
+      const client = new ApidClient({
+        baseUrl: apidUrl,
+        bearerToken: token,
+        organizationId,   // sent as Dust-Ctx-Org-Id
+        teamId,           // optional; sent as Dust-Ctx-Team-Id when set
+      });
+
+
+      // createOne unwraps the batch response to the single created thread
+      const created = await client.threads.createOne({
+        type: "single",
+        thread: {
+          name: "Tire SZ3J-11-ZJ17",
+          description: "Production asset",
+        },
+        data: [
+          { name: "Serial Number", type: "text",   value: { text: "SZ3J-11-ZJ17" } },
+          { name: "Max PSI",       type: "number", value: { number: 51 } },
+        ],
+      });
+      console.log(created.threadId);
+  - section: Read it back
+    kind: curl-request
+    language: bash
+    operations:
+    - threads.get
+    http:
+    - GET /api/v1/threads/{thread_id}
+    binding_confidence: high
+    code: |-
+      export THREAD_ID="<created[0].threadId from the previous step>"
+
+
+      curl -fsS "$APID_URL/api/v1/threads/$THREAD_ID" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID"
+  - section: Read it back
+    kind: typescript
+    language: ts
+    code: |-
+      const record = await client.threads.get(created.threadId);
+      console.log(record.thread.name);       // "Tire SZ3J-11-ZJ17"
+      console.log(record.events.length);     // creation events already recorded
+- page: Teams, sharing, and connections API guide
+  url: https://docs.dustid.io/api/teams-and-sharing/
+  example_count: 3
+  examples:
+  - section: Request context
+    kind: http-exchange
+    language: http
+    code: |-
+      Authorization: Bearer <authd-token>
+      Dust-Ctx-Org-Id: <organization-uuid>
+      Dust-Ctx-Team-Id: <team-uuid>
+  - section: Sharing
+    kind: curl-request
+    language: bash
+    operations:
+    - sharing.add
+    http:
+    - POST /api/v1/sharing
+    binding_confidence: high
+    code: |-
+      curl -fsS "$APID_URL/api/v1/sharing" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -H "Dust-Ctx-Team-Id: $DUST_TEAM_ID" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "items": [
+            { "item": "thread", "id": "'"$THREAD_ID"'", "teamId": "'"$PARTNER_TEAM_ID"'", "relation": "viewer" }
+          ]
+        }'
+  - section: Sharing
+    kind: typescript
+    language: ts
+    code: |-
+      await client.sharing.add({
+        items: [
+          { item: "thread", id: threadId, teamId: partnerTeamId, relation: "viewer" },
+        ],
+      });
+- page: Threads API guide
+  url: https://docs.dustid.io/api/threads/
+  example_count: 5
+  examples:
+  - section: Create a Thread
+    kind: curl-request
+    language: bash
+    operations:
+    - threads.create
+    http:
+    - POST /api/v1/threads
+    binding_confidence: high
+    code: |-
+      curl -fsS "$APID_URL/api/v1/threads" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "type": "single",
+          "thread": { "name": "Tire SZ3J-11-ZJ17" },
+          "data": [
+            { "name": "Serial Number", "type": "text", "value": { "text": "SZ3J-11-ZJ17" } },
+            { "name": "Max PSI", "type": "number", "value": { "number": 51 } }
+          ]
+        }'
+  - section: Create a Thread
+    kind: typescript
+    language: ts
+    code: |-
+      const created = await client.threads.create({
+        type: "single",
+        thread: { name: "Tire SZ3J-11-ZJ17" },
+        data: [
+          { name: "Serial Number", type: "text", value: { text: "SZ3J-11-ZJ17" } },
+          { name: "Max PSI", type: "number", value: { number: 51 } },
+        ],
+      });
+  - section: Bulk import
+    kind: json-payload
+    language: json
+    code: |-
+      {
+        "type": "raw",
+        "nameKey": "serial",
+        "raw": [
+          { "serial": "SZ3J-11-ZJ17", "part": "P355/30R19", "maxPsi": 51 }
+        ]
+      }
+  - section: Update a Thread
+    kind: json-payload
+    language: json
+    code: |-
+      {
+        "threadId": "9f6a…",
+        "update": [
+          { "name": "VIN", "type": "text", "value": { "text": "1HGCM82633A004352" } }
+        ],
+        "remove": []
+      }
+  - section: Permissions
+    kind: curl-request
+    language: bash
+    operations:
+    - threads.check_permissions
+    - threads.update
+    http:
+    - POST /api/v1/threads/permissions
+    - POST /api/v1/threads/{thread_id}
+    binding_confidence: medium
+    code: |-
+      curl -fsS "$APID_URL/api/v1/threads/permissions" \
+        -H "Authorization: Bearer $DUST_TOKEN" \
+        -H "Dust-Ctx-Org-Id: $DUST_ORG_ID" \
+        -H "Content-Type: application/json" \
+        -d '{ "threadIds": ["9f6a…", "c2d1…"] }'
+- page: TypeScript client (@dustid/apid-client)
+  url: https://docs.dustid.io/api/typescript-client/
+  example_count: 9
+  examples:
+  - section: Construct a client
+    kind: typescript
+    language: ts
+    code: |-
+      import { ApidClient } from "@dustid/apid-client";
+
+
+      const client = new ApidClient({
+        baseUrl: "https://apid.dustid.io",
+        bearerToken: token,        // Authorization: Bearer <token>
+        organizationId: orgId,     // sent as Dust-Ctx-Org-Id
+        teamId: teamId,            // sent as Dust-Ctx-Team-Id
+      });
+  - section: Construct a client
+    kind: typescript
+    language: ts
+    code: |-
+      type ApidClientOptions = {
+        baseUrl: string;
+        bearerToken?: string;
+        organizationId?: string;                       // Dust-Ctx-Org-Id header
+        teamId?: string;                               // Dust-Ctx-Team-Id header
+        fetcher?: typeof globalThis.fetch;             // custom fetch (proxies, testing)
+        defaultHeaders?: HeadersInit | (() => HeadersInit);  // e.g. Dust-Ctx-Locale
+        logger?: Logger;                               // debug/error request logging
+      };
+  - section: Construct a client
+    kind: typescript
+    language: ts
+    code: |-
+      const client = new ApidClient({
+        baseUrl,
+        bearerToken,
+        organizationId,
+        defaultHeaders: { "Dust-Ctx-Locale": "zh-CN" },
+      });
+  - section: Switching context or token
+    kind: typescript
+    language: ts
+    code: |-
+      const asOtherTeam = client.withContext({ teamId: otherTeamId });
+      const asFreshToken = client.withToken(newBearerToken);
+  - section: Resources and calls
+    kind: typescript
+    language: ts
+    code: |-
+      // GET /api/v1/threads — cursor-paginated list
+      const page = await client.threads.list({ pageSize: 50, q: "tire" });
+      for (const thread of page.threads) {
+        console.log(thread.threadId, thread.name);
+      }
+      if (page.next) {
+        const nextPage = await client.threads.list({ pageSize: 50, cursor: page.next });
+      }
+  - section: Resources and calls
+    kind: typescript
+    language: ts
+    code: |-
+      // POST /api/v1/threads — create, unwrapped to the single created record
+      const created = await client.threads.createOne({
+        type: "single",
+        thread: { name: "Tire SZ3J-11-ZJ17" },
+        data: [{ name: "Serial Number", type: "text", value: { text: "SZ3J-11-ZJ17" } }],
+      });
+
+
+      // GET /api/v1/threads/{thread_id}
+      const record = await client.threads.get(created.threadId);
+      console.log(record.thread.name, record.events.length);
+  - section: Error handling
+    kind: typescript
+    language: ts
+    code: |-
+      import { ApiError } from "@dustid/apid-client";
+
+
+      try {
+        await client.threads.get(threadId);
+      } catch (error) {
+        if (error instanceof ApiError) {
+          // error.code    stable error code, e.g. "NOT_FOUND", "UNAUTHORIZED"
+          // error.status  HTTP status number
+          // error.message localized human-readable message
+          // error.detail  optional extra context (validation issues, etc.)
+          // error.body    the full { code, message, status, detail } payload
+          if (error.code === "UNAUTHORIZED") {
+            // token expired — re-exchange the API key and retry
+          }
+        } else {
+          throw error; // network failure or non-JSON response
+        }
+      }
+  - section: 'Alternative: generate your own types'
+    kind: shell
+    language: bash
+    code: npx openapi-typescript@7 https://apid.dustid.io/api/openapi.json -o <generated-types-file>
+  - section: 'Alternative: generate your own types'
+    kind: typescript
+    language: ts
+    code: |-
+      import type { paths } from "./dust-api";
+
+
+      type ThreadList =
+        paths["/api/v1/threads"]["get"]["responses"]["200"]["content"]["application/json"];
+- page: DUST Go
+  url: https://docs.dustid.io/integrate/dust-go/
+  example_count: 1
+  examples:
+  - section: Install the package
+    kind: shell
+    language: bash
+    code: bun add @dustid/dust-go-connect
+- page: Integrate with DUST Go
+  url: https://docs.dustid.io/integrate/dust-go-connect/
+  example_count: 6
+  examples:
+  - section: Install
+    kind: shell
+    language: bash
+    code: npm install @dustid/dust-go-connect
+  - section: Detect DUST Go
+    kind: typescript
+    language: ts
+    code: |-
+      import { connector } from "@dustid/dust-go-connect";
+
+
+      export const insideDustGo = Boolean(connector);
+  - section: Capture a scan
+    kind: typescript
+    language: ts
+    code: |-
+      import { scanAsync } from "@dustid/dust-go-connect";
+
+
+      const payload = await scanAsync();
+      // payload: { type: 'DUST' | 'QR' | 'BARCODE' | 'DATA_MATRIX' | 'NFC',
+      //            data: string, metadata?: ScanMetadata }
+  - section: Capture a scan
+    kind: typescript
+    language: ts
+    code: |-
+      import { connector } from "@dustid/dust-go-connect";
+
+
+      connector?.add("my-listener", (event) => {
+        switch (event.type) {
+          case "scan":
+            handleScan(event.payload);
+            break;
+          case "hide": // scanner closed
+          case "show": // scanner opened
+            break;
+          default:
+            // Ignore unknown event types — the protocol may grow.
+            break;
+        }
+      });
+
+
+      connector?.showScanner();
+      // later: connector?.hideScanner(); connector?.remove("my-listener");
+  - section: Resolve the scan against APID
+    kind: typescript
+    language: ts
+    code: |-
+      async function identifyDustScan(base64Jpeg: string) {
+        // The scan arrives base64-encoded; APID expects binary multipart data.
+        const bytes = Uint8Array.from(atob(base64Jpeg), (c) => c.charCodeAt(0));
+        const form = new FormData();
+        form.set("tagType", "DUST");
+        form.set("data", new Blob([bytes], { type: "image/jpeg" }));
+        // API field names keep legacy "group" naming — these are Team ids.
+        form.set("searchGroupIds", JSON.stringify([TEAM_ID]));
+
+
+        const response = await fetch(`${APID_URL}/api/v1/tags/identify`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Dust-Ctx-Org-Id": ORGANIZATION_ID,
+          },
+          body: form,
+        });
+
+
+        if (!response.ok) throw new Error(`identify failed: ${response.status}`);
+        return await response.json();
+      }
+  - section: Sign-in flows inside DUST Go
+    kind: typescript
+    language: ts
+    code: |-
+      import { connector } from "@dustid/dust-go-connect";
+
+
+      const origin = window.location.origin;
+      const redirectUri = (
+        connector?.rewriteRedirect(new URL(`${origin}/auth/callback`)) ??
+        new URL(`${origin}/auth/callback`)
+      ).href;
+- page: React Scanner
+  url: https://docs.dustid.io/integrate/react-scanner/
+  example_count: 7
+  examples:
+  - section: Install
+    kind: shell
+    language: bash
+    code: bun add html5-qrcode
+  - section: Install
+    kind: shell
+    language: bash
+    code: bun add react react-dom html5-qrcode
+  - section: Use it
+    kind: react
+    language: tsx
+    code: |-
+      import { useEffect, useState } from "react";
+      import { DustScanner } from "./DustScanner";
+      import "./scanner.css";
+
+
+      export function IdentifyPage() {
+        const [token, setToken] = useState<string | null>(null);
+
+
+        useEffect(() => {
+          // Your endpoint: exchanges the user's session for a short-lived APID token.
+          fetch("/api/scanner-token")
+            .then((res) => res.json())
+            .then(({ token }) => setToken(token));
+        }, []);
+
+
+        if (!token) return <p>Preparing scanner…</p>;
+
+
+        return (
+          <DustScanner
+            operation="identify"
+            bearerToken={token}
+            organizationId="00000000-0000-0000-0000-000000000000"
+            searchGroupIds={["00000000-0000-0000-0000-000000000000"]}
+            onResult={(result) => console.log("scan result", result)}
+          />
+        );
+      }
+  - section: Bind to a Thread
+    kind: react
+    language: tsx
+    code: |-
+      <DustScanner
+        operation="bind"
+        bearerToken={token}
+        organizationId={organizationId}
+        threadId={threadId}
+        tagDescription="Receiving scan"
+        onResult={setResult}
+      />
+  - section: Verify an Identifier
+    kind: react
+    language: tsx
+    code: |-
+      <DustScanner
+        operation="verify"
+        bearerToken={token}
+        organizationId={organizationId}
+        threadId={threadId}
+        verifyTags={[{ tagId: "replace-with-tag-id", tagType: "DUST" }]}
+        onResult={setResult}
+      />
+  - section: Component source
+    kind: react
+    language: tsx
+    code: |-
+      import { Html5Qrcode, type Html5QrcodeResult } from "html5-qrcode";
+      import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+
+      type ScannerMode = "dust" | "other" | "manual";
+      type ScanOperation = "identify" | "bind" | "verify";
+      type NonDustTagType = "QR" | "BAR_CODE" | "DATA_MATRIX" | "NFC";
+      type TagType = "DUST" | NonDustTagType;
+
+
+      type VerifyTag = {
+        tagId: string;
+        tagType: TagType;
+      };
+
+
+      type DustScannerProps = {
+        apidUrl?: string;
+        bearerToken: string;
+        organizationId: string;
+        groupId?: string;
+        operation: ScanOperation;
+        threadId?: string;
+        verifyTags?: VerifyTag[];
+        searchGroupIds?: string[];
+        tagDescription?: string;
+        onResult?: (result: unknown) => void;
+        onError?: (error: Error) => void;
+      };
+
+
+      type Detection = {
+        tagType: NonDustTagType;
+        value: string;
+        format?: string;
+      };
+
+
+      const FORMAT_TO_TAG: Record<string, { tagType: NonDustTagType; format: string }> = {
+        QR_CODE: { tagType: "QR", format: "qrcode" },
+        DATA_MATRIX: { tagType: "DATA_MATRIX", format: "datamatrix" },
+        AZTEC: { tagType: "DATA_MATRIX", format: "azteccode" },
+        MAXICODE: { tagType: "DATA_MATRIX", format: "maxicode" },
+        EAN_13: { tagType: "BAR_CODE", format: "ean13" },
+        EAN_8: { tagType: "BAR_CODE", format: "ean8" },
+        UPC_A: { tagType: "BAR_CODE", format: "upca" },
+        UPC_E: { tagType: "BAR_CODE", format: "upce" },
+        CODE_39: { tagType: "BAR_CODE", format: "code39" },
+        CODE_93: { tagType: "BAR_CODE", format: "code93" },
+        CODE_128: { tagType: "BAR_CODE", format: "code128" },
+        ITF: { tagType: "BAR_CODE", format: "interleaved2of5" },
+        CODABAR: { tagType: "BAR_CODE", format: "rationalizedCodabar" },
+        PDF_417: { tagType: "BAR_CODE", format: "pdf417" },
+      };
+
+
+      // Manual entry can't know the concrete symbology, so choose a canonical
+      // format from the same vocabulary the camera path uses.
+      const MANUAL_FORMATS: Record<NonDustTagType, string> = {
+        QR: FORMAT_TO_TAG.QR_CODE.format,
+        BAR_CODE: FORMAT_TO_TAG.CODE_128.format,
+        DATA_MATRIX: FORMAT_TO_TAG.DATA_MATRIX.format,
+        NFC: "nfc",
+      };
+
+
+      function normalizeIdentifier(value: string) {
+        const trimmed = value.trim();
+        if (!trimmed || trimmed.length > 2000) return null;
+
+
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (parsed && typeof parsed === "object" && typeof parsed.id === "string") {
+            return parsed.id.trim() || null;
+          }
+        } catch {
+          // Plain text identifiers are valid.
+        }
+
+
+        return trimmed;
+      }
+
+
+      function detectNonDust(decodedText: string, result: Html5QrcodeResult): Detection | null {
+        const value = normalizeIdentifier(decodedText);
+        const formatName = result.result.format?.formatName?.toUpperCase();
+        if (!value || !formatName) return null;
+
+
+        const mapped = FORMAT_TO_TAG[formatName];
+        if (!mapped) return null;
+
+
+        return {
+          tagType: mapped.tagType,
+          value,
+          format: mapped.format,
+        };
+      }
+
+
+      function appendJson(form: FormData, key: string, value: unknown) {
+        if (value === undefined) return;
+        form.set(key, typeof value === "string" ? value : JSON.stringify(value));
+      }
+
+
+      export function DustScanner({
+        apidUrl = "https://apid.dustid.io",
+        bearerToken,
+        organizationId,
+        groupId,
+        operation,
+        threadId,
+        verifyTags = [],
+        searchGroupIds,
+        tagDescription,
+        onResult,
+        onError,
+      }: DustScannerProps) {
+        const [mode, setMode] = useState<ScannerMode>("dust");
+        const [manualType, setManualType] = useState<NonDustTagType>("QR");
+        const [manualValue, setManualValue] = useState("");
+        const [busy, setBusy] = useState(false);
+        const [message, setMessage] = useState<string | null>(null);
+        const qrRegionId = useMemo(() => `dust-non-dust-scanner-${crypto.randomUUID()}`, []);
+        const qrRef = useRef<Html5Qrcode | null>(null);
+        const lastDetectionRef = useRef<string | null>(null);
+
+
+        const submitForm = useCallback(
+          async (path: string, form: FormData) => {
+            const headers = new Headers({
+              Authorization: `Bearer ${bearerToken}`,
+              "Dust-Ctx-Org-Id": organizationId,
+            });
+            if (groupId) headers.set("Dust-Ctx-Team-Id", groupId);
+
+
+            const response = await fetch(`${apidUrl.replace(/\/+$/, "")}${path}`, {
+              method: "POST",
+              headers,
+              body: form,
+            });
+
+
+            const text = await response.text();
+            const data = text ? JSON.parse(text) : null;
+
+
+            if (!response.ok) {
+              throw new Error(data?.message ?? `APID request failed with ${response.status}`);
+            }
+
+
+            return data;
+          },
+          [apidUrl, bearerToken, groupId, organizationId],
+        );
+
+
+        const runScan = useCallback(
+          async (scan: { tagType: TagType; data: string | Blob; metadata?: Record<string, unknown> }) => {
+            setBusy(true);
+            setMessage(null);
+
+
+            try {
+              const form = new FormData();
+              form.set("tagType", scan.tagType);
+              form.set("data", scan.data);
+
+
+              if (operation === "identify") {
+                appendJson(form, "searchGroupIds", searchGroupIds);
+                const result = await submitForm("/api/v1/tags/identify", form);
+                onResult?.(result);
+                setMessage("Identify complete.");
+                return;
+              }
+
+
+              if (!threadId) {
+                throw new Error("threadId is required for bind and verify operations.");
+              }
+
+
+              form.set("threadId", threadId);
+
+
+              if (operation === "bind") {
+                if (tagDescription) form.set("tagDescription", tagDescription);
+
+
+                if (scan.tagType === "DUST") {
+                  appendJson(form, "options", { enrollmentSessionId: crypto.randomUUID() });
+                } else if (scan.metadata) {
+                  appendJson(form, "options", { metadata: scan.metadata });
+                }
+
+
+                const result = await submitForm("/api/v1/tags/bind", form);
+                onResult?.(result);
+                setMessage("Bind complete.");
+                return;
+              }
+
+
+              if (verifyTags.length === 0) {
+                throw new Error("verifyTags is required for verify operations.");
+              }
+
+
+              appendJson(form, "tags", verifyTags);
+              const result = await submitForm("/api/v1/tags/verify", form);
+              onResult?.(result);
+              setMessage("Verify complete.");
+            } catch (error) {
+              const err = error instanceof Error ? error : new Error("Unknown scanner error");
+              setMessage(err.message);
+              onError?.(err);
+            } finally {
+              setBusy(false);
+            }
+          },
+          [onError, onResult, operation, searchGroupIds, submitForm, tagDescription, threadId, verifyTags],
+        );
+
+
+        const runScanRef = useRef(runScan);
+        runScanRef.current = runScan;
+        const onErrorRef = useRef(onError);
+        onErrorRef.current = onError;
+
+
+        const handleDustFile = useCallback(
+          async (file: File | null) => {
+            if (!file) return;
+            await runScan({ tagType: "DUST", data: file });
+          },
+          [runScan],
+        );
+
+
+        const handleManualSubmit = useCallback(async () => {
+          const value = normalizeIdentifier(manualValue);
+          if (!value) {
+            setMessage("Enter an identifier value.");
+            return;
+          }
+
+
+          await runScan({
+            tagType: manualType,
+            data: value,
+            metadata: { format: MANUAL_FORMATS[manualType] },
+          });
+          setManualValue("");
+        }, [manualType, manualValue, runScan]);
+
+
+        useEffect(() => {
+          if (mode !== "other") return;
+
+
+          let cancelled = false;
+          const scanner = new Html5Qrcode(qrRegionId, false);
+          qrRef.current = scanner;
+
+
+          // Keep the start promise so cleanup can wait for an in-flight startup
+          // before stopping — otherwise a fast unmount leaves the camera running.
+          const startPromise = scanner
+            .start(
+              { facingMode: "environment" },
+              { fps: 8, qrbox: { width: 260, height: 260 } },
+              async (decodedText, result) => {
+                const detection = detectNonDust(decodedText, result);
+                if (!detection) return;
+
+
+                const key = `${detection.tagType}:${detection.format}:${detection.value}`;
+                if (lastDetectionRef.current === key) return;
+                lastDetectionRef.current = key;
+
+
+                await runScanRef.current({
+                  tagType: detection.tagType,
+                  data: detection.value,
+                  metadata: detection.format ? { format: detection.format } : undefined,
+                });
+
+
+                window.setTimeout(() => {
+                  if (lastDetectionRef.current === key) lastDetectionRef.current = null;
+                }, 2000);
+              },
+              () => {},
+            )
+            .catch((error) => {
+              if (!cancelled) {
+                const err = error instanceof Error ? error : new Error("Could not start camera scanner.");
+                setMessage(err.message);
+                onErrorRef.current?.(err);
+              }
+            });
+
+
+          return () => {
+            cancelled = true;
+            qrRef.current = null;
+            void startPromise.then(async () => {
+              if (scanner.isScanning) await scanner.stop().catch(() => undefined);
+              scanner.clear();
+            });
+          };
+        }, [mode, qrRegionId]);
+
+
+        return (
+          <section className="dust-scanner">
+            <div className="dust-scanner__modes" role="group" aria-label="Scanner mode">
+              {(["dust", "other", "manual"] as const).map((nextMode) => (
+                <button
+                  key={nextMode}
+                  type="button"
+                  aria-pressed={mode === nextMode}
+                  onClick={() => setMode(nextMode)}
+                >
+                  {nextMode === "dust" ? "DUST" : nextMode === "other" ? "Other" : "Manual"}
+                </button>
+              ))}
+            </div>
+
+
+            {mode === "dust" ? (
+              <label className="dust-scanner__dropzone">
+                <span>DUST image scan</span>
+                <input
+                  disabled={busy}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={(event) => void handleDustFile(event.currentTarget.files?.[0] ?? null)}
+                />
+              </label>
+            ) : null}
+
+
+            {mode === "other" ? <div id={qrRegionId} className="dust-scanner__camera" /> : null}
+
+
+            {mode === "manual" ? (
+              <div className="dust-scanner__manual">
+                <select
+                  value={manualType}
+                  disabled={busy}
+                  aria-label="Identifier type"
+                  onChange={(event) => setManualType(event.currentTarget.value as NonDustTagType)}
+                >
+                  <option value="QR">QR</option>
+                  <option value="BAR_CODE">Barcode</option>
+                  <option value="DATA_MATRIX">Data Matrix</option>
+                  <option value="NFC">NFC</option>
+                </select>
+                <input
+                  data-manual-identifier-input
+                  aria-label="Identifier value"
+                  value={manualValue}
+                  disabled={busy}
+                  placeholder="Identifier value"
+                  onChange={(event) => setManualValue(event.currentTarget.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") void handleManualSubmit();
+                  }}
+                />
+                <button type="button" disabled={busy} onClick={() => void handleManualSubmit()}>
+                  Submit
+                </button>
+              </div>
+            ) : null}
+
+
+            {message ? <p role="status">{message}</p> : null}
+            {busy ? <p>Processing scan...</p> : null}
+          </section>
+        );
+      }
+  - section: Component source
+    kind: css
+    language: css
+    code: |-
+      .dust-scanner {
+        display: grid;
+        gap: 1rem;
+        max-width: 42rem;
+      }
+
+
+      .dust-scanner__modes {
+        display: inline-flex;
+        width: fit-content;
+        gap: 0.25rem;
+        border: 1px solid #d4d4d8;
+        border-radius: 8px;
+        padding: 0.25rem;
+      }
+
+
+      .dust-scanner__modes button {
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        padding: 0.45rem 0.75rem;
+        cursor: pointer;
+      }
+
+
+      .dust-scanner__modes button[aria-pressed="true"] {
+        background: #111827;
+        color: white;
+      }
+
+
+      .dust-scanner__dropzone,
+      .dust-scanner__camera,
+      .dust-scanner__manual {
+        border: 1px solid #d4d4d8;
+        border-radius: 8px;
+        padding: 1rem;
+      }
+
+
+      .dust-scanner__dropzone {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+
+      .dust-scanner__camera {
+        min-height: 320px;
+      }
+
+
+      .dust-scanner__manual {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+
+      .dust-scanner__manual input {
+        min-width: min(100%, 18rem);
+        flex: 1;
+      }

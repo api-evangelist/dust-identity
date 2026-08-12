@@ -1,0 +1,237 @@
+generated: '2026-08-12'
+method: derived
+source: openapi/dust-identity-apid-openapi.yml
+also_from: https://docs.dustid.io/api/core-model/
+note: >-
+  Entity graph derived from the 285 component schemas and the id-reference fields that
+  link them, with entity names and namespace mappings taken from the published core-model
+  page. DUST's product vocabulary and its wire vocabulary diverge in several places —
+  the API paths preserve pre-rename names — so both are recorded on each entity, because
+  an integrator reading the docs and an agent reading the spec will otherwise disagree
+  about what a thing is called.
+identifier_format: UUID (RFC 4122; schemas pin the pattern and format:uuid, with the
+  nil and max UUIDs allowed as sentinels)
+id_prefixes: none — DUST uses bare UUIDs, not prefixed ids
+entities:
+- name: Thread
+  wire_namespace: /api/v1/threads
+  id_field: threadId
+  description: The digital record for one physical asset, part, document or workflow
+    item. Carries a name, description, typed field data, attached files, bound
+    identifiers and an event history.
+  kinds: [single, assembly]
+  operations: 30
+- name: Identifier
+  product_name: Identifier
+  wire_name: tag
+  wire_namespace: /api/v1/tags
+  id_field: tagId
+  description: A physical marking bound to a Thread — a DUST diamond tag, QR code,
+    barcode, Data Matrix symbol or NFC chip — so that a field scan resolves to the
+    digital record.
+  formats: [DUST, QR_CODE, BAR_CODE, DATA_MATRIX, PDF_417, CODE_128, CODE_93, CODE_39,
+    EAN_13, EAN_8, UPC_A, UPC_E, NFC]
+  key_operations: [extract, bind, identify, verify, unbind]
+- name: File
+  product_name: File
+  wire_name: resource
+  wire_namespace: /api/v1/files
+  id_field: resId / resource_id
+  description: Object-storage file attached to a Thread directly or through a
+    resource-typed field. Large uploads use tus; small ones a multipart POST.
+  operations: 11
+- name: Bundle
+  product_name: Folder / Category
+  wire_namespace: /api/v1/bundles
+  id_field: bundleId
+  description: Container for Threads. kind "folder" gives exclusive containment,
+    kind "category" gives non-exclusive labelling; bundles nest into trees via childOfId.
+  operations: 12
+- name: Template
+  wire_namespace: /api/v1/templates
+  id_field: templateId
+  description: Defines the expected typed fields for a repeatable kind of Thread.
+  operations: 4
+- name: Field / Datum
+  id_field: fieldId, defId, datumId
+  description: Typed value on a Thread (text, number, date, select, resource reference,
+    thread-valued). defId points at the field definition, fieldId at the instance.
+  note: fieldId (59 schemas) and defId (54) are the two most widespread id references
+    in the whole spec — the typed-field system is the densest part of the model.
+- name: Assembly
+  wire_namespace: /api/v1/assemblies
+  id_field: assembly_id
+  description: A Thread of kind "assembly" with child parts attached at named positions,
+    forming a multi-part tree.
+- name: Team
+  wire_namespace: /api/v1/teams
+  legacy_wire_name: group / grp
+  id_field: teamId
+  description: The ownership and access boundary inside an organization. Teams own
+    Threads; sharing, connections and shipments all operate between Teams.
+- name: Organization
+  wire_namespace: /api/v1/org
+  id_field: orgId
+  description: Top-level tenant. Owns Teams and Service Accounts; selected per request
+    via Dust-Ctx-Org-Id.
+- name: User
+  wire_namespace: /api/v1/me
+  id_field: userId
+  description: Human principal, resolved from the bearer token. Identity lives in AuthD.
+- name: Connection
+  wire_namespace: /api/v1/connections
+  legacy_wire_name: team link
+  id_field: linkId
+  description: A link between a Team in one organization and a Team in another, enabling
+    cross-organization sharing and shipment.
+  operations: 14
+- name: Share
+  wire_namespace: /api/v1/sharing
+  description: A grant giving another Team access to Threads, folders or categories.
+    Grants can be inherited or suspended.
+  operations: 6
+- name: Transfer
+  product_name: Shipment
+  wire_namespace: /api/v1/transfers
+  id_field: transferId
+  description: Moves ownership of Threads and assemblies — with their fields, files and
+    identifiers — to a connected Team in another organization.
+  operations: 18
+- name: Slice
+  wire_namespace: /api/v1/slices
+  id_field: sourceThreadId / targetThreadId
+  description: A new Thread derived from an existing one, copying selected fields, files
+    and identifiers, with lineage recorded automatically.
+  operations: 3
+- name: Fabric
+  wire_namespace: /api/v1/fabric
+  id_field: upstreamThreadId
+  description: The cross-organization provenance and lineage graph — where a Thread came
+    from and what was derived from it, across shipments, slices and org boundaries.
+    Also carries disclosures pushed down the chain.
+  operations: 25
+- name: Certificate
+  wire_namespace: /api/v1/certificates
+  description: Immutable PDF generated from Thread data against a Certificate Form,
+    singly or in batches, with preflight checks and a void operation.
+  operations: 9
+- name: CertificateForm
+  wire_namespace: /api/v1/certificate-forms
+  id_field: formId
+  description: The template and zone layout a Certificate is rendered from.
+  operations: 4
+- name: ThreadLink
+  wire_namespace: /api/v1/threads links
+  id_field: link_id, source_link_id, consumer_link_id
+  description: A typed link between two Threads.
+  operations: 4
+- name: ThreadRelation
+  id_field: sourceId / targetId
+  description: Relationship type with forward and inverse labels, instantiated between
+    Threads.
+  operations: 6
+- name: Event
+  wire_namespace: /api/v1/events
+  description: Append-only activity record. Team-wide feed and per-Thread transaction
+    history; the audit ledger records Service Accounts as themselves.
+  operations: 1
+- name: Notification
+  wire_namespace: /api/v1/notifications
+  description: In-app notification, including Fabric disclosure notifications.
+  operations: 1
+relationships:
+- from: Thread
+  to: Field
+  kind: has_many
+  via: data[]
+- from: Thread
+  to: Identifier
+  kind: has_many
+  via: tags
+- from: Thread
+  to: File
+  kind: has_many
+  via: resources / resource-typed fields
+- from: Thread
+  to: Event
+  kind: has_many
+  via: event history
+- from: Thread
+  to: Bundle
+  kind: belongs_to
+  via: bundleId
+- from: Thread
+  to: Template
+  kind: belongs_to
+  via: templateId
+- from: Thread
+  to: Team
+  kind: belongs_to
+  via: ownerId
+- from: Thread
+  to: Thread
+  kind: has_many
+  via: ThreadLink (link_id) and ThreadRelation (sourceId/targetId)
+- from: Assembly
+  to: Thread
+  kind: has_many
+  via: assembly parts (assembly_id)
+- from: Bundle
+  to: Bundle
+  kind: belongs_to
+  via: childOfId
+- from: Bundle
+  to: Thread
+  kind: has_many
+  via: bundle membership
+- from: Template
+  to: Field
+  kind: has_many
+  via: defId
+- from: Organization
+  to: Team
+  kind: has_many
+  via: orgId
+- from: Team
+  to: User
+  kind: has_many
+  via: team members
+- from: Team
+  to: Connection
+  kind: has_many
+  via: sourceTeamId / targetTeamId
+- from: Connection
+  to: Transfer
+  kind: has_many
+  via: partnerTeamId
+- from: Transfer
+  to: Thread
+  kind: has_many
+  via: transferred threads
+- from: Slice
+  to: Thread
+  kind: belongs_to
+  via: sourceThreadId
+- from: Fabric
+  to: Thread
+  kind: has_many
+  via: upstreamThreadId
+- from: Certificate
+  to: CertificateForm
+  kind: belongs_to
+  via: formId
+- from: Certificate
+  to: Thread
+  kind: belongs_to
+  via: threadId
+- from: File
+  to: Thread
+  kind: belongs_to
+  via: threadId
+summary:
+  entities: 22
+  relationships: 22
+  component_schemas: 285
+  operations: 177
+  root_entity: Thread
+  provenance_entity: Fabric

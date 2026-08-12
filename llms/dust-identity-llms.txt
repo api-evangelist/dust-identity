@@ -1,0 +1,79 @@
+# DUST Platform (DICE)
+
+> Documentation for the DUST Identity platform: the DICE web app for tracking physical items as digital threads, the DUST API (apid), and integration surfaces (DUST Go, dust-go-connect, web scanner, agent skills).
+
+Docs version: 2026.7.4. Generated at build time from the documentation content collection — do not hand-edit.
+
+Key machine-readable resources:
+
+- OpenAPI spec (live): https://apid.dustid.io/api/openapi.json (a build-time copy of the same spec is served at /openapi.json on this site)
+- Interactive API reference (Scalar): https://apid.dustid.io/api/docs
+- Agent integration skills (SKILL.md format, generated with this site): /skills/dice-api-integration/SKILL.md and /skills/dust-go-connect-integration/SKILL.md
+- npm packages: @dustid/dust-go-connect (mobile scanning bridge); @dustid/apid-client (typed TypeScript API client)
+
+## Documentation Sets
+
+- [Abridged documentation](https://docs.dustid.io/llms-small.txt): a compact version of the documentation for DUST Platform (DICE), with non-essential content removed
+- [Complete documentation](https://docs.dustid.io/llms-full.txt): the full documentation for DUST Platform (DICE)
+
+## Notes
+
+- The complete documentation includes all content from the official documentation
+- The content is automatically generated from the same source as the official documentation
+
+## Use DICE (end users and admins)
+
+- [Activity and transaction history](https://docs.dustid.io/use/activity/): Audit everything that happens in DICE — the Team-wide Activity feed, grouped activities, filters, CSV export, and per-Thread transaction history.
+- [Administrator guide](https://docs.dustid.io/use/admin-guide/): How organization admins invite users, manage Teams, set up cross-organization collaboration, and control module availability and API access.
+- [Assemblies](https://docs.dustid.io/use/assemblies/): Build multi-part structures by attaching threads to an assembly, organize them with named positions, and see the full tree.
+- [Categories](https://docs.dustid.io/use/categories/): Group threads across folders and assemblies with additive, nestable categories.
+- [Certificates](https://docs.dustid.io/use/certificates/): Design Certificate Forms, run preflight checks, and generate immutable PDF certificates from Thread data — one at a time or in batches.
+- [Connections](https://docs.dustid.io/use/connections/): Link your team with a team in another organization so you can share data and send shipments across organization boundaries.
+- [Core concepts](https://docs.dustid.io/use/core-concepts/): The DICE mental model in one page — Threads and Identifiers, how you organize them, how teams share and ship them, and how Fabric keeps provenance.
+- [Disclosures and updates](https://docs.dustid.io/use/disclosures/): Push chosen assets down a thread's Fabric chain, and review, adopt, or skip what upstream sources disclose to you.
+- [Fabric: provenance and lineage](https://docs.dustid.io/use/fabric/): Trace where a thread came from and what was derived from it — across shipments, slices, and organizations.
+- [FAQ and troubleshooting](https://docs.dustid.io/use/faq/): Answers to common DICE questions — sign-in issues, permissions, scanning, shipments, updates, module availability, and language settings.
+- [Folders](https://docs.dustid.io/use/folders/): Organize threads into a hierarchy of folders and subfolders, move them safely, and let DICE remember your working folder.
+- [Getting started with DICE](https://docs.dustid.io/use/getting-started/): Sign in, pick your organization and team, create your first folder and thread, and bind your first DUST identifier.
+- [Identifiers and scanning](https://docs.dustid.io/use/identifiers-and-scanning/): Bind, verify, and identify Threads with DUST, QR, barcode, data matrix, and NFC identifiers using the DICE scanner.
+- [Importing threads from CSV](https://docs.dustid.io/use/import/): Bulk-create Threads from a CSV file, with automatic template inference, field mapping, and a destination folder.
+- [Navigating DICE](https://docs.dustid.io/use/navigation/): The sidebar, Home page, context switcher, user menu, and other ways to move around the DICE web app.
+- [Relationships and linked threads](https://docs.dustid.io/use/relationships/): Define relationship types with forward and inverse labels, link Threads together, and review or remove links.
+- [Sharing and access](https://docs.dustid.io/use/sharing-and-access/): Give other teams access to your threads, folders, and categories, review who can see what, and manage inherited or suspended shares.
+- [Shipments](https://docs.dustid.io/use/shipments/): Transfer threads and assemblies — with their fields, files, and identifiers — to a team in another organization, and receive what other teams ship to you.
+- [Slicing](https://docs.dustid.io/use/slicing/): Derive new threads from an existing thread — copying selected fields, files, and identifiers — while Fabric records the lineage automatically.
+- [Threads](https://docs.dustid.io/use/threads/): Create, browse, edit, and archive threads — the digital records DICE keeps for your physical items.
+
+## Build with the API (developers)
+
+- [Authentication and API keys](https://docs.dustid.io/api/authentication/): Create a Service Account, exchange its credentials for a bearer token, and keep credentials server-side.
+- [Compatibility and versioning](https://docs.dustid.io/api/compatibility/): What you can rely on when you build against the DUST API — what changes without notice, what never will, and how deprecations work.
+- [Request conventions: context headers, errors, localization](https://docs.dustid.io/api/conventions/): The headers, error shape, pagination, and localization rules shared by every DUST API endpoint.
+- [Core model](https://docs.dustid.io/api/core-model/): The domain objects behind every DUST API call, and where each one lives in the API surface.
+- [Files API guide](https://docs.dustid.io/api/files/): Upload files with tus resumable uploads or simple POSTs, then download, search, and verify them.
+- [Identifiers API guide](https://docs.dustid.io/api/identifiers/): Extract, bind, identify, verify, and manage the physical identifiers attached to Threads.
+- [API quickstart](https://docs.dustid.io/api/quickstart/): Exchange an API key for a bearer token, set your context headers, and create and read your first thread.
+- [Teams, sharing, and connections API guide](https://docs.dustid.io/api/teams-and-sharing/): Request context, Team management, sharing grants, cross-organization Connections, and the Shipment endpoints.
+- [Threads API guide](https://docs.dustid.io/api/threads/): Create, search, update, archive, and read Thread records and their field data.
+- [TypeScript client (@dustid/apid-client)](https://docs.dustid.io/api/typescript-client/): The typed TypeScript client for the DUST API — setup, real calls, error handling, and the generate-your-own-types alternative.
+
+## Integrate & extend
+
+- [Building with AI agents](https://docs.dustid.io/integrate/ai-agents/): Machine-readable docs (llms.txt) and downloadable integration skills for AI coding agents working against the DUST platform.
+- [Integrate with DUST Go](https://docs.dustid.io/integrate/dust-go-connect/): Add DUST scanning to your own web app by running it inside the DUST Go mobile browser.
+- [DUST Go](https://docs.dustid.io/integrate/dust-go/): Mobile scanning workflows with DUST Go.
+- [React Scanner](https://docs.dustid.io/integrate/react-scanner/): A copy-ready React scanner for DUST, QR, barcode, Data Matrix, and NFC.
+- [Supported Devices](https://docs.dustid.io/integrate/supported-devices/): iPhone compatibility for DUST Go scan accessories.
+
+## Reference
+
+- [API Reference](https://docs.dustid.io/reference/api/): The full generated APID reference, live and as a raw OpenAPI spec.
+- [Environments](https://docs.dustid.io/reference/environments/): DUST service URLs, API paths, and health endpoints.
+- [Glossary](https://docs.dustid.io/reference/glossary/): Definitions of the user-facing DUST platform vocabulary.
+
+## Optional
+
+- [OpenAPI spec (live)](https://apid.dustid.io/api/openapi.json): The full DUST API OpenAPI 3 document, generated by the API server
+- [Interactive API reference](https://apid.dustid.io/api/docs): Scalar reference UI served by the API
+- [dice-api-integration skill](https://docs.dustid.io/skills/dice-api-integration/SKILL.md): Agent skill: authenticate and drive the DUST API (threads, identifiers, files, sharing, shipments)
+- [dust-go-connect-integration skill](https://docs.dustid.io/skills/dust-go-connect-integration/SKILL.md): Agent skill: add DUST scanning to a web app running inside DUST Go

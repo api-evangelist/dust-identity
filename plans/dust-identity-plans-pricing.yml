@@ -1,0 +1,52 @@
+generated: '2026-08-12'
+method: searched
+source: https://www.dustidentity.com/
+note: >-
+  DUST Identity publishes no pricing of any kind. There is no /pricing page
+  (https://www.dustidentity.com/pricing returns 404), no plans or tiers page, no
+  per-seat or per-tag rate, and no metered API pricing in the developer documentation.
+  The entire commercial motion runs through "Get a Demo" and "Start for free"
+  call-to-action buttons that route to the contact form, plus a DICE login for existing
+  customers. Access to the API itself is additionally gated at the organization level:
+  Service Accounts must be enabled for an organization by DUST before an admin can even
+  create an API key, and the documentation directs admins whose tenant lacks the feature
+  to email support@dustidentity.com. The typed TypeScript client is likewise
+  "available to integration customers on request". This is an enterprise contact-sales
+  model end to end.
+plan_count: 0
+pricing_model: contact-sales
+public_pricing: false
+free_tier:
+  advertised: true
+  advertised_as: '"Start for free" button on the corporate site'
+  resolves_to: contact/demo form — no self-serve signup, no published free-tier limits
+  verified: false
+plans: []
+access_gates:
+- gate: no self-serve signup
+  detail: There is no public registration flow; https://dice.dustid.io/login is a
+    sign-in for existing tenants.
+- gate: Service Accounts are feature-flagged per organization
+  detail: >-
+    "If the Service accounts tab reports that service accounts are not enabled for your
+    organization, contact support@dustidentity.com." API credentials cannot be created
+    until DUST enables the capability for the tenant.
+  source: https://docs.dustid.io/api/authentication/
+- gate: modules are feature-flagged per organization
+  detail: >-
+    13 operations in the published spec declare a 403 FEATURE_DISABLED response, so
+    parts of the documented API surface are unavailable depending on contract.
+  source: openapi/dust-identity-apid-openapi.yml
+- gate: TypeScript client distributed on request
+  detail: '@dustid/apid-client is not on the public npm registry; DUST ships it to
+    integration customers on request.'
+  source: https://docs.dustid.io/api/typescript-client/
+evidence:
+- url: https://www.dustidentity.com/pricing
+  status: 404
+- url: https://www.dustidentity.com/
+  status: 200
+- url: https://www.dustidentity.com/contact
+  status: 200
+- url: https://dice.dustid.io/login
+  status: 200

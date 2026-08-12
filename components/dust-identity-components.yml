@@ -1,0 +1,70 @@
+generated: '2026-08-12'
+method: searched
+source: https://docs.dustid.io/integrate/
+note: >-
+  DUST's client-side surface is scanning, not UI chrome. There is no element library,
+  no embeddable dashboard and no hosted checkout-style widget; what it publishes is a
+  browser-side bridge to camera and optical scanning hardware, plus a copy-ready React
+  component built on it. Both are documented as distinct from the server-side API — a
+  scan produces a raw capture, never an identity, and resolution always happens
+  server-side against /api/v1/tags/*.
+families:
+- family: Scanning bridge
+  components:
+  - name: '@dustid/dust-go-connect'
+    kind: javascript-bridge
+    loader: npm package
+    package: packages/dust-identity-packages.yml
+    docs: https://docs.dustid.io/integrate/dust-go-connect/
+    skill: skills/dust-identity-dust-go-connect-integration.md
+    description: >-
+      Connects an ordinary web app to the DUST Go mobile app's scanning hardware. The
+      customer's site loads inside DUST Go's WebView and this package exposes camera and
+      optical-accessory capture to the page through a small JavaScript bridge, with both
+      promise and listener APIs.
+    capabilities: [app detection, scan capture (promise API), scan capture (listener
+        API), DUST/QR/barcode/Data Matrix/NFC payload handling, OAuth redirect rewriting
+        inside the WebView]
+    returns: base64-encoded JPEG plus capture metadata — a raw capture, not an identity
+    resolution: server-side via POST /api/v1/tags/extract, /identify, /verify, /bind
+    constraints:
+    - App-link allowlist — DUST Go only opens URLs registered with DUST Identity
+      (plus custom links added manually on-device for development), so a customer app
+      URL must be registered before production use.
+    - No native toolchain required; the web app never talks to scanning hardware directly.
+  - name: React Scanner
+    kind: copy-ready-react-component
+    loader: source snippet in the docs (not a published package)
+    docs: https://docs.dustid.io/integrate/react-scanner/
+    description: A copy-ready React scanner component for DUST, QR, barcode, Data Matrix
+      and NFC identifiers.
+    note: Distributed as documentation source to copy into an app rather than as an npm
+      dependency, so it carries no version.
+- family: Host application
+  components:
+  - name: DUST Go
+    kind: mobile-host-app
+    platform: iOS
+    app_store_id: '6636551540'
+    url: https://go.dustid.io/
+    docs: https://docs.dustid.io/integrate/dust-go/
+    device_support: https://docs.dustid.io/integrate/supported-devices/
+    description: >-
+      DUST Identity's mobile app, functioning as an embedded browser that loads a
+      customer web app in a WebView and lends it the device's DUST scanning hardware.
+      The integration surface is the WebView plus @dustid/dust-go-connect.
+  - name: DICE web app
+    kind: first-party-web-application
+    url: https://dice4.dustid.io
+    login: https://dice.dustid.io/login
+    docs: https://docs.dustid.io/use/getting-started/
+    description: >-
+      DUST's own web UI for the platform — folders, threads, scanning, sharing,
+      shipments, certificates and activity. Not embeddable; listed because it is the
+      reference consumer of the same API and the same TypeScript client.
+summary:
+  families: 2
+  components: 4
+  npm_distributed: 1
+  embeddable_ui_library: false
+  hosted_widgets: false

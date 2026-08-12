@@ -1,0 +1,164 @@
+generated: '2026-08-12'
+method: searched
+source: https://docs.dustid.io/api/compatibility/
+also_from:
+- https://docs.dustid.io/reference/environments/
+- openapi/dust-identity-apid-openapi.yml
+note: >-
+  DUST publishes a genuine, specific compatibility and deprecation policy — a named
+  90-day minimum window, an enumerated list of what counts as breaking, and the
+  published OpenAPI named as the authoritative contract with deprecation markers in it.
+  That is materially stronger than most providers of this size. What is missing is
+  operational: there is no public status page, no SLA or uptime target, and no dated
+  changelog or release-notes feed, so a consumer has no way to be told when something
+  changed other than diffing the spec themselves — which is, explicitly, what DUST
+  tells them to do.
+versioning:
+  scheme: uri-path
+  current: v1
+  path_root: /api/v1
+  docs: https://docs.dustid.io/api/compatibility/
+  major_version_policy: >-
+    New major versions are rare by design. /api/v1 evolves additively; a /api/v2 would
+    be introduced only for a reshape that cannot be expressed compatibly, and /api/v1
+    would remain supported through a long, explicitly announced migration period.
+  build_stamp: '2026.7.4'
+  build_stamp_note: >-
+    info.version in the OpenAPI is a calendar build stamp shared with the docs site,
+    not an API version. The API version is the /api/v1 path segment.
+deprecation:
+  policy_url: https://docs.dustid.io/api/compatibility/
+  policy_published: true
+  minimum_window_days: 90
+  mechanism: >-
+    A retiring operation or field is marked `deprecated: true` in the published OpenAPI
+    specification and noted in the docs. It keeps working unchanged for at least 90 days
+    from the announcement, and a documented replacement is available before or at the
+    moment of deprecation whenever one exists.
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  rfc8594_note: >-
+    Deprecation is signalled in the specification document, not in HTTP response headers.
+    No Sunset or Deprecation header is documented, and none appears in the spec.
+  guidance_to_consumers: >-
+    DUST tells integrators to diff the published OpenAPI between integration reviews as
+    the most reliable way to see what changed.
+breaking_change_definition:
+- Removing or renaming an endpoint, request parameter, or response field
+- Changing a field's type or format
+- Making an optional request input required, or narrowing the values an input accepts
+- Removing a value from an enumerated field
+- Changing the error code or HTTP status returned for an existing, documented failure mode
+- Requiring a higher authorization tier or new permission for an existing operation
+- Materially changing an operation's semantics, even if its shape is unchanged
+additive_without_notice:
+- New endpoints and new operations on existing paths
+- New optional request parameters, headers, and body fields
+- New fields in responses
+- New values in enumerated fields
+- New error codes for failure modes that previously surfaced as a generic code
+- Documentation, error message text, and field ordering
+deprecated_operations: []
+deprecated_operations_note: >-
+  Zero of the 177 operations in the published spec carry `deprecated: true` at time of
+  harvest. Several namespaces carry legacy names the docs flag as historical (tags for
+  identifiers, bundles for folders/categories, transfers for shipments, Grp for team),
+  but they are current API surface, not deprecated.
+status_page:
+  published: false
+  url: null
+  note: >-
+    No status.dustid.io or status.dustidentity.com exists and no status page is linked
+    from the docs or the corporate site. The API does serve standard health probes,
+    which is the only public availability signal.
+health_endpoints:
+- path: /livez
+  check: liveness — the process is up
+  behavior: always 200 while the server runs
+  observed_status: 200
+- path: /readyz
+  check: readiness — includes a database round-trip
+  behavior: 503 if the database check fails or exceeds its 2-second timeout
+  observed_status: 200
+- path: /healthz
+  check: alias for the readiness check
+  observed_status: 200
+health_probe:
+  probed: '2026-08-12'
+  host: https://apid.dustid.io
+  body: '{"status":"ok","timestamp":"2026-08-12T11:07:17.237Z"}'
+sla:
+  published: false
+  url: null
+  uptime_target: null
+changelog:
+  published: false
+  url: null
+  note: >-
+    No dated changelog or release-notes page is published on docs.dustid.io (the site
+    has 40 indexed pages and none is a changelog) or on the corporate site. The
+    compatibility page names the OpenAPI diff as the substitute.
+
+spec_determinism:
+  deterministic: false
+  severity: high
+  method: probed
+  probed: '2026-08-12'
+  finding: >-
+    The published OpenAPI document is NOT byte-stable. Two consecutive fetches of
+    https://apid.dustid.io/api/openapi.json return specs that differ in 18 component
+    schemas, with ZERO overlap between the two sets of values — the generator emits a
+    freshly random UUID into the `default` of every UUID-typed field each time it runs.
+  affected_schemas_count: 18
+  affected_schemas:
+  - ThreadFieldDefinitionBoolean
+  - ThreadFieldDefinitionDate
+  - ThreadFieldDefinitionDateRange
+  - ThreadFieldDefinitionDatetime
+  - ThreadFieldDefinitionDuration
+  - ThreadFieldDefinitionEmail
+  - ThreadFieldDefinitionJson
+  - ThreadFieldDefinitionLongText
+  - ThreadFieldDefinitionNumber
+  - ThreadFieldDefinitionResource
+  - ThreadFieldDefinitionText
+  - ThreadFieldDefinitionTime
+  affected_schemas_note: >-
+    Twelve named above; 18 schemas differ per fetch in total, all of them
+    ThreadFieldDefinition* variants carrying a UUID field whose `default` is randomized.
+  example_drift:
+    field: components.schemas.ThreadFieldDefinitionBoolean … default
+    fetch_a: d0b75ffb-defb-4fef-abca-36e510a6f447
+    fetch_b: b12119c2-cc44-4694-bce7-b533d24fa2a3
+    description_of_field: 'a UUID'
+  why_it_matters: >-
+    This defeats the exact mechanism DUST tells integrators to rely on. With no changelog
+    and no release-notes feed, the compatibility page instructs consumers to diff the
+    published OpenAPI between integration reviews as the way to see what changed — and
+    every such diff reports 18 changed schemas that did not change. Real additive changes
+    are buried in permanent noise, spec checksums and ETags are useless for change
+    detection, and any CI job that pins or diffs the contract fails or churns on every run.
+  scope_note: >-
+    The drift is confined to `default` values on UUID-typed fields. Path count (147),
+    operation count (177), schema count (285) and info.version (2026.7.4) are stable
+    across fetches, so the contract itself is not changing — only its serialization.
+  provider_action: >-
+    Make the UUID `default` values static (or drop them — a random UUID is not a
+    meaningful default for a field the server assigns), so the document is reproducible
+    build-over-build and a diff means something.
+  evidence:
+  - url: https://apid.dustid.io/api/openapi.json
+    status: 200
+    note: fetch A
+  - url: https://apid.dustid.io/api/openapi.json
+    status: 200
+    note: fetch B, same session — 18 schemas differ, 0 of 18 UUID defaults shared
+  - url: https://docs.dustid.io/openapi.json
+    status: 200
+    note: >-
+      The build-time copy served from the docs host is the same spec by version and
+      counts, and differs from the live one in the same 18 schemas for the same reason.
+support:
+  email: support@dustidentity.com
+  contact_page: https://www.dustidentity.com/contact

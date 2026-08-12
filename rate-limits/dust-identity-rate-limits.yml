@@ -1,0 +1,46 @@
+generated: '2026-08-12'
+method: searched
+source: https://docs.dustid.io/api/conventions/
+note: >-
+  DUST documents no rate limits. This is a deliberate check, not an omission: the
+  conventions page is a thorough, explicit statement of the cross-cutting request
+  contract — it covers context headers, the error envelope, pagination, localization
+  and request tracing — and it says nothing about throttling. A full-text search of the
+  complete documentation corpus (llms-full.txt, 289KB, the entire docs site as one
+  document) returns zero occurrences of "rate limit", "throttle", "429", "Retry-After"
+  or "X-RateLimit". The published OpenAPI declares 493 error responses across 177
+  operations and not one of them is a 429; the declared status codes are 400, 401, 403,
+  404, 500 and 503 only. An agent therefore has no runtime signal to back off on, and no
+  documented ceiling to design against — it can only infer capacity from failure.
+limit_count: 0
+documented: false
+limits: []
+response_headers:
+  documented: []
+  note: >-
+    No rate-limit response headers are documented. The only response header DUST does
+    document is x-request-id, present on every response for trace correlation — useful,
+    but not a throttling signal.
+exhaustion:
+  status_code: null
+  documented: false
+  note: 429 does not appear in any operation's responses[] in the published spec.
+observed_status_codes_in_spec: [200, 201, 302, 400, 401, 403, 404, 500, 503]
+adjacent_limits_that_are_documented:
+- limit: bearer token lifetime
+  value: 900 seconds (15 minutes)
+  note: Not a rate limit, but the one hard runtime ceiling DUST does publish; clients
+    must re-exchange rather than assume a lifetime.
+  source: https://docs.dustid.io/api/authentication/
+- limit: readiness check timeout
+  value: 2 seconds
+  note: The /readyz database round-trip returns 503 if it exceeds this. Server-side
+    behavior, not a client quota.
+  source: https://docs.dustid.io/reference/environments/
+evidence:
+- url: https://docs.dustid.io/api/conventions/
+  status: 200
+- url: https://docs.dustid.io/llms-full.txt
+  status: 200
+- url: https://apid.dustid.io/api/openapi.json
+  status: 200

@@ -1,0 +1,120 @@
+generated: '2026-08-12'
+method: probed
+source: live GET of /.well-known/* across every apis.yml baseURL host, the OpenAPI
+  servers[] host, the docs host and the DICE console host
+note: >-
+  Five hosts were probed against eight well-known paths (40 probes). Exactly one
+  document was served: the OpenID Connect discovery document on authd.dustid.io.
+  There is no security.txt, no api-catalog, no ai-plugin.json and no agent card on
+  any DUST host. docs.dustid.io, dice4.dustid.io and www.dustidentity.com each return
+  an HTML shell on every /.well-known/* path — those are 404 status codes carrying
+  an error page, not documents, and are recorded as misses.
+hosts:
+- host: https://authd.dustid.io
+  role: auth service (AuthD)
+  documents:
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: application/json
+    file: dust-identity-openid-configuration.json
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://apid.dustid.io
+  role: core DUST API
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://docs.dustid.io
+  role: documentation site (Astro Starlight)
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    note: HTML 404 page returned; not a document
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://dice4.dustid.io
+  role: DICE web application
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    note: HTML 404 page returned; not a document
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://www.dustidentity.com
+  role: corporate website
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    note: 'Webflow catch-all returns an HTML body reading "Invalid .well-known request"'
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+summary:
+  hosts_probed: 5
+  paths_probed_per_host: 8
+  documents_served: 1
+  security_txt: false
+  api_catalog: false
+  agent_card: false
+  openid_configuration: true

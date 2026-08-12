@@ -1,0 +1,222 @@
+generated: '2026-08-12'
+method: searched
+source: https://docs.dustid.io/use/activity/
+also_from:
+- https://docs.dustid.io/use/fabric/
+- https://docs.dustid.io/use/disclosures/
+- openapi/_original/dust-identity-apid-openapi-original.json
+note: >-
+  DUST has a rich, first-class event model and NO push contract for it. Every meaningful
+  action on a Thread is recorded as an immutable event — that append-only history is the
+  product, not a side effect — and the API exposes it through pollable REST collections
+  with cursor pagination and action-type filters. What does not exist is any way to be
+  told. There are no webhooks, no callbacks, no SSE or WebSocket stream, no queue, and no
+  AsyncAPI document: the published OpenAPI 3.1 spec has no top-level `webhooks` object,
+  the word "webhook" appears zero times in the complete 289KB documentation corpus, and
+  so do "websocket", "server-sent" and "subscribe". The "notifications" surface is an
+  in-app inbox that a client also polls, not a delivery mechanism.
+
+  This file is therefore an EVENT CATALOG, not an AsyncAPI specification, and no AsyncAPI
+  or Webhooks pointer is emitted in apis.yml — those pointers would assert DUST serves a
+  push contract, and it does not. The catalog is recorded because the event types
+  themselves are genuinely published and enumerated, and because an integrator needs to
+  know that keeping an external system in sync with DUST means running a polling loop
+  against GET /api/v1/events and checkpointing on the cursor.
+
+push_contract:
+  webhooks: false
+  asyncapi: false
+  websocket: false
+  server_sent_events: false
+  streaming: false
+  callbacks_in_spec: false
+  evidence: >-
+    No `webhooks` object and no `callbacks` in the OpenAPI 3.1 document (147 paths,
+    177 operations). Zero occurrences of webhook / websocket / server-sent / event stream /
+    subscribe in https://docs.dustid.io/llms-full.txt (the complete docs site as one
+    document, 289,078 bytes, fetched 2026-08-12).
+  consequence: >-
+    An agent or downstream system cannot be notified when a Thread changes, when an
+    identifier is bound or a verification fails, or when a shipment arrives. It must poll.
+
+delivery_model: poll
+polling_surface:
+- operationId: events.list
+  method: GET
+  path: /api/v1/events
+  summary: List events
+  role: the primary event log — a flat, Team-wide feed, one row per event
+  pagination: cursor + pageSize (opaque cursor; a missing `next` means the last page)
+  ordering: order=asc|desc
+  filters:
+  - name: actionFilter
+    type: string or array of strings
+    meaning: include only these action types
+  - name: excludeActionFilter
+    type: string
+    meaning: exclude these action types
+  - name: occurred
+    type: string
+    meaning: filter on when the event occurred — the field to checkpoint against
+  - name: threadId
+    meaning: scope to a single Thread (this is the Transaction History view)
+  - name: orgId
+    meaning: organization scope
+  - name: teamId
+    meaning: team scope
+  - name: groupBy
+    type: const "activity"
+    meaning: collapse a multi-step operation (shipment, slice, CSV import, assembly install)
+      into one grouped activity instead of its constituent rows
+  - name: withTargets
+    type: boolean
+    meaning: hydrate the target resource on each event
+  - name: withUser
+    type: boolean
+    meaning: hydrate the acting user on each event
+  response_schema: EventListResponse
+  recommended_checkpoint: the `occurred` timestamp, replayed with the cursor
+- operationId: fabric.link_events
+  method: GET
+  path: /api/v1/fabric/links/{link_id}/events
+  summary: Fabric Event Views for a Fabric Link
+  role: events disclosed to you across a Fabric provenance link — the cross-organization
+    view of upstream history
+  response_schema: FabricLinkEventsResponse
+  cursor_field: eventCursorOccurredAt
+- operationId: transfer.preview_thread_events
+  method: GET
+  path: /api/v1/transfers/{transfer_id}/preview/threads/{source_thread_id}/events
+  summary: Disclosed transaction history for an offered Thread
+  role: the event history a receiving organization is allowed to see before accepting a
+    shipment
+  response_schema: TransferPreviewThreadEventsResponse
+
+notification_inbox:
+  note: >-
+    Distinct from the event log. These are pending decisions addressed to an
+    organization, held until acted on — an inbox a client polls, not a push channel.
+  operations:
+  - operationId: notifications.list
+    method: GET
+    path: /api/v1/notifications
+    pagination: pageIndex + pageSize
+    status_values: [accepted, canceled, pending, rejected]
+  - operationId: fabric.list_notifications
+    method: GET
+    path: /api/v1/fabric/notifications
+    summary: List Fabric notifications for the downstream owner
+    status_values: [dismissed, pending, resolved]
+  - operationId: fabric.preview_notification_decision
+    method: POST
+    path: /api/v1/fabric/notifications/{notification_id}/preview
+    summary: Preview the effect of accepting before accepting
+  - operationId: fabric.accept_notification
+    method: POST
+    path: /api/v1/fabric/notifications/{notification_id}/accept
+  - operationId: fabric.reject_notification
+    method: POST
+    path: /api/v1/fabric/notifications/{notification_id}/reject
+  - operationId: fabric.dismiss_notifications
+    method: POST
+    path: /api/v1/fabric/notifications/dismiss
+
+event_types:
+  source: https://docs.dustid.io/use/activity/
+  note: >-
+    The action types DUST enumerates in the Activity filter. These are the values
+    actionFilter / excludeActionFilter select on. The spec types `action` as an open
+    string (maxLength 64) rather than an enum, so this published list is the catalog —
+    treat it as the documented set, not a closed one.
+  count: 18
+  types:
+  - action: Created Thread
+    domain: thread
+  - action: Updated Thread
+    domain: thread
+  - action: Archived Thread
+    domain: thread
+  - action: Unarchived Thread
+    domain: thread
+  - action: Viewed Thread
+    domain: thread
+    note: hidden by default in the UI feed ("Hide viewed"); still returned by the API
+  - action: Created Field
+    domain: thread-data
+  - action: Updated Field
+    domain: thread-data
+  - action: Bound
+    domain: identifier
+    meaning: a physical identifier was bound to a Thread
+  - action: Bind Failed
+    domain: identifier
+  - action: Verified
+    domain: identifier
+    meaning: a scan was checked against the identifier already bound to a Thread
+  - action: Verification Failed
+    domain: identifier
+  - action: Identified
+    domain: identifier
+    meaning: a scan resolved to a Thread
+  - action: Identification Failed
+    domain: identifier
+  - action: Uploaded File
+    domain: file
+  - action: Document Verified
+    domain: file
+  - action: Created Folder
+    domain: folder
+  - action: Updated Folder
+    domain: folder
+  - action: Deleted Folder
+    domain: folder
+
+grouped_activities:
+  note: >-
+    groupBy=activity collapses the constituent events of one logical operation under a
+    single header, with a roll-up of how many actions and people were involved.
+  groups: [Shipment, Slice, Imported Thread, Assembly Position]
+
+event_record_fields:
+  source: EventListResponse / FabricDisclosedEvent in the OpenAPI, and the documented CSV export columns
+  fields:
+  - action
+  - created
+  - occurred-at time
+  - event ID (UUID)
+  - title
+  - target type / target ID / target name
+  - declaredActor (id, displayName, role, system)
+  - user ID / user name / user email
+  - organization and Team name
+  - IP address
+  - user agent
+  - latitude / longitude
+  - comment
+  - summary of field changes
+  export: >-
+    DICE exports the same rows to CSV with full audit columns. There is no documented
+    API operation for the CSV export; it is a web-app action.
+
+integration_guidance:
+  keeping_in_sync: >-
+    Poll GET /api/v1/events with order=desc, page through with the cursor, and checkpoint
+    on `occurred`. Cursors are documented as opaque — persist and replay them, never parse
+    or construct them.
+  scoping: >-
+    Events are org- and team-scoped like every other endpoint; set Dust-Ctx-Org-Id (and
+    Dust-Ctx-Team-Id when you want a non-root team). The same poll under a different team
+    context legitimately returns a different feed.
+  no_backoff_signal: >-
+    DUST documents no rate limits and returns no 429 anywhere in the spec, so a polling
+    loop has no published ceiling to design against and no Retry-After to obey. See
+    rate-limits/dust-identity-rate-limits.yml.
+  cost_of_polling: >-
+    Because there is no push channel and no rate-limit contract, sync latency is entirely
+    a function of how aggressively the integrator is willing to poll blind.
+
+cross_links:
+  conventions: conventions/dust-identity-conventions.yml
+  rate_limits: rate-limits/dust-identity-rate-limits.yml
+  data_model: data-model/dust-identity-data-model.yml
+  conformance: conformance/dust-identity-conformance.yml

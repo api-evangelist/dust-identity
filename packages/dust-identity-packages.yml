@@ -1,0 +1,100 @@
+generated: '2026-08-12'
+method: searched
+source: https://docs.dustid.io/api/typescript-client/ + https://docs.dustid.io/integrate/dust-go-connect/
+  + registry.npmjs.org metadata
+note: >-
+  DUST publishes under the @dustid npm scope. Registry metadata was read from
+  registry.npmjs.org on 2026-08-12. The headline client — @dustid/apid-client, the
+  typed TypeScript client the DICE web app itself uses — is documented in detail but
+  is NOT on the public npm registry (registry.npmjs.org/@dustid/apid-client returns
+  404); DUST states it "is currently distributed by DUST rather than published to the
+  public npm registry" and is available to integration customers on request via
+  support@dustidentity.com. That makes the only publicly installable first-party
+  package @dustid/dust-go-connect, the browser-side scanning bridge. No Python, Java,
+  Go, .NET, Ruby, PHP or Rust client is published or documented.
+packages:
+- language: javascript
+  registry: npm
+  name: '@dustid/dust-go-connect'
+  url: https://www.npmjs.com/package/@dustid/dust-go-connect
+  install: npm install @dustid/dust-go-connect
+  official: true
+  version: 0.1.13
+  published: '2026-08-05'
+  release_count: 13
+  homepage: https://go.dustid.io
+  description: Browser-side bridge that lets a web app running inside the DUST Go mobile
+    app capture DUST, QR, barcode, Data Matrix and NFC scans from the device hardware.
+  docs: https://docs.dustid.io/integrate/dust-go-connect/
+  note: Actively maintained — latest release is seven days old at time of harvest.
+- language: typescript
+  registry: none
+  name: '@dustid/apid-client'
+  url: https://docs.dustid.io/api/typescript-client/
+  install: null
+  official: true
+  version: null
+  published: null
+  description: The typed TypeScript client for the DUST API; request/response types
+    are generated from the OpenAPI spec, and it is the same client DICE runs in production.
+  note: >-
+    Not published to the public npm registry — registry.npmjs.org/@dustid/apid-client
+    returns 404. Distributed directly by DUST to integration customers on request
+    (support@dustidentity.com). version/published are null because there is no registry
+    metadata endpoint to read, not because the check was skipped. DUST documents
+    generating your own types from the published OpenAPI spec as the supported
+    alternative for developers who do not want the private dependency.
+- language: javascript
+  registry: npm
+  name: '@dustid/dust-go'
+  url: https://www.npmjs.com/package/@dustid/dust-go
+  install: npm install @dustid/dust-go
+  official: true
+  version: 0.0.17
+  published: '2025-05-06'
+  release_count: 17
+  description: null
+  note: >-
+    Placeholder/abandoned. The published package description is still the unedited
+    scaffold text "A template for creating npm packages using TypeScript and VSCode",
+    and the last release predates the current DUST API era by fifteen months. It is
+    not referenced from any DUST documentation page; the documented DUST Go integration
+    path is @dustid/dust-go-connect. Recorded for completeness, not recommended.
+github_organization:
+  url: https://github.com/dustid
+  name: DUST Identity
+  verified: true
+  verified_via: api.github.com/users/dustid on 2026-08-12 — type Organization, blog
+    https://dustidentity.com/, created 2019-08-12
+  public_repos: 3
+  first_party_code_published: false
+  repos:
+  - name: AsyncHTTPNetworkService
+    fork: true
+    upstream_subject: a Swift concurrency network layer
+    last_push: '2024-03-08'
+  - name: better-auth
+    fork: true
+    upstream_subject: the TypeScript authentication framework
+    last_push: '2025-11-20'
+  - name: react-native-vision-camera
+    fork: true
+    upstream_subject: the React Native camera library
+    last_push: '2025-05-01'
+  note: >-
+    The organization is genuinely DUST Identity's and is public, so a GitHubOrganization
+    pointer is wired in apis.yml. But all three public repositories are FORKS of
+    third-party libraries — dependency mirrors, almost certainly pinned for internal
+    builds — and none carries DUST code. There is no SDK repository, no OpenAPI
+    repository, no examples repository and no issue tracker a developer could use. The
+    @dustid npm scope is published from a private source tree. So the org exists and
+    the pointer is honest, but a developer arriving there finds nothing about DUST.
+
+summary:
+  total: 3
+  official: 3
+  publicly_installable: 2
+  actively_maintained: 1
+  registries: [npm]
+  languages: [javascript, typescript]
+  no_client_for: [python, java, go, dotnet, ruby, php, rust]

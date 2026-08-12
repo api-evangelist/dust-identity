@@ -1,23 +1,158 @@
 aid: dust-identity
 name: Dust Identity
-description: 'Dust Identity is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'DUST Identity (Newton, Massachusetts; founded 2018 as an MIT spinout) binds physical
+  objects to trusted digital records using the Diamond Unclonable Security Tag — an applied coating
+  of engineered nano-diamonds in a polymer matrix that forms an unclonable optical fingerprint. The
+  DUST Platform (DICE) tracks each marked item as a "Thread": a digital record carrying typed fields,
+  files, physical identifiers (DUST, QR, barcode, Data Matrix, NFC), an immutable event history,
+  and Fabric lineage across slices, shipments and organization boundaries. It is used for aerospace
+  and defense raw-material traceability, secure electronics, certified-pre-owned authentication,
+  return-fraud detection, security labeling and high-value asset identity. The company publishes
+  a public OpenAPI 3.1 contract for the DUST API (apid) covering 177 operations, a Starlight documentation
+  site, llms.txt, and two provider-authored agent skills.'
 url: https://raw.githubusercontent.com/api-evangelist/dust-identity/refs/heads/main/apis.yml
+image: https://cdn.prod.website-files.com/696a1cb647f26194e423aba4/6980a035011540d3493bf124_Webclip%20Dust%20Identity.png
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-12'
 modified: '2026-08-12'
 tags:
-- Company
-apis: []
+- Authentication
+- Identity
+- Supply Chain
+- Traceability
+- Provenance
+- Anti-Counterfeiting
+- Asset Tracking
+- Aerospace and Defense
+- Manufacturing
+- Security
+apis:
+- name: DUST API
+  description: The core DUST Platform API (apid). REST over HTTPS with a bearer-JWT Service Account
+    model, organization/team context headers, cursor pagination and a single stable error envelope.
+    Covers Threads, Identifiers (tags), Files (tus resumable uploads), Bundles/Folders, Templates,
+    Certificates and Certificate Forms, Teams, Sharing, cross-organization Connections, Transfers/Shipments,
+    Slices, Fabric provenance, Thread Links and Relations, Events, Notifications, Metrics and Org
+    Admin.
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Identity
+  - Traceability
+  - Provenance
+  - Supply Chain
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-apid-openapi.yml
+  - type: OpenAPI
+    url: openapi/_original/dust-identity-apid-openapi-original.json
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- name: DUST AuthD
+  description: The DUST account service — organizations, users, sessions, Service Accounts and OpenID
+    Connect. Issues the short-lived JWTs the DUST API consumes, via an API-key exchange (GET /api/auth/token
+    with x-api-key) or the OAuth2 client_credentials grant. Publishes an OpenID Connect discovery
+    document at /.well-known/openid-configuration with authorization, token, introspection, revocation,
+    userinfo, JWKS and end-session endpoints, and PKCE S256 support.
+  humanURL: https://docs.dustid.io/api/authentication/
+  baseURL: https://authd.dustid.io
+  tags:
+  - Authentication
+  - OpenID Connect
+  - OAuth
+  properties:
+  - type: OpenIDConnect
+    url: well-known/dust-identity-openid-configuration.json
+  - type: Documentation
+    url: https://docs.dustid.io/api/authentication/
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/dust-identity-agentic-access.yml
+- type: DomainSecurity
+  url: security/dust-identity-domain-security.yml
+- type: Authentication
+  url: authentication/dust-identity-authentication.yml
 - type: Website
-  url: https://forgeglobal.com/dust-identity_stock/
+  url: https://www.dustidentity.com/
+- type: DeveloperPortal
+  url: https://docs.dustid.io/
+- type: Documentation
+  url: https://docs.dustid.io/
+- type: APIReference
+  url: https://docs.dustid.io/reference/api/
+- type: GettingStarted
+  url: https://docs.dustid.io/api/quickstart/
+- type: Blog
+  url: https://www.dustidentity.com/blog
+- type: Support
+  url: https://www.dustidentity.com/contact
+- type: SignUp
+  url: https://dice.dustid.io/login
+- type: TermsOfService
+  url: https://www.dustidentity.com/legal-pages/terms-of-service
+- type: PrivacyPolicy
+  url: https://www.dustidentity.com/legal-pages/privacy-policy
+- type: LLMsTxt
+  url: llms/dust-identity-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Packages
+  url: packages/dust-identity-packages.yml
+- type: SDKs
+  url: packages/dust-identity-packages.yml
+- type: WellKnown
+  url: well-known/dust-identity-well-known.yml
+- type: Conventions
+  url: conventions/dust-identity-conventions.yml
+- type: ErrorCatalog
+  url: errors/dust-identity-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/dust-identity-lifecycle.yml
+- type: Deprecation
+  url: https://docs.dustid.io/api/compatibility/
+- type: OAuthScopes
+  url: scopes/dust-identity-scopes.yml
+- type: OpenIDConnect
+  url: well-known/dust-identity-openid-configuration.json
+- type: Conformance
+  url: conformance/dust-identity-conformance.yml
+- type: DataModel
+  url: data-model/dust-identity-data-model.yml
+- type: Components
+  url: components/dust-identity-components.yml
+- type: Overlay
+  url: overlays/dust-identity-apid-overlay.yaml
+- type: Plans
+  url: plans/dust-identity-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/dust-identity-rate-limits.yml
+- type: AgentSkill
+  url: skills/dust-identity-dice-api-integration.md
+- type: AgentSkill
+  url: skills/dust-identity-dust-go-connect-integration.md
+- type: GitHubOrganization
+  url: https://github.com/dustid
+- type: Examples
+  url: examples/dust-identity-examples.yml
+x-enrichment:
+  date: '2026-08-12'
+  status: enriched
+  artifacts_added: 25
+  pass: local-v1

@@ -1,0 +1,42 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for DUST API
+  version: 1.0.0
+extends: openapi/dust-identity-apid-openapi.yml
+x-generated: '2026-08-12'
+x-method: generated
+x-note: 'Captures API Evangelist annotations on top of the harvested DUST API spec. The original is never
+  mutated: openapi/_original/dust-identity-apid-openapi-original.json is the verbatim document served
+  by https://apid.dustid.io/api/openapi.json on 2026-08-12.'
+actions:
+- target: $.info
+  update:
+    x-apievangelist-profile: https://apis.io/provider/dust-identity/
+    x-apievangelist-harvested: '2026-08-12'
+    x-apievangelist-source: https://apid.dustid.io/api/openapi.json
+    x-apievangelist-spec-build: 2026.7.4
+- target: $.info
+  update:
+    x-apievangelist-observations:
+      operations: 177
+      paths: 147
+      schemas: 285
+      operations_without_description: 70
+      operations_without_summary: 0
+      operations_without_operationId: 0
+      operations_with_examples: 0
+      deprecated_operations: 0
+      error_responses_declared: 493
+      idempotency_key: absent
+      webhooks_object: absent
+- target: $.servers
+  update:
+  - url: https://apid.dustid.io
+    description: DUST API for trusted provenance.
+- target: $.info
+  update:
+    x-apievangelist-conventions: conventions/dust-identity-conventions.yml
+    x-apievangelist-errors: errors/dust-identity-problem-types.yml
+    x-apievangelist-authentication: authentication/dust-identity-authentication.yml
+    x-apievangelist-lifecycle: lifecycle/dust-identity-lifecycle.yml
+    x-apievangelist-data-model: data-model/dust-identity-data-model.yml

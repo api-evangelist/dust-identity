@@ -1,0 +1,102 @@
+generated: '2026-08-12'
+method: searched
+source: https://docs.dustid.io/api/authentication/
+derived_from: openapi/dust-identity-apid-openapi.yml
+docs: https://docs.dustid.io/api/authentication/
+note: >-
+  The OpenAPI declares one security scheme — http/bearer/JWT applied globally to all
+  177 operations — which understates the real model. The documentation and the AuthD
+  OIDC discovery document add the credential-issuance side: a Service Account machine
+  identity holding an API key and/or an OAuth2 client, exchanged for a short-lived JWT.
+  Upgraded from the mechanical derivation with the documented model.
+summary:
+  types: [http, oauth2, openIdConnect, apiKey]
+  api_key_in: [header]
+  api_key_names: [x-api-key]
+  oauth2_flows: [clientCredentials, authorizationCode, refreshToken]
+  bearer_format: JWT
+  applied: globally — every operation in the spec inherits the root security requirement
+schemes:
+- name: Bearer
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  role: calling the DUST API
+  applies_to: all 177 operations of /api/v1/* (and /api/auth/*)
+  description: >-
+    JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API
+    key (GET /api/auth/token with the key header) or via the OAuth2 client_credentials
+    grant. Tokens are short-lived; re-exchange on expiry.
+  sources: [openapi/dust-identity-apid-openapi.yml]
+- name: ServiceAccountApiKey
+  type: apiKey
+  in: header
+  parameter_name: x-api-key
+  role: exchanging for a bearer token
+  exchange_operation: GET /api/auth/token
+  exchange_host: https://apid.dustid.io
+  returns: {token, expiresIn, expiresAt}
+  sources: [https://docs.dustid.io/api/authentication/]
+  note: >-
+    API keys are never sent to core endpoints directly — only to the token-exchange
+    endpoint. APID proxies this to AuthD so one base URL covers both.
+- name: ServiceAccountOAuth2
+  type: oauth2
+  flow: clientCredentials
+  tokenUrl: https://authd.dustid.io/api/auth/dust/service-accounts/token
+  client_auth: [client_secret_post, client_secret_basic]
+  role: enterprise middleware integration (SAP Integration Suite, MuleSoft, Boomi)
+  returns: standard OAuth2 token response {access_token, token_type, expires_in}
+  sources: [https://docs.dustid.io/api/authentication/]
+  note: The resulting token is identical in shape and rights to one from the API-key
+    exchange.
+- name: AuthDOpenIDConnect
+  type: openIdConnect
+  openIdConnectUrl: https://authd.dustid.io/.well-known/openid-configuration
+  role: interactive user sign-in to DICE and OIDC relying parties
+  flows: [authorizationCode, refreshToken]
+  pkce: [S256]
+  id_token_signing_alg: [EdDSA]
+  sources: [well-known/dust-identity-openid-configuration.json]
+identity_model:
+  principal: Service Account
+  description: >-
+    A first-class machine identity that belongs to exactly one organization, can be
+    granted team access like a member, and is recorded as itself in the audit ledger
+    rather than as whichever employee configured it. Credentials can be rotated or
+    revoked without touching any personal account. One Service Account can hold both an
+    API key and an OAuth2 client.
+  personal_api_keys: false
+  personal_api_keys_note: >-
+    Personal API keys do not exist and legacy user-owned keys no longer authenticate.
+    This is a notably strong posture — most providers still allow user-bound keys.
+  provisioning: organization admins, in the AuthD portal at https://authd.dustid.io
+    (Service accounts tab)
+  key_display: shown once at creation; DUST instructs storing it in a secrets manager
+  gating: >-
+    Service accounts must be enabled for the organization; when they are not, the tab
+    reports so and the admin is directed to support@dustidentity.com.
+token:
+  format: JWT
+  lifetime_seconds: 900
+  lifetime_note: documented as currently 15 minutes; DUST explicitly tells clients to
+    read expiresIn/expiresAt and not hardcode a lifetime
+  transport: 'Authorization: Bearer <token>'
+  verification_key_source: https://apid.dustid.io/api/auth/jwks
+  verification_alternative: https://authd.dustid.io/api/auth/jwks
+  refresh: re-run the exchange; no refresh-token flow for Service Accounts
+  test_call: GET /api/v1/me
+failure:
+  status: 401
+  body: '{"code":"UNAUTHORIZED","message":"...","status":401}'
+  see: errors/dust-identity-problem-types.yml
+authorization:
+  model: team-membership, not scopes
+  headers: [Dust-Ctx-Org-Id, Dust-Ctx-Team-Id]
+  see: [scopes/dust-identity-scopes.yml, conventions/dust-identity-conventions.yml]
+credential_handling:
+  server_side_only: true
+  guidance: >-
+    DUST is explicit that credentials stay server-side — the browser-side scanning
+    bridge deliberately returns raw captures and requires server-held credentials to
+    identify, verify or bind them.

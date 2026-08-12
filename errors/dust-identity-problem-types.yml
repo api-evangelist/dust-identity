@@ -1,0 +1,112 @@
+generated: '2026-08-12'
+method: searched
+source: https://docs.dustid.io/api/conventions/
+derived_from: openapi/dust-identity-apid-openapi.yml
+format: proprietary-json
+rfc9457: false
+note: >-
+  DUST does not use RFC 9457 problem+json. Every failure returns application/json with
+  a fixed four-member envelope {code, message, status, detail}. The `code` values below
+  were extracted mechanically from the published OpenAPI — each 4xx/5xx response schema
+  pins `code` to a JSON Schema const, so the spec itself is the error registry — and
+  then cross-checked against the codes named in the conventions documentation. Codes
+  are stable identifiers and are the correct branch point; `message` is localized and
+  explicitly outside the compatibility promise.
+envelope:
+  media_type: application/json
+  fields:
+    code: stable machine-readable identifier
+    message: human-readable, localized via Dust-Ctx-Locale
+    status: mirrors the HTTP status code
+    detail: optional object with error-specific context (validation specifics)
+  example: '{"code":"UNAUTHORIZED","message":"You are not authorized to perform this
+    action","status":401,"detail":{}}'
+problems:
+- code: UNAUTHORIZED
+  status: 401
+  title: Missing, expired, or invalid bearer token
+  operations_declaring: 169
+  remediation: Re-exchange the Service Account API key at GET /api/auth/token (or the
+    OAuth2 client_credentials grant) and retry. Tokens live ~15 minutes; read expiresIn
+    rather than assuming a lifetime.
+  source: spec
+- code: INVALID_REQUEST
+  status: 400
+  title: Malformed body, query, or header
+  operations_declaring: 139
+  detail_carries: validation specifics
+  remediation: Inspect `detail`. A non-UUID Dust-Ctx-Org-Id or Dust-Ctx-Team-Id is
+    rejected with this code before the endpoint runs.
+  source: spec+docs
+- code: NOT_FOUND
+  status: 404
+  title: No such record visible in this context
+  operations_declaring: 83
+  remediation: >-
+    404 here is context-relative — the record may exist but not be visible to the team
+    named by Dust-Ctx-Team-Id. Confirm the context before concluding the record is gone.
+  source: spec+docs
+- code: UNKNOWN_ERROR
+  status: 500
+  title: Unknown error occurred
+  operations_declaring: 57
+  remediation: Retry with backoff; quote the x-request-id response header to support.
+  source: spec
+- code: FORBIDDEN
+  status: 403
+  title: Authenticated, but this team context may not do that
+  operations_declaring: 27
+  remediation: The Service Account is authenticated but its team grants do not permit
+    the operation. Have an org admin grant the Service Account team access.
+  source: spec+docs
+- code: FEATURE_DISABLED
+  status: 403
+  title: Feature is currently disabled
+  operations_declaring: 13
+  remediation: >-
+    The module backing this operation is not enabled for the organization. Module
+    availability is controlled by org admins; contact support@dustidentity.com. Check
+    GET /api/v1/me/feature-flags to see what is enabled before calling.
+  source: spec
+- code: INVALID_DATA
+  status: 400
+  title: Invalid data provided
+  operations_declaring: 3
+  remediation: Field-level validation failure on typed Thread data; check the field
+    `type` matches the `value` shape.
+  source: spec
+- code: ORG_ID_REQUIRED
+  status: 400
+  title: Organization context header missing
+  remediation: Send Dust-Ctx-Org-Id with a valid organization UUID.
+  source: docs
+- code: TEAM_ID_REQUIRED
+  status: 400
+  title: Team context header missing
+  remediation: Send Dust-Ctx-Team-Id with a valid team UUID.
+  source: docs
+- code: GROUP_ID_REQUIRED
+  status: 400
+  title: Team context header missing (legacy spelling)
+  note: Predates the group to team rename; read `group` as `team`.
+  source: docs
+- code: NO_DATA_FOUND
+  status: 404
+  title: No such record visible in this context
+  note: Variant of NOT_FOUND used on some data-bearing reads.
+  source: docs
+- code: THREAD_DATA_CONFLICT
+  status: 409
+  title: Optimistic-concurrency conflict
+  remediation: The caller's view of the thread was stale. Re-read the thread and
+    re-apply the change. This is the only write-safety mechanism DUST documents —
+    there is no idempotency key.
+  source: docs
+summary:
+  distinct_codes: 12
+  from_spec: 7
+  from_docs_only: 5
+  http_statuses: [400, 401, 403, 404, 409, 500]
+  problem_json: false
+  codes_are_contract: true
+  messages_are_contract: false

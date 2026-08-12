@@ -1,0 +1,179 @@
+generated: '2026-08-12'
+method: searched
+source: https://docs.dustid.io/api/conventions/
+also_from:
+- https://docs.dustid.io/api/authentication/
+- https://docs.dustid.io/api/compatibility/
+- https://docs.dustid.io/api/quickstart/
+- openapi/dust-identity-apid-openapi.yml
+note: >-
+  DUST publishes an unusually explicit cross-cutting request contract on one page,
+  and the OpenAPI corroborates every claim on it. The one significant gap is
+  idempotency: DUST documents no idempotency key on any write operation, and no
+  Idempotency-Key parameter or header appears anywhere in the 177-operation spec.
+  Write safety is instead handled by optimistic concurrency on Threads
+  (THREAD_DATA_CONFLICT, HTTP 409). No Idempotency pointer is emitted in apis.yml
+  because the provider does not support it.
+
+authentication:
+  style: bearer-jwt
+  header: 'Authorization: Bearer <token>'
+  identity_model: Service Account (machine identity owned by an organization; personal
+    API keys do not exist)
+  token_acquisition:
+  - method: api-key-exchange
+    operation: GET /api/auth/token
+    credential_header: x-api-key
+    returns: {token, expiresIn, expiresAt}
+  - method: oauth2-client-credentials
+    endpoint: https://authd.dustid.io/api/auth/dust/service-accounts/token
+    client_auth: [client_secret_post, client_secret_basic]
+  token_lifetime_seconds: 900
+  token_lifetime_note: 15 minutes, documented as subject to change — DUST explicitly
+    instructs clients to read expiresIn/expiresAt rather than hardcode a lifetime.
+  detail: authentication/dust-identity-authentication.yml
+
+context:
+  model: >-
+    Almost every endpoint acts inside an organization and, within it, a team. The
+    caller selects that context with request headers, and authorization is evaluated
+    for the caller acting in the named team — the same call with a different team id
+    can legitimately return different results. Sending a context you do not belong to
+    does not escalate; requests are checked against actual memberships.
+  headers:
+  - name: Dust-Ctx-Org-Id
+    required: true
+    scope: org-scoped endpoints (nearly all)
+    value: organization UUID
+  - name: Dust-Ctx-Team-Id
+    required: false
+    value: team UUID; defaults to the organization root team when omitted
+  - name: Dust-Ctx-Grp-Id
+    required: false
+    status: legacy
+    value: pre-rename spelling of Dust-Ctx-Team-Id; still accepted, Dust-Ctx-Team-Id
+      wins when both are sent
+  aliases: X- prefixed variants (X-Dust-Ctx-Org-Id, X-Dust-Ctx-Team-Id and the legacy
+    pair) are accepted
+  validation: header values must be UUIDs; a malformed value is rejected with 400
+    INVALID_REQUEST before the endpoint runs
+  unscoped_endpoints: [GET /api/v1/me, GET /livez, GET /readyz, GET /healthz, GET /api/auth/token,
+    GET /api/auth/jwks]
+  missing_context_errors: [ORG_ID_REQUIRED, TEAM_ID_REQUIRED, GROUP_ID_REQUIRED]
+
+idempotency:
+  supported: false
+  header: null
+  evidence: >-
+    No Idempotency-Key (or equivalent) parameter, header or request-body field exists
+    in any of the 177 operations in the published OpenAPI 3.1 spec, and the conventions,
+    quickstart and compatibility documentation pages never use the word. Retrying a
+    failed POST is not documented as safe.
+  related_safety_mechanism:
+    kind: optimistic-concurrency
+    scope: Thread data writes
+    error_code: THREAD_DATA_CONFLICT
+    status: 409
+    meaning: the caller's view of the thread was stale; re-read and re-apply
+
+pagination:
+  style: cursor
+  request_params:
+  - name: pageSize
+    in: query
+    meaning: page length
+  - name: cursor
+    in: query
+    meaning: opaque string taken from a previous page
+  response_fields: [next, prev]
+  terminator: a missing `next` means the last page
+  opacity: cursors and ids are documented as opaque strings — persist and replay them,
+    never parse or construct them
+  secondary_params:
+    note: >-
+      A number of list operations additionally accept offset-style and filter params
+      observed in the spec — pageIndex (16 operations), q (18), order (15), orderCol,
+      queryCol, includeArchived (13), createdBy, status, kind, excludeIds — so the
+      cursor contract coexists with page-index paging on some collections.
+
+errors:
+  envelope: proprietary-json
+  rfc9457: false
+  media_type: application/json
+  shape:
+    code: string — stable, machine-readable identifier; branch on this
+    message: string — human-readable, localized per Dust-Ctx-Locale; never branch on it
+    status: number — mirrors the HTTP status code
+    detail: object (optional) — extra context, e.g. validation specifics
+  example: '{"code":"UNAUTHORIZED","message":"You are not authorized to perform this
+    action","status":401,"detail":{}}'
+  stability: >-
+    Error codes are contract and are never localized; error message text is explicitly
+    excluded from the compatibility promise and may be reworded at any time.
+  catalog: errors/dust-identity-problem-types.yml
+
+localization:
+  header: Dust-Ctx-Locale
+  supported_locales: [en, zh-CN]
+  default: en
+  fallback_order: [Dust-Ctx-Locale, Accept-Language, en]
+  applies_to: server-generated user-facing text, most visibly error `message` strings
+  never_localized: error `code` values
+
+tracing:
+  response_header: x-request-id
+  present_on: every response
+  guidance: DUST instructs callers to log it and quote it to support — it pinpoints
+    the request in server traces.
+
+versioning:
+  scheme: uri-path
+  current: v1
+  path_root: /api/v1
+  spec_version_field: info.version (2026.7.4 at harvest — a calendar build stamp, not
+    an API version)
+  major_version_policy: >-
+    New major versions are described as rare by design; /api/v1 evolves additively and
+    a /api/v2 would only be introduced for a reshape that cannot be expressed compatibly,
+    with /api/v1 remaining supported through a long announced migration.
+  detail: lifecycle/dust-identity-lifecycle.yml
+
+compatibility:
+  contract_source_of_truth: the published OpenAPI at /api/openapi.json
+  additive_without_notice: [new endpoints and operations, new optional request params/headers/body
+      fields, new response fields, new enum values, new error codes, documentation and
+      error message text, field ordering]
+  treated_as_breaking: [removing or renaming an endpoint/param/response field, changing
+      a field type or format, making an optional input required or narrowing accepted
+      values, removing an enum value, changing the error code or HTTP status for an
+      existing documented failure, requiring a higher authorization tier for an existing
+      operation, materially changing operation semantics]
+  tolerant_reader_rules: [ignore unrecognized response fields, tolerate unknown enum
+      values, branch on error code not message, treat ids and cursors as opaque, call
+      only what the published spec documents]
+
+content_types:
+  request: application/json
+  file_upload: [multipart/form-data, tus resumable upload protocol]
+  response: application/json
+
+rate_limiting:
+  documented: false
+  headers: null
+  detail: rate-limits/dust-identity-rate-limits.yml
+
+health:
+  liveness: GET /livez
+  readiness: GET /readyz
+  alias: GET /healthz
+  note: served at the server root, not under /api; readiness includes a database
+    round-trip with a 2-second timeout and returns 503 on failure
+  body: '{"status":"ok","timestamp":"..."}'
+
+cross_links:
+  authentication: authentication/dust-identity-authentication.yml
+  errors: errors/dust-identity-problem-types.yml
+  lifecycle: lifecycle/dust-identity-lifecycle.yml
+  rate_limits: rate-limits/dust-identity-rate-limits.yml
+  scopes: scopes/dust-identity-scopes.yml
+  data_model: data-model/dust-identity-data-model.yml

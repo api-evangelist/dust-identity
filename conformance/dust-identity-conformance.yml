@@ -1,0 +1,150 @@
+generated: '2026-08-12'
+method: derived
+source: openapi/dust-identity-apid-openapi.yml
+also_from:
+- https://docs.dustid.io/api/conventions/
+- https://docs.dustid.io/api/authentication/
+- well-known/dust-identity-openid-configuration.json
+note: >-
+  Cross-cutting standards conformance, derived from the published spec and the
+  documented conventions and verified against live probes where possible. DUST
+  publishes no certification or compliance program (no SOC 2, ISO 27001, ITAR, CMMC
+  or FedRAMP claim appears anywhere on dustidentity.com or docs.dustid.io, and there
+  is no trust center), so no Compliance pointer is emitted — a notable gap for a
+  vendor selling into aerospace and defense supply chains.
+standards:
+- id: openapi-3.1
+  conforms: true
+  evidence: openapi field is 3.1.0; 147 paths, 177 operations, 285 component schemas;
+    served live by the API server at https://apid.dustid.io/api/openapi.json
+- id: oauth2
+  conforms: true
+  evidence: >-
+    OAuth2 client_credentials grant documented for Service Accounts at
+    authd.dustid.io/api/auth/dust/service-accounts/token with client_secret_post and
+    client_secret_basic; authorization_code and refresh_token advertised in OIDC
+    discovery.
+- id: oidc-discovery
+  conforms: true
+  evidence: '/.well-known/openid-configuration returns 200 application/json on
+    authd.dustid.io with issuer, authorization, token, introspection, revocation,
+    userinfo, jwks and end-session endpoints'
+- id: oauth2-pkce
+  conforms: true
+  evidence: code_challenge_methods_supported = [S256]
+- id: rfc7662-token-introspection
+  conforms: true
+  evidence: introspection_endpoint published with client_secret_basic/post auth
+- id: rfc7009-token-revocation
+  conforms: true
+  evidence: revocation_endpoint published
+- id: rfc7519-jwt
+  conforms: true
+  evidence: bearerFormat JWT; JWKS served at /api/auth/jwks; EdDSA id-token signing
+- id: rfc8414-oauth-authorization-server-metadata
+  conforms: false
+  evidence: /.well-known/oauth-authorization-server returns 404 on all five DUST hosts;
+    only the OIDC discovery path is served
+- id: rfc9728-oauth-protected-resource-metadata
+  conforms: false
+  evidence: /.well-known/oauth-protected-resource returns 404 on all five DUST hosts
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    Errors use a proprietary application/json envelope {code, message, status, detail}.
+    No application/problem+json media type appears in any of the 493 error responses
+    in the spec.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt returns 404 on all five DUST hosts
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: >-
+    A real 90-day deprecation policy is published, but deprecation is signalled with
+    `deprecated: true` in the OpenAPI rather than with Sunset or Deprecation response
+    headers.
+- id: rfc9111-api-catalog
+  conforms: false
+  evidence: /.well-known/api-catalog returns 404 on all five DUST hosts
+- id: cursor-pagination
+  conforms: true
+  evidence: 'documented cursor contract (pageSize + opaque cursor, next/prev in the
+    response); cursor parameter present on 7 operations and pageSize on 23'
+- id: idempotency
+  conforms: false
+  evidence: >-
+    No Idempotency-Key parameter, header or body field in any of the 177 operations,
+    and the word does not appear anywhere in the documentation. Write safety is handled
+    by optimistic concurrency (THREAD_DATA_CONFLICT / 409) on Thread data only.
+- id: tus-resumable-upload
+  conforms: true
+  evidence: >-
+    Files are uploaded with the tus resumable upload protocol for large files
+    (POST /api/v1/files/finalize turns completed tus uploads into resource records),
+    with a simple multipart POST for small ones.
+- id: llmstxt
+  conforms: true
+  evidence: '/llms.txt, /llms-small.txt and /llms-full.txt served at docs.dustid.io,
+    generated at build time from the docs content collection and the current OpenAPI'
+- id: agent-skills
+  conforms: true
+  evidence: >-
+    Two provider-authored SKILL.md files published at stable URLs under
+    docs.dustid.io/skills/, in the Agent Skill format (YAML frontmatter with name +
+    description, then instructions), version-stamped to the docs and spec build.
+- id: a2a-agent-card
+  conforms: false
+  evidence: /.well-known/agent-card.json and /.well-known/agent.json return 404 on all
+    five DUST hosts
+- id: mcp
+  conforms: false
+  evidence: >-
+    No MCP server published. tools/list POSTs to apid.dustid.io/mcp, apid.dustid.io/api/mcp
+    and docs.dustid.io/mcp returned 404, mcp.dustid.io does not resolve, and neither
+    the documentation nor llms.txt mentions Model Context Protocol.
+- id: asyncapi
+  conforms: false
+  evidence: >-
+    No event or streaming contract. The spec has no `webhooks` object and the docs
+    never mention webhooks — the event surface is a pollable REST collection
+    (GET /api/v1/events) plus in-app notifications, not a push contract.
+- id: graphql
+  conforms: false
+  evidence: no /graphql surface documented or discovered
+- id: json-schema-2020-12
+  conforms: true
+  evidence: OpenAPI 3.1 dialect; 285 component schemas using const/anyOf/format keywords
+    including RFC 4122 uuid patterns
+- id: soc2
+  conforms: unknown
+  evidence: >-
+    No certification is claimed. dustidentity.com/security is a one-paragraph marketing
+    page naming no standard, no auditor and no report; there is no trust center at
+    trust.dustidentity.com (does not resolve).
+- id: iso-27001
+  conforms: unknown
+  evidence: not claimed anywhere on the public surface
+- id: reproducible-spec-build
+  conforms: false
+  evidence: >-
+    The published OpenAPI is not byte-stable. Two consecutive fetches of
+    https://apid.dustid.io/api/openapi.json on 2026-08-12 differed in 18 component
+    schemas with zero overlap in values — every UUID-typed field's `default` is
+    regenerated at each spec build. Since DUST publishes no changelog and explicitly
+    tells integrators to diff the spec to detect change, this makes the documented
+    change-detection mechanism unusable. See lifecycle/dust-identity-lifecycle.yml
+    (spec_determinism).
+- id: openapi-examples
+  conforms: false
+  evidence: >-
+    Zero examples in the spec — no `example` or `examples` keyword in any of the 177
+    operations, 493 error responses or 285 component schemas, and components.examples is
+    empty. 66 worked examples exist, but only in the prose documentation; harvested to
+    examples/dust-identity-examples.yml.
+summary:
+  asserted: 27
+  conforming: 12
+  not_conforming: 13
+  unknown: 2
+  compliance_program_published: false
+  certifications_published: []
