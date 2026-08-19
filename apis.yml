@@ -14,7 +14,7 @@ url: https://raw.githubusercontent.com/api-evangelist/dust-identity/refs/heads/m
 image: https://cdn.prod.website-files.com/696a1cb647f26194e423aba4/6980a035011540d3493bf124_Webclip%20Dust%20Identity.png
 x-type: company
 x-source: harvest:secondary-market
-specificationVersion: '0.20'
+specificationVersion: '0.23'
 created: '2026-08-12'
 modified: '2026-08-12'
 tags:
