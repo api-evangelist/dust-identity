@@ -1,0 +1,4428 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "DUST API",
+    "version": "2026.7.4"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "System",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Liveness check",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/livez"
+          },
+          "docs": "Liveness check"
+        },
+        {
+          "info": {
+            "name": "Readiness check",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/readyz"
+          },
+          "docs": "Readiness check"
+        },
+        {
+          "info": {
+            "name": "Health check",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/healthz"
+          },
+          "docs": "Health check"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Auth",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get auth token",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/auth/token"
+          },
+          "docs": "Exchange an API key (x-api-key header) for a short-lived bearer token. The response includes expiresIn (seconds) and expiresAt (ISO 8601) so clients can refresh proactively — re-exchange the key before expiry."
+        },
+        {
+          "info": {
+            "name": "Get JWKS",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/auth/jwks"
+          },
+          "docs": "Get JSON Web Key Set for verifying tokens."
+        },
+        {
+          "info": {
+            "name": "Current feature flags",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/me/feature-flags"
+          },
+          "docs": "Returns the server-evaluated PostHog feature flag snapshot for the current request context."
+        },
+        {
+          "info": {
+            "name": "Current user",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/me"
+          },
+          "docs": "Returns the current user context derived from the validated AuthD access token (DICE4 parity)."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Threads",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List the assembly Threads the caller can view",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/assemblies",
+            "params": [
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List the assembly Threads the caller can view"
+        },
+        {
+          "info": {
+            "name": "List the direct Parts of an assembly Thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/assemblies/:assembly_id/parts",
+            "params": [
+              {
+                "name": "assembly_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "List the direct Parts of an assembly Thread"
+        },
+        {
+          "info": {
+            "name": "Attach a Part to an assembly Thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/assemblies/:assembly_id/parts",
+            "params": [
+              {
+                "name": "assembly_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Attach a Part to an assembly Thread"
+        },
+        {
+          "info": {
+            "name": "Detach a Part from an assembly Thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://apid.dustid.io/api/v1/assemblies/:assembly_id/parts",
+            "params": [
+              {
+                "name": "assembly_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Detach a Part from an assembly Thread"
+        },
+        {
+          "info": {
+            "name": "Set Part protection relation",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/assemblies/:assembly_id/parts/protection",
+            "params": [
+              {
+                "name": "assembly_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Set Part protection relation"
+        },
+        {
+          "info": {
+            "name": "Set or clear a thread-valued assembly field",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://apid.dustid.io/api/v1/assemblies/:assembly_id/thread-fields",
+            "params": [
+              {
+                "name": "assembly_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Set or clear a thread-valued assembly field"
+        },
+        {
+          "info": {
+            "name": "Convert a Thread between unit and assembly kind",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/assemblies/:assembly_id/kind",
+            "params": [
+              {
+                "name": "assembly_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Convert a Thread between unit and assembly kind"
+        },
+        {
+          "info": {
+            "name": "List transitive Parts for an assembly Thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/assemblies/:assembly_id/rolled-up-parts",
+            "params": [
+              {
+                "name": "assembly_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "List transitive Parts for an assembly Thread"
+        },
+        {
+          "info": {
+            "name": "List threads with cursor pagination.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/threads",
+            "params": [
+              {
+                "name": "archivedOnly",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "bundleId",
+                "value": "",
+                "type": "query",
+                "description": "Search within a bundle, or use 'none' for threads without a bundle"
+              },
+              {
+                "name": "createdBy",
+                "value": "",
+                "type": "query",
+                "description": "Filter by creator user ID"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "excludeTransferred",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "hasResources",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "orderCol",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "ownedByTeam",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search query string. Searches over name and description by default."
+              },
+              {
+                "name": "queryCol",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "tagType",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "templateId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by thread template"
+              },
+              {
+                "name": "threadIds",
+                "value": "",
+                "type": "query",
+                "description": "Filter to this set of thread IDs (repeatable query param). Non-UUID values are ignored; threads the caller cannot see are silently omitted."
+              },
+              {
+                "name": "transferredOnly",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "withActiveShipment",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List threads with cursor pagination."
+        },
+        {
+          "info": {
+            "name": "Create one or more threads",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/threads",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create multiple threads in a single request. Allows for key-value thread objects and automatically build the necessary thread field data structure for each thread."
+        },
+        {
+          "info": {
+            "name": "Count threads with optional filters.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/threads/count",
+            "params": [
+              {
+                "name": "archivedOnly",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "bundleId",
+                "value": "",
+                "type": "query",
+                "description": "Search within a bundle, or use 'none' for threads without a bundle"
+              },
+              {
+                "name": "createdBy",
+                "value": "",
+                "type": "query",
+                "description": "Filter by creator user ID"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "excludeTransferred",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "hasResources",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "orderCol",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "ownedByTeam",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search query string. Searches over name and description by default."
+              },
+              {
+                "name": "queryCol",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "tagType",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "templateId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by thread template"
+              },
+              {
+                "name": "threadIds",
+                "value": "",
+                "type": "query",
+                "description": "Filter to this set of thread IDs (repeatable query param). Non-UUID values are ignored; threads the caller cannot see are silently omitted."
+              },
+              {
+                "name": "transferredOnly",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "withActiveShipment",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Returns the exact total for the same filter set used by `threads.list`. Use this to compute totals or total pages when the list endpoint is using cursor pagination."
+        },
+        {
+          "info": {
+            "name": "Get user permissions on threads.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/threads/permissions",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Returns the permissions a user has on each thread in the current organization-team context."
+        },
+        {
+          "info": {
+            "name": "Get thread data.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id",
+            "params": [
+              {
+                "name": "maxEvents",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get thread data."
+        },
+        {
+          "info": {
+            "name": "Update thread field data",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update thread field data"
+        },
+        {
+          "info": {
+            "name": "Update thread field data",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/data",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update thread field data"
+        },
+        {
+          "info": {
+            "name": "List archived thread field data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/data/archived",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns the thread's soft-deleted (archived) data fields so they can be viewed and restored."
+        },
+        {
+          "info": {
+            "name": "Restore archived thread field data",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/data/restore",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Un-archives the given fields and returns the thread's authorized active field list."
+        },
+        {
+          "info": {
+            "name": "Heartbeat presence and list the current viewers of a thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/presence",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Heartbeat presence and list the current viewers of a thread"
+        },
+        {
+          "info": {
+            "name": "List access contexts for threads.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/access",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "This returns what access the user has on the thread, and which teams they belong to that give them that access."
+        },
+        {
+          "info": {
+            "name": "Archive a set of threads.",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/threads/archive",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Archive is a soft delete operation that hides threads from the default list and prevents them from being updated/changed. Archived threads can be unarchived to restore them."
+        },
+        {
+          "info": {
+            "name": "Restore archived threads.",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/threads/restore",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Unarchive threads that were previously archived to restore them."
+        },
+        {
+          "info": {
+            "name": "Upload thread thumbnail.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/thumbnail",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "thumbnail",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Set a thread's thumbnail image by uploading a file. The thumbnail will be used as a preview image for the thread in the UI."
+        },
+        {
+          "info": {
+            "name": "Set thread's thumbnail",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/thumbnail",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Set a thread's thumbnail image by providing a resource ID or an image uri of an already uploaded image. The thumbnail will be used as a preview image for the thread in the UI."
+        },
+        {
+          "info": {
+            "name": "Thread shared with",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/shared",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Thread shared with"
+        },
+        {
+          "info": {
+            "name": "List resources for a Thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/files",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "createdBy",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List resources for a Thread"
+        },
+        {
+          "info": {
+            "name": "Get a file resource for a Thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/files/:res_id",
+            "params": [
+              {
+                "name": "res_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Get a file resource for a Thread"
+        },
+        {
+          "info": {
+            "name": "Update a thread resource",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/files/:res_id",
+            "params": [
+              {
+                "name": "res_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update resource attachment settings for a resource attached to this thread."
+        },
+        {
+          "info": {
+            "name": "List thread links",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/threads/:thread_id/links",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "List thread links"
+        },
+        {
+          "info": {
+            "name": "Dry-run an Assembly Import Package into an Import Plan",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/imports/plan",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Dry-run an Assembly Import Package into an Import Plan"
+        },
+        {
+          "info": {
+            "name": "Commit an Assembly Import Package all-or-nothing",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/imports/commit",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Commit an Assembly Import Package all-or-nothing"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Bundles",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List bundles with cursor pagination",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/bundles",
+            "params": [
+              {
+                "name": "createdBy",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "kind",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "orderCol",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Returns bundles plus opaque `next` and `prev` values. Cursors are stable across shared timestamps because they include the ordered column and bundle ID."
+        },
+        {
+          "info": {
+            "name": "Create a thread bundle",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/bundles",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a thread bundle"
+        },
+        {
+          "info": {
+            "name": "List visible child bundles",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/bundles/children",
+            "params": [
+              {
+                "name": "depth",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "kind",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "parentId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Returns the immediate visible child bundles for a parent bundle or the root level when `parentId` is omitted."
+        },
+        {
+          "info": {
+            "name": "Count bundles",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/bundles/count",
+            "params": [
+              {
+                "name": "createdBy",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "kind",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Returns the exact total for the same visibility and filter set used by `bundles.list`, excluding pagination and cursor params. Use this to compute totals or total pages when the list endpoint is using cursor pagination."
+        },
+        {
+          "info": {
+            "name": "Get bundle",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/bundles/:bundle_id",
+            "params": [
+              {
+                "name": "recurse",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "bundle_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get bundle"
+        },
+        {
+          "info": {
+            "name": "Update a bundle",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/bundles/:bundle_id",
+            "params": [
+              {
+                "name": "bundle_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update a bundle"
+        },
+        {
+          "info": {
+            "name": "Delete a bundle",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://apid.dustid.io/api/v1/bundles/:bundle_id",
+            "params": [
+              {
+                "name": "bundle_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Delete a bundle"
+        },
+        {
+          "info": {
+            "name": "Set bundle parent",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/bundles/parent",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Move one or more bundles under a parent bundle. Use `parentId: null` to move bundles to the root."
+        },
+        {
+          "info": {
+            "name": "Add a thread to the bundle",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/bundles/:bundle_id/add",
+            "params": [
+              {
+                "name": "bundle_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add a thread to the bundle"
+        },
+        {
+          "info": {
+            "name": "Move threads to a bundle",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/bundles/:bundle_id/move",
+            "params": [
+              {
+                "name": "bundle_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Move threads to a bundle - this is *not* additive, it removes any existing bundle memberships of the same bundle kind (e.g. folder) before adding the threads to the new bundle."
+        },
+        {
+          "info": {
+            "name": "Remove a thread from a category bundle",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://apid.dustid.io/api/v1/bundles/:bundle_id/threads/:thread_id",
+            "params": [
+              {
+                "name": "bundle_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Remove a thread from a category bundle"
+        },
+        {
+          "info": {
+            "name": "Set bundle children",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/bundles/:bundle_id/children",
+            "params": [
+              {
+                "name": "bundle_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Set bundle children"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Templates",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List thread templates",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/templates",
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List thread templates"
+        },
+        {
+          "info": {
+            "name": "Create a thread template",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/templates",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a thread template"
+        },
+        {
+          "info": {
+            "name": "Get a thread template",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/templates/:templateId",
+            "params": [
+              {
+                "name": "templateId",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Get a thread template"
+        },
+        {
+          "info": {
+            "name": "Update a thread template",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/templates/:templateId",
+            "params": [
+              {
+                "name": "templateId",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update a thread template"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Teams",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List teams",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/teams",
+            "params": [
+              {
+                "name": "excludeIds",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeLinked",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "role",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "rootId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "List teams"
+        },
+        {
+          "info": {
+            "name": "List connected teams",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/teams/connected",
+            "params": [
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List connected teams"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Org Admin",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List all teams in the organization",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/org/teams",
+            "params": [
+              {
+                "name": "excludeIds",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeLinked",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "role",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "rootId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "List every team in the active organization matching the query, including teams the caller is not a member of."
+        },
+        {
+          "info": {
+            "name": "Create one or more teams",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/org/teams",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create one or more teams"
+        },
+        {
+          "info": {
+            "name": "Update a team",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/org/teams/:team_id",
+            "params": [
+              {
+                "name": "team_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update a team"
+        },
+        {
+          "info": {
+            "name": "Delete a team",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://apid.dustid.io/api/v1/org/teams/:team_id",
+            "params": [
+              {
+                "name": "team_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Delete a team by its ID. This is a soft delete, the team will be marked as deleted but not removed from the database."
+        },
+        {
+          "info": {
+            "name": "List memberships",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/org/teams/members",
+            "params": [
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "role",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "teamId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              },
+              {
+                "name": "userId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "List memberships for a team, optionally filtered by user ID."
+        },
+        {
+          "info": {
+            "name": "Add/Update memberships",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/org/teams/members",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add or update memberships for a team. This will create memberships if they don't exist, or update metadata if they do."
+        },
+        {
+          "info": {
+            "name": "Remove memberships",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://apid.dustid.io/api/v1/org/teams/members",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Remove memberships for a team. This will remove the specified users from the team. If a specified user is not a member of the team, it will be ignored."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Connections",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List connections",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/connections",
+            "params": [
+              {
+                "name": "authedUserOnly",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "box",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "excludeIds",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includeLinked",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "role",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "rootId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List connections in your organization, optionally filtered by team ID."
+        },
+        {
+          "info": {
+            "name": "Create a connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/connections",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a connection invite, which enables sharing between the two teams once accepted."
+        },
+        {
+          "info": {
+            "name": "Get a connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/connections/:code",
+            "params": [
+              {
+                "name": "code",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a connection by invite code."
+        },
+        {
+          "info": {
+            "name": "Delete a connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://apid.dustid.io/api/v1/connections/:code",
+            "params": [
+              {
+                "name": "code",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a connection"
+        },
+        {
+          "info": {
+            "name": "Confirm a connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/connections/confirm",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Confirm an accepted connection, completing the invite/accept/confirm handshake."
+        },
+        {
+          "info": {
+            "name": "Pause a connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/connections/pause",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Suspend the sharing and shipment activity that depends on this connection without deleting it."
+        },
+        {
+          "info": {
+            "name": "Cancel a connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/connections/cancel",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Cancel a connection"
+        },
+        {
+          "info": {
+            "name": "Resume a paused connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/connections/resume",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Resume a paused connection"
+        },
+        {
+          "info": {
+            "name": "Propose a connection direction amendment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/connections/amend/propose",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Propose a new data-flow direction for a connected Connection. Either team may propose; the partner must accept and the proposer must confirm before it takes effect. The current direction stays in force until confirmation."
+        },
+        {
+          "info": {
+            "name": "Accept a pending connection amendment",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/connections/amend/accept",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Accept a proposed direction amendment. Only the team that did not propose may accept."
+        },
+        {
+          "info": {
+            "name": "Confirm an accepted connection amendment",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/connections/amend/confirm",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Confirm an accepted direction amendment, making the new direction effective. Only the proposing team may confirm. Existing shares whose flow is no longer permitted become dormant."
+        },
+        {
+          "info": {
+            "name": "Cancel a pending connection amendment",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/connections/amend/cancel",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Cancel a pending direction amendment before final confirmation. Either team may cancel."
+        },
+        {
+          "info": {
+            "name": "Accept a connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/connections/accept",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Accept a connection"
+        },
+        {
+          "info": {
+            "name": "Reject a connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/connections/reject",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Reject a connection"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Notifications",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List notifications",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/notifications",
+            "params": [
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by status of the notification"
+              }
+            ]
+          },
+          "docs": "List notifications"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Organizations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List organization invites",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/orgs/invites",
+            "params": [
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by status of the notification"
+              }
+            ]
+          },
+          "docs": "List organization invites"
+        },
+        {
+          "info": {
+            "name": "Accept an organization invitation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/orgs/invites/accept",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Accept a pending organization invitation addressed to the authenticated user's email. Callable before any organization/team context is selected."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Metrics",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get summary count metrics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/summary",
+            "params": [
+              {
+                "name": "include",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get a summary of thread, template, tag, and file counts for the current organization-team context. This is used to populate the dashboard and give users a quick overview of their threads and associated metadata."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Sharing",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List sharing relationships",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/sharing",
+            "params": [
+              {
+                "name": "direction",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "objectId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              },
+              {
+                "name": "objectType",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List items shared with the active team or items the active team has shared, based on the requested direction."
+        },
+        {
+          "info": {
+            "name": "Share a bundle or thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/sharing",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create one or more sharing relationships for the requested threads or bundles."
+        },
+        {
+          "info": {
+            "name": "Remove sharing relationships",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://apid.dustid.io/api/v1/sharing",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Delete one or more existing sharing tuples by ID."
+        },
+        {
+          "info": {
+            "name": "Effective access summary for a thread or bundle",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/sharing/access-summary",
+            "params": [
+              {
+                "name": "objectId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              },
+              {
+                "name": "objectType",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List every team that can access the item, attributing each grant to its source: owner, a direct share, or access inherited from an ancestor folder."
+        },
+        {
+          "info": {
+            "name": "Per-partner sharing inventory",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/sharing/partner-inventory",
+            "params": [
+              {
+                "name": "teamId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "List every share grant between the active team and the given partner team in both directions — including grants suspended by a paused connection — with counts and the number of in-flight transfers between the pair."
+        },
+        {
+          "info": {
+            "name": "Update a sharing relationship",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/sharing/:tuple_id",
+            "params": [
+              {
+                "name": "tuple_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update the relation for an existing sharing tuple."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Events",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List events",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/events",
+            "params": [
+              {
+                "name": "actionFilter",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "excludeActionFilter",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "groupBy",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "occurred",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "orgId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "teamId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "threadId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "withTargets",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "withUser",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List events"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Users",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get current profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/users/profile"
+          },
+          "docs": "Get current profile of authenticated user"
+        },
+        {
+          "info": {
+            "name": "Update profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/users/profile",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            }
+          },
+          "docs": "Update profile of authenticated user"
+        },
+        {
+          "info": {
+            "name": "Get a user's profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/users/:user_id",
+            "params": [
+              {
+                "name": "user_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Get a user's profile"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Files",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search Resources",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/files",
+            "params": [
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "createdBy",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "threadId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Search Resources"
+        },
+        {
+          "info": {
+            "name": "Upload a file",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/files",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            }
+          },
+          "docs": "Upload a file using a simple POST request. The request must include `multipart/form-data` with the file and metadata.On completion, APID creates the resource and returns its details. <br/><br/> This endpoint is intended for smaller files and does not support resumable uploads. For larger files, please use the `/upload` endpoint which supports the TUS protocol for resumable uploads.  "
+        },
+        {
+          "info": {
+            "name": "Search Resources",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/files/search",
+            "params": [
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "mimeFilters",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "threadId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              },
+              {
+                "name": "verification",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Search Resources"
+        },
+        {
+          "info": {
+            "name": "Get signed URLs",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/files/urls",
+            "params": [
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Resource IDs"
+              }
+            ]
+          },
+          "docs": "Get signed URLs"
+        },
+        {
+          "info": {
+            "name": "Search resource signatures",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/files/signatures",
+            "params": [
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "result",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Search resource signatures"
+        },
+        {
+          "info": {
+            "name": "File verification metrics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/files/metrics",
+            "params": [
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "mimeFilters",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "threadId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              },
+              {
+                "name": "verification",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get file verification metrics resources matching query"
+        },
+        {
+          "info": {
+            "name": "Get latest verification",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/files/verification/:resource_id/:thread_id",
+            "params": [
+              {
+                "name": "resource_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Get the latest file verification result for a resource tied to a thread"
+        },
+        {
+          "info": {
+            "name": "Update file verification",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/files/verification/:resource_id/:thread_id",
+            "params": [
+              {
+                "name": "resource_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update file verification line items for approval or review"
+        },
+        {
+          "info": {
+            "name": "Start verification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/files/verification/:resource_id/:thread_id/start",
+            "params": [
+              {
+                "name": "resource_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Start document validation for a resource tied to a thread if it has not already started."
+        },
+        {
+          "info": {
+            "name": "Download a file",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/files/:resource_id/download",
+            "params": [
+              {
+                "name": "resource_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Create an attachment download for a resource visible in the current context."
+        },
+        {
+          "info": {
+            "name": "Finalize uploaded resources",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/files/finalize",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create or update resource records for objects that have already been uploaded to object storage, including TUS uploads."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Thread Links",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List thread links",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/links",
+            "params": [
+              {
+                "name": "directionFilter",
+                "value": "",
+                "type": "query",
+                "description": "Filter links by direction. If not provided, returns links in both directions."
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search query to filter links by thread or relationship name"
+              },
+              {
+                "name": "relId",
+                "value": "",
+                "type": "query",
+                "description": "Filter links by relationship ID"
+              }
+            ]
+          },
+          "docs": "List thread links"
+        },
+        {
+          "info": {
+            "name": "Create thread links",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/links",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create thread links"
+        },
+        {
+          "info": {
+            "name": "List available threads for linking",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/links/available-threads",
+            "params": [
+              {
+                "name": "relId",
+                "value": "",
+                "type": "query",
+                "description": "Relationship type used to determine existing links to exclude from available threads"
+              },
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "orderCol",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search available threads by name or description"
+              },
+              {
+                "name": "queryCol",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "sourceThreadId",
+                "value": "",
+                "type": "query",
+                "description": "Fixed source thread. Returns target threads available for linking."
+              },
+              {
+                "name": "targetThreadId",
+                "value": "",
+                "type": "query",
+                "description": "Fixed target thread. Returns source threads available for linking."
+              }
+            ]
+          },
+          "docs": "List available threads for linking"
+        },
+        {
+          "info": {
+            "name": "Unlink two threads",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://apid.dustid.io/api/v1/links/:link_id",
+            "params": [
+              {
+                "name": "link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Unlink two threads"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Thread Relations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get relation definition",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/relations/:relation_id",
+            "params": [
+              {
+                "name": "relation_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Get relation definition"
+        },
+        {
+          "info": {
+            "name": "Update relation definition",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/relations/:relation_id",
+            "params": [
+              {
+                "name": "relation_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update relation definition"
+        },
+        {
+          "info": {
+            "name": "Delete relation definition",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://apid.dustid.io/api/v1/relations/:relation_id",
+            "params": [
+              {
+                "name": "relation_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Remove a relation definition. This will also remove all links that reference this relation definition."
+        },
+        {
+          "info": {
+            "name": "List relation definitions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/relations",
+            "params": [
+              {
+                "name": "archived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "threadId",
+                "value": "",
+                "type": "query",
+                "description": "Scope relationship definitions to the owner of this thread"
+              }
+            ]
+          },
+          "docs": "List relation definitions"
+        },
+        {
+          "info": {
+            "name": "Create relation definition",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/relations",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create relation definition"
+        },
+        {
+          "info": {
+            "name": "Get relation link counts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/relations/count",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Count the number of links that reference this relation definition."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Tags",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Extract a tag identifier.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/tags/extract",
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "data",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "options",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Extract a tag identifier from an uploaded resource. This creates the tag and its identifier scan in the system, but does not bind it to a thread"
+        },
+        {
+          "info": {
+            "name": "Bind a tag identifier.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/tags/bind",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            }
+          },
+          "docs": "Bind a tag identifier to an existing thread."
+        },
+        {
+          "info": {
+            "name": "Verify one or more tags",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/tags/verify",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            }
+          },
+          "docs": "Verify one or more tags"
+        },
+        {
+          "info": {
+            "name": "Identify a thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/tags/identify",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            }
+          },
+          "docs": "Identify a thread given an identifier scan"
+        },
+        {
+          "info": {
+            "name": "Set the text on a tag.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/tags/text",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Set the text on a tag."
+        },
+        {
+          "info": {
+            "name": "Update identifier lifecycle state.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/tags/update",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update an identifier's name, description, privacy, and archive state. Archiving hides the identifier from default listings without deleting it; passing a null archivedAt restores it. The value and type are immutable."
+        },
+        {
+          "info": {
+            "name": "Unbind a tag from a thread.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/tags/unbind",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Unbind a tag from a thread. This does not delete the tag or its identifier scan, but simply removes the association between the tag and the thread."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Transfers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List transfers for the active team (status views or mail-box)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/transfers",
+            "params": [
+              {
+                "name": "box",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "direction",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "view",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Listing of Transfer Fabric Operations. Preferred `view` semantics: `all` = every transfer the team is party to; `draft` = the team's editable shipments; `in_progress` = dispatched but unfinished, either direction; `completed` = shipments the team sent that finished; `received` = shipments the team received that finished. Legacy mail-box `box` (`inbox`/`outbox`/`sent`) still supported and takes precedence."
+        },
+        {
+          "info": {
+            "name": "Create a draft Transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/transfers",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a draft Transfer"
+        },
+        {
+          "info": {
+            "name": "Get a Transfer with its Fabric Manifest items",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Visible to admins of the sending team and, once sent, admins of the receiving team."
+        },
+        {
+          "info": {
+            "name": "Authoritative Transfer Preview for a sent Transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/preview",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "The frozen `sent` manifest (ADR-0037) projected live as one preview per effective processing Thread: copied Thread data plus the Fabric Disclosure that becomes visible on acceptance, with offered Assembly Part structure and any Folder/Category placement. Available to admins of either party once the Transfer is `sent` (and while `processing`/`failed_retryable`); not available while it is still editable (`draft`/`change_request`)."
+        },
+        {
+          "info": {
+            "name": "Offered Resource content for a Transfer Preview",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/preview/resources/:res_id/content",
+            "params": [
+              {
+                "name": "res_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "download",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "A short-lived signed URL for the bytes of a Resource offered in the Transfer Preview. Authorizes by previewable transfer + party admin + membership in the frozen `sent` manifest's selected source assets, not by recipient Thread access (recipient Threads do not exist before acceptance). `?download=1` requests attachment disposition."
+        },
+        {
+          "info": {
+            "name": "Pre-acceptance provenance graph for a sent Transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/preview/graph",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "sourceThreadId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "The frozen `sent` manifest projected live into the Fabric Graph shape (receiver preview provenance, extends ADR-0037): BOM-scoped nodes (the offered Threads, with Assembly structure on `parentAssembly`/`kind`) plus one incoming-transfer receipt per Thread. Redacted to the offered/disclosed set. Available to admins of either party once `sent` (and while `processing`/`failed_retryable`)."
+        },
+        {
+          "info": {
+            "name": "Disclosed transaction history for an offered Thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/preview/threads/:source_thread_id/events",
+            "params": [
+              {
+                "name": "source_thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "excludeActionFilter",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "The disclosed event history for one offered Thread in the frozen `sent` manifest, projected live and scoped to the offered/disclosed asset set and the offered BOM — mirroring exactly what acceptance would fix as event-disclosure. NOT_FOUND when the Thread is not part of the preview."
+        },
+        {
+          "info": {
+            "name": "Send a draft Transfer to a receiving team",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/send",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Sets the target team and moves the transfer to `sent`. Transfers are cross-organization only; the receiving team must respond before anything is processed."
+        },
+        {
+          "info": {
+            "name": "Respond to a received Transfer (accept / reject / request changes)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/respond",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Receiving-team response. `accept` starts processing immediately and cannot be undone; `request_changes` returns the transfer to the sender for editing."
+        },
+        {
+          "info": {
+            "name": "Post a message on a Transfer's conversation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/messages",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Either party (sending or receiving team) can post a free-form message on the shipment. Messages are recorded in the same append-only history as change-request / reject / accept notes, but carry no state transition."
+        },
+        {
+          "info": {
+            "name": "Cancel a draft, sent, or change-requested Transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/cancel",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Cancels a shipment the sending team still owns (`draft`/`sent`/`change_request`), releasing any source-thread freeze. An optional reason is recorded in the shipment's negotiation log. Admin of the source team."
+        },
+        {
+          "info": {
+            "name": "Retry a failed Transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/retry",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Re-enqueues processing for a `failed_retryable` transfer. Processing is idempotent (pre-allocated Fabric Links, deterministic resource keys). Admin of either party team."
+        },
+        {
+          "info": {
+            "name": "Abandon a failed Transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/abandon",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Gives up on a `failed_retryable` transfer, moving it to `abandoned` and releasing the source-thread processing locks so those threads can be re-transferred. Admin of either party team."
+        },
+        {
+          "info": {
+            "name": "Start a new shipment from a stopped shipment's manifest",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/start-from-prior-manifest",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Reuses a stopped shipment's selected manifest intent to start a fresh editable `draft` owned by the source team, so it can be adjusted and sent through the normal review path (e.g. after a rejection, cancellation, abandonment, or failed processing). This does not duplicate Thread data, create recipient Threads, or change the historical shipment; it records the old/new shipment linkage and an optional note. Fails if a source thread is no longer available to transfer. Admin of the source team."
+        },
+        {
+          "info": {
+            "name": "Add a Manifest Item to a draft Transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/items",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Adds a unit/assembly thread item or a folder/category collection item. Private fields, resources, and tags are filtered out automatically and can never be included."
+        },
+        {
+          "info": {
+            "name": "Update a Manifest Item on a draft Transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/items/:item_id",
+            "params": [
+              {
+                "name": "item_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Overwrites the item's selection. The intent/kind cannot change; remove and re-add instead."
+        },
+        {
+          "info": {
+            "name": "Remove a Manifest Item from a draft Transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/items/:item_id",
+            "params": [
+              {
+                "name": "item_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Remove a Manifest Item from a draft Transfer"
+        },
+        {
+          "info": {
+            "name": "Set the primary Thread of a draft Transfer",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://apid.dustid.io/api/v1/transfers/:transfer_id/primary-thread",
+            "params": [
+              {
+                "name": "transfer_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Set the primary Thread of a draft Transfer"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Slices",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Slice a thread (same-team derivation)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/slices",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Derives a new team-owned thread from a source thread, creating a Fabric Link and fixing the initial Fabric Disclosure. The source thread is unaffected and can be sliced repeatedly. Omitted asset selections default to all non-private assets; explicit private selections fail; DUST identifiers never travel. Link-only slices copy nothing. Source thumbnails are copied by default and can be omitted with `copyThumbnail: false`."
+        },
+        {
+          "info": {
+            "name": "Slice a thread into many derived threads in one operation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/slices/batch",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates every target slice of the source in a single transaction (far faster than one request per slice, and the only safe way to slice the same source repeatedly). Each target carries its own name/description and field values (existing fields are overridden by name; unmatched names create new fields). `sourceFields` updates the source thread once — e.g. decrementing a bar's remaining length as rods are sliced off. Source thumbnails are copied by default and can be omitted with `copyThumbnail: f"
+        },
+        {
+          "info": {
+            "name": "Get a Slice with its Fabric Links",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/slices/:slice_id",
+            "params": [
+              {
+                "name": "slice_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Get a Slice with its Fabric Links"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Fabric",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Visible Fabric Graph for a thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/fabric/threads/:thread_id/graph",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Visible structural lineage for the thread. Downstream consumers see chain-wide upstream lineage (ADR-0024); source-side transferors receive receipt rows for outgoing transfers instead of recipient thread identity or downstream chain details (ADR-0027). Disclosed data is read per link via the link context endpoint."
+        },
+        {
+          "info": {
+            "name": "Fabric Thread Versions for a thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/fabric/threads/:thread_id/versions",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "The thread as disclosed through each Fabric Link it sources, one version per link (never merged). Readable chain-wide (ADR-0024) by any consumer of a link, even without live thread access; liveThreadAccess reports live can_view separately."
+        },
+        {
+          "info": {
+            "name": "Current disclosed data for a Fabric Link",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/fabric/links/:link_id/context",
+            "params": [
+              {
+                "name": "link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "The link's current Fabric Disclosure (included assets with snapshots; redacted/removed markers without data), readable by downstream consumers (ADR-0024). Source transferors use disclosure-management endpoints and do not receive recipient thread identity through this read."
+        },
+        {
+          "info": {
+            "name": "Source-side context for a Fabric disclosure push",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/fabric/threads/:thread_id/disclosure/push/context",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Current disclosure rows and event cursor for a source Thread, readable only by the owning (source) team. Disclosure is source-Thread scoped (ADR-0032); the payload intentionally excludes downstream target thread identity, link ids, and chain shape."
+        },
+        {
+          "info": {
+            "name": "Disclosed resource content for a Fabric Link",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/fabric/links/:link_id/resources/:res_id/content",
+            "params": [
+              {
+                "name": "link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "res_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "download",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "A short-lived signed URL for the bytes of a resource disclosed through the Fabric Link, readable by downstream consumers (ADR-0024). Returns a redaction-gated signed URL (no tuples written), mirroring the files download architecture; `?download=1` requests attachment disposition."
+        },
+        {
+          "info": {
+            "name": "Fabric Event Views for a Fabric Link",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/fabric/links/:link_id/events",
+            "params": [
+              {
+                "name": "link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "excludeActionFilter",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "groupBy",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageIndex",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "targetId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              },
+              {
+                "name": "targetKind",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Source-thread and disclosed-asset events up to the link's event cursor, ordered by occurred time then event id. Events touching undisclosed targets carry redaction markers and no payload."
+        },
+        {
+          "info": {
+            "name": "Disclosure revision timeline for a Fabric Link",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/fabric/links/:link_id/timeline",
+            "params": [
+              {
+                "name": "link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Disclosure revision timeline for a Fabric Link"
+        },
+        {
+          "info": {
+            "name": "Frozen Assembly Parts for a Fabric Link version",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/fabric/links/:link_id/assembly",
+            "params": [
+              {
+                "name": "link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "The operation's frozen selected Parts scoped under the version's Assembly Thread (the link's source Thread), read from the Fabric Manifest Thread rows (ADR-0028). Readable by the source owner (audit) and chain consumers (ADR-0024); carries source-side structure only, never downstream target thread identity. Excluded Parts are silently omitted."
+        },
+        {
+          "info": {
+            "name": "Preview a disclosure revision or redaction",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/threads/:thread_id/disclosure/preview",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Pure read preview of a source-Thread disclosure revision or redaction (ADR-0032). Fan-out is chain-wide under ADR-0024, but the source-side preview only confirms the change is visible through the fabric chain — it never reveals downstream chain size, link ids, or participant identities."
+        },
+        {
+          "info": {
+            "name": "Revise Fabric Disclosure",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/threads/:thread_id/disclosure/revise",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Includes newly disclosed assets or refreshes snapshots for already-included assets on a source Thread. Revisions require a source-side reason and notify the whole downstream chain."
+        },
+        {
+          "info": {
+            "name": "Redact disclosed Fabric assets",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/threads/:thread_id/disclosure/redact",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Explicit audited redaction removes already-disclosed assets of a source Thread from future fabric views without deleting historical revision records."
+        },
+        {
+          "info": {
+            "name": "Preview Fabric event cursor advancement",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/threads/:thread_id/cursor/preview",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Preview Fabric event cursor advancement"
+        },
+        {
+          "info": {
+            "name": "Advance Fabric event cursor",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/threads/:thread_id/cursor/advance",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Moves the source Thread's occurred-time event cursor forward and refreshes included asset snapshots for the new boundary."
+        },
+        {
+          "info": {
+            "name": "Preview a Disclosure Push",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/threads/:thread_id/disclosure/push/preview",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Pure read preview of a source-Thread Disclosure Push (ADR-0026, ADR-0032): per-asset eligibility/disposition for the selected assets, the Fabric Event Views that the push-time cursor would reveal, and a privacy-safe chain-visibility marker. Never reveals downstream chain size, link ids, or participant identities."
+        },
+        {
+          "info": {
+            "name": "Disclosure Push",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/threads/:thread_id/disclosure/push",
+            "params": [
+              {
+                "name": "thread_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "One reviewed source-side act (ADR-0026, ADR-0032): revises the selected eligible disclosed assets and advances the source Thread's event cursor to the push time in one transaction, recorded as one `push` revision and read through every outgoing Fabric Link from the Thread. Requires a reason. Notifies downstream asset-level for the selected assets only; a cursor-only push notifies no one. Newly visible events are informational and create no per-event adoption decisions."
+        },
+        {
+          "info": {
+            "name": "List Fabric notifications for the downstream owner",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/fabric/notifications",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List Fabric notifications for the downstream owner"
+        },
+        {
+          "info": {
+            "name": "Dismiss pending Fabric notifications for the given threads",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/notifications/dismiss",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Clears the downstream reminder for the acting team's selected destination threads (sets pending notifications to dismissed). Records no adoption decision and never mutates thread data — the underlying disclosures stay reviewable in the Fabric Explorer."
+        },
+        {
+          "info": {
+            "name": "Preview accepting a Fabric notification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/notifications/:notification_id/preview",
+            "params": [
+              {
+                "name": "notification_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Preview accepting a Fabric notification"
+        },
+        {
+          "info": {
+            "name": "Accept a Fabric notification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/notifications/:notification_id/accept",
+            "params": [
+              {
+                "name": "notification_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Records a target-side Fabric Decision and applies the upstream disclosed change to the mapped active target asset when there is no conflict."
+        },
+        {
+          "info": {
+            "name": "Reject a Fabric notification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/notifications/:notification_id/reject",
+            "params": [
+              {
+                "name": "notification_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Records a provenance-only target-side Fabric Decision with the required rejection reason. Rejection does not hide upstream fabric visibility."
+        },
+        {
+          "info": {
+            "name": "Review a source link's disclosed state for adoption",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/fabric/links/:consumer_link_id/disclosure/sources/:source_link_id/sync",
+            "params": [
+              {
+                "name": "consumer_link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "source_link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ]
+          },
+          "docs": "Read-only Disclosure Sync (ADR-0036): the selected upstream source link's currently-included disclosure datums, binned for the destination's consumer link (adopt-new / update / in-sync / needs-review / certificate review / skipped / hidden). View/team-level access; mutating decisions require edit access on the destination thread."
+        },
+        {
+          "info": {
+            "name": "Adopt a disclosed datum into the destination thread",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/links/:consumer_link_id/disclosure/sources/:source_link_id/sync/adopt",
+            "params": [
+              {
+                "name": "consumer_link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "source_link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Records an accepted Fabric Decision and applies the upstream disclosed datum (adopt-new for a direct consumer, or update a mapped asset). A disclosed certificate is acknowledged only. Requires edit access on the destination thread."
+        },
+        {
+          "info": {
+            "name": "Decline (skip) a disclosed datum",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/links/:consumer_link_id/disclosure/sources/:source_link_id/sync/decline",
+            "params": [
+              {
+                "name": "consumer_link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "source_link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Records a provenance-only rejected Fabric Decision (the destination skips the disclosed datum). The optional note defaults to system text. Declining never hides upstream fabric visibility. Requires edit access on the destination thread."
+        },
+        {
+          "info": {
+            "name": "Hide the local copy of a withdrawn disclosed datum",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/links/:consumer_link_id/disclosure/sources/:source_link_id/sync/hide-local-copy",
+            "params": [
+              {
+                "name": "consumer_link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "source_link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "For an upstream redacted/removed disclosure with a mapped local copy: makes the local Field/Resource/Identifier private and archived (reversible). Flags when the local copy was disclosed onward and still needs outgoing redaction. Requires edit access on the destination thread."
+        },
+        {
+          "info": {
+            "name": "Adopt several disclosed datums atomically",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/fabric/links/:consumer_link_id/disclosure/sources/:source_link_id/sync/adopt-batch",
+            "params": [
+              {
+                "name": "consumer_link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              },
+              {
+                "name": "source_link_id",
+                "value": "",
+                "type": "path",
+                "description": "a UUID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Atomic batch adopt (ADR-0036): all supplied datums are adopted in one transaction; any conflict rolls back the whole batch. Callers pass only eligible add/update datums. Requires edit access on the destination thread."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Certificate Forms",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Certificate Forms.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/certificate-forms",
+            "params": [
+              {
+                "name": "includeArchived",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List the active team's Certificate Forms (active-only by default)."
+        },
+        {
+          "info": {
+            "name": "Create a Certificate Form.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/certificate-forms",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a reusable, team-owned Certificate Form. Requires team admin."
+        },
+        {
+          "info": {
+            "name": "Get a Certificate Form.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/certificate-forms/:formId",
+            "params": [
+              {
+                "name": "formId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a Certificate Form."
+        },
+        {
+          "info": {
+            "name": "Update a Certificate Form.",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://apid.dustid.io/api/v1/certificate-forms/:formId",
+            "params": [
+              {
+                "name": "formId",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update a Certificate Form (team admin). Forms are always editable; status is visibility only."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Certificates",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Preflight a Certificate Form against a Thread.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/certificates/preflight",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Read-only compliance check: which bindings resolve against this Thread."
+        },
+        {
+          "info": {
+            "name": "Batch preflight (read-only) for the Dice batch workflow.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/certificates/preflight/batch",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Per-Thread compliance for up to 100 Threads. This is a READ, not bulk issuance."
+        },
+        {
+          "info": {
+            "name": "Render a Certificate Form preview with placeholder data.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/certificates/preview-form",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Server-side render of a (possibly unsaved) design with sample values; returns the PDF as base64."
+        },
+        {
+          "info": {
+            "name": "Render a Certificate Form preview resolved against a Thread.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/certificates/preview-form-thread",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Server-side render of a (possibly unsaved) design with values resolved against a Thread (same resolution as issuance preflight); returns the PDF as base64 plus the preflight gap list. Requires can_view on the Thread."
+        },
+        {
+          "info": {
+            "name": "Resolve a Certificate Form's bindings against a Thread (values only, no PDF).",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/certificates/resolve-form-values",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Resolves a (possibly unsaved) design's bindings against a Thread using the same resolution as issuance preflight, and returns the per-zone renderable values (text + inline image data URLs) for the Live Design Canvas. No PDF is rendered. Requires can_view on the Thread."
+        },
+        {
+          "info": {
+            "name": "Generate (issue) a single Certificate.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/certificates/generate",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Render the PDF, compute its SHA-256, enforce the same-Thread duplicate-checksum guard, and store the immutable Certificate. Requires can_edit on the Thread."
+        },
+        {
+          "info": {
+            "name": "Void a Certificate.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://apid.dustid.io/api/v1/certificates/void",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Mark an issued Certificate as voided (owner-team admin only). Internal lifecycle status in R1."
+        },
+        {
+          "info": {
+            "name": "List a Thread's Certificates.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/certificates",
+            "params": [
+              {
+                "name": "threadId",
+                "value": "",
+                "type": "query",
+                "description": "a UUID"
+              },
+              {
+                "name": "includeVoided",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List a Thread's Certificates. Includes voided Certificates by default; pass includeVoided=false to return only issued ones. Follows Thread can_view."
+        },
+        {
+          "info": {
+            "name": "Get a Certificate.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://apid.dustid.io/api/v1/certificates/:certificateId",
+            "params": [
+              {
+                "name": "certificateId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a Certificate."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

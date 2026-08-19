@@ -948,3 +948,9 @@ tools:
   category: Users
   source_operation: openapi/dust-identity-apid-openapi.yml#users.update_profile
   http: PATCH /api/v1/users/profile
+deployment:
+  mode: none
+  verified: derived
+  tools: 177
+  checked: '2026-08-12'
+  source: catalog MCP census
