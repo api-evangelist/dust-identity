@@ -71,6 +71,9 @@ apis:
   tags:
   - Authentication
   - OpenID Connect
+  tags_raw:
+  - Authentication
+  - OpenID Connect
   - OAuth
   properties:
   - type: OpenIDConnect
