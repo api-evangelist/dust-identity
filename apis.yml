@@ -29,43 +29,13 @@ tags:
 - Manufacturing
 - Security
 apis:
-- name: DUST API
-  description: The core DUST Platform API (apid). REST over HTTPS with a bearer-JWT Service Account
-    model, organization/team context headers, cursor pagination and a single stable error envelope.
-    Covers Threads, Identifiers (tags), Files (tus resumable uploads), Bundles/Folders, Templates,
-    Certificates and Certificate Forms, Teams, Sharing, cross-organization Connections, Transfers/Shipments,
-    Slices, Fabric provenance, Thread Links and Relations, Events, Notifications, Metrics and Org
-    Admin.
-  humanURL: https://docs.dustid.io/reference/api/
-  baseURL: https://apid.dustid.io
-  tags:
-  - Identity
-  - Traceability
-  - Provenance
-  - Supply Chain
-  properties:
-  - type: OpenAPI
-    url: openapi/dust-identity-apid-openapi.yml
-  - type: OpenAPI
-    url: openapi/_original/dust-identity-apid-openapi-original.json
-  - type: Documentation
-    url: https://docs.dustid.io/
-  - type: APIReference
-    url: https://apid.dustid.io/api/docs
-  - type: GettingStarted
-    url: https://docs.dustid.io/api/quickstart/
-  - type: Authentication
-    url: https://docs.dustid.io/api/authentication/
-  - type: Examples
-    url: examples/dust-identity-examples.yml
-  - type: Events
-    url: asyncapi/dust-identity-events.yml
 - name: DUST AuthD
-  description: The DUST account service — organizations, users, sessions, Service Accounts and OpenID
-    Connect. Issues the short-lived JWTs the DUST API consumes, via an API-key exchange (GET /api/auth/token
-    with x-api-key) or the OAuth2 client_credentials grant. Publishes an OpenID Connect discovery
-    document at /.well-known/openid-configuration with authorization, token, introspection, revocation,
-    userinfo, JWKS and end-session endpoints, and PKCE S256 support.
+  description: >-
+    The DUST account service — organizations, users, sessions, Service Accounts and OpenID Connect. Issues
+    the short-lived JWTs the DUST API consumes, via an API-key exchange (GET /api/auth/token with x-api-key)
+    or the OAuth2 client_credentials grant. Publishes an OpenID Connect discovery document at /.well-known/openid-configuration
+    with authorization, token, introspection, revocation, userinfo, JWKS and end-session endpoints, and
+    PKCE S256 support.
   humanURL: https://docs.dustid.io/api/authentication/
   baseURL: https://authd.dustid.io
   tags:
@@ -80,6 +50,512 @@ apis:
     url: well-known/dust-identity-openid-configuration.json
   - type: Documentation
     url: https://docs.dustid.io/api/authentication/
+- aid: dust-identity:dust-identity-auth-api
+  name: Dust Identity Auth API
+  description: Authentication and authorization
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Auth
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-auth-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-bundles-api
+  name: Dust Identity Bundles API
+  description: Unordered teams of threads
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Bundles
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-bundles-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-certificate-forms-api
+  name: Dust Identity Certificate Forms API
+  description: Create and manage certificate form designs
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Certificate Forms
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-certificate-forms-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-certificates-api
+  name: Dust Identity Certificates API
+  description: Generate, list, and void certificates
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Certificates
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-certificates-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-connections-api
+  name: Dust Identity Connections API
+  description: Connections (team links) between Teams; they gate sharing and shipments
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Connections
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-connections-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-events-api
+  name: Dust Identity Events API
+  description: Work with system events
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Events
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-fabric-api
+  name: Dust Identity Fabric API
+  description: The Fabric API from Dust Identity — 25 operation(s) for fabric.
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Fabric
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-fabric-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-files-api
+  name: Dust Identity Files API
+  description: Upload and manage files
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Files
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-files-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-metrics-api
+  name: Dust Identity Metrics API
+  description: Organization and team metrics.
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Metrics
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-metrics-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-notifications-api
+  name: Dust Identity Notifications API
+  description: Manage user notifications.
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Notifications
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-notifications-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-org-admin-api
+  name: Dust Identity Org Admin API
+  description: Org-admin management of teams and memberships
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Org Admin
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-org-admin-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-organizations-api
+  name: Dust Identity Organizations API
+  description: Manage organizations and their members.
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Organizations
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-organizations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-sharing-api
+  name: Dust Identity Sharing API
+  description: The Sharing API from Dust Identity — 4 operation(s) for sharing.
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Sharing
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-sharing-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-slices-api
+  name: Dust Identity Slices API
+  description: The Slices API from Dust Identity — 3 operation(s) for slices.
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Slices
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-slices-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-system-api
+  name: Dust Identity System API
+  description: Health and status checks
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - System
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-system-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-tags-api
+  name: Dust Identity Tags API
+  description: Manage identifiers and their metadata
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Tags
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-tags-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-teams-api
+  name: Dust Identity Teams API
+  description: Manage user teams and permissions
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Teams
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-teams-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-templates-api
+  name: Dust Identity Templates API
+  description: Manage thread templates
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-templates-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-thread-links-api
+  name: Dust Identity Thread Links API
+  description: Link threads with relations
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Thread Links
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-thread-links-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-thread-relations-api
+  name: Dust Identity Thread Relations API
+  description: The ways threads can be linked
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Thread Relations
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-thread-relations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-threads-api
+  name: Dust Identity Threads API
+  description: Create and manage threads
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Threads
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-threads-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-transfers-api
+  name: Dust Identity Transfers API
+  description: Transfer ownership of threads across organizations
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Transfers
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-transfers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-users-api
+  name: Dust Identity Users API
+  description: Manage user accounts and profiles
+  humanURL: https://docs.dustid.io/reference/api/
+  baseURL: https://apid.dustid.io
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-users-api-openapi.yml
+  - type: Documentation
+    url: https://docs.dustid.io/
+  - type: APIReference
+    url: https://apid.dustid.io/api/docs
+  - type: GettingStarted
+    url: https://docs.dustid.io/api/quickstart/
+  - type: Authentication
+    url: https://docs.dustid.io/api/authentication/
+  - type: Examples
+    url: examples/dust-identity-examples.yml
+  - type: Events
+    url: asyncapi/dust-identity-events.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
