@@ -11,6 +11,18 @@ description: 'DUST Identity (Newton, Massachusetts; founded 2018 as an MIT spino
   a public OpenAPI 3.1 contract for the DUST API (apid) covering 177 operations, a Starlight documentation
   site, llms.txt, and two provider-authored agent skills.'
 url: https://raw.githubusercontent.com/api-evangelist/dust-identity/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://cdn.prod.website-files.com/696a1cb647f26194e423aba4/6980a035011540d3493bf124_Webclip%20Dust%20Identity.png
 x-type: company
 x-source: harvest:secondary-market
