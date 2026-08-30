@@ -68,6 +68,8 @@ apis:
   humanURL: https://docs.dustid.io/reference/api/
   baseURL: https://apid.dustid.io
   tags:
+  - Authentication
+  tags_raw:
   - Auth
   properties:
   - type: OpenAPI
@@ -178,6 +180,8 @@ apis:
   humanURL: https://docs.dustid.io/reference/api/
   baseURL: https://apid.dustid.io
   tags:
+  - Event
+  tags_raw:
   - Events
   properties:
   - type: OpenAPI
@@ -222,6 +226,8 @@ apis:
   humanURL: https://docs.dustid.io/reference/api/
   baseURL: https://apid.dustid.io
   tags:
+  - File
+  tags_raw:
   - Files
   properties:
   - type: OpenAPI
@@ -266,6 +272,8 @@ apis:
   humanURL: https://docs.dustid.io/reference/api/
   baseURL: https://apid.dustid.io
   tags:
+  - Notification
+  tags_raw:
   - Notifications
   properties:
   - type: OpenAPI
@@ -310,6 +318,8 @@ apis:
   humanURL: https://docs.dustid.io/reference/api/
   baseURL: https://apid.dustid.io
   tags:
+  - Organization
+  tags_raw:
   - Organizations
   properties:
   - type: OpenAPI
@@ -420,6 +430,8 @@ apis:
   humanURL: https://docs.dustid.io/reference/api/
   baseURL: https://apid.dustid.io
   tags:
+  - Team
+  tags_raw:
   - Teams
   properties:
   - type: OpenAPI
@@ -552,6 +564,8 @@ apis:
   humanURL: https://docs.dustid.io/reference/api/
   baseURL: https://apid.dustid.io
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
