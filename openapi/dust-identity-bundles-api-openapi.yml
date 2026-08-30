@@ -1,0 +1,1356 @@
+openapi: 3.2.0
+info:
+  title: DUST Bundles API
+  description: DUST Platform API
+  version: 2026.7.4
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Bundles
+  description: Unordered teams of threads
+paths:
+  /api/v1/bundles:
+    get:
+      operationId: bundles.list
+      summary: List bundles with cursor pagination
+      description: Returns bundles plus opaque `next` and `prev` values. Cursors are stable across shared timestamps because they include the ordered column and bundle ID.
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: List of bundles matching the query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleListResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      parameters:
+      - in: query
+        name: createdBy
+        schema:
+          type: string
+      - in: query
+        name: cursor
+        schema:
+          type: string
+      - in: query
+        name: includeArchived
+        schema:
+          enum:
+          - 'false'
+          - 'true'
+      - in: query
+        name: kind
+        schema:
+          enum:
+          - category
+          - folder
+      - in: query
+        name: order
+        schema:
+          enum:
+          - asc
+          - desc
+      - in: query
+        name: orderCol
+        schema:
+          enum:
+          - createdAt
+          - updatedAt
+      - in: query
+        name: pageSize
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: q
+        schema:
+          type: string
+    post:
+      operationId: bundles.create
+      summary: Create a thread bundle
+      tags:
+      - Bundles
+      responses:
+        '201':
+          description: Created bundle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleCreateResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BundleCreateRequest'
+  /api/v1/bundles/children:
+    get:
+      operationId: bundles.get_children
+      summary: List visible child bundles
+      description: Returns the immediate visible child bundles for a parent bundle or the root level when `parentId` is omitted.
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: List of visible child bundles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleChildrenResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      parameters:
+      - in: query
+        name: depth
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: includeArchived
+        schema:
+          enum:
+          - 'false'
+          - 'true'
+      - in: query
+        name: kind
+        schema:
+          enum:
+          - category
+          - folder
+      - in: query
+        name: parentId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        description: a UUID
+  /api/v1/bundles/count:
+    get:
+      operationId: bundles.count
+      summary: Count bundles
+      description: Returns the exact total for the same visibility and filter set used by `bundles.list`, excluding pagination and cursor params. Use this to compute totals or total pages when the list endpoint is using cursor pagination.
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: Total bundles matching the query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleCountResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      parameters:
+      - in: query
+        name: createdBy
+        schema:
+          type: string
+      - in: query
+        name: includeArchived
+        schema:
+          enum:
+          - 'false'
+          - 'true'
+      - in: query
+        name: kind
+        schema:
+          enum:
+          - category
+          - folder
+      - in: query
+        name: q
+        schema:
+          type: string
+  /api/v1/bundles/{bundle_id}:
+    get:
+      operationId: bundles.get
+      summary: Get bundle
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: The bundle and its children (if `recurse`=true)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Folder not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      parameters:
+      - in: query
+        name: recurse
+        schema:
+          enum:
+          - 'false'
+          - 'true'
+      - schema:
+          type: string
+        in: path
+        name: bundle_id
+        required: true
+    patch:
+      operationId: bundles.update
+      parameters:
+      - in: path
+        name: bundle_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BundleUpdateRequest'
+      summary: Update a bundle
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: Updated bundle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleUpdateResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Folder not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+    delete:
+      operationId: bundles.remove
+      parameters:
+      - in: path
+        name: bundle_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Delete a bundle
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Folder not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/bundles/parent:
+    patch:
+      operationId: bundles.set_parent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BundleSetParentRequest'
+      summary: Set bundle parent
+      description: 'Move one or more bundles under a parent bundle. Use `parentId: null` to move bundles to the root.'
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: Updated bundles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleSetParentResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Parent bundle not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/bundles/{bundle_id}/add:
+    post:
+      operationId: bundles.add
+      parameters:
+      - in: path
+        name: bundle_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                threadId:
+                  anyOf:
+                  - type: string
+                    description: a UUID
+                    format: uuid
+                    pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                  - const: 00000000-0000-0000-0000-000000000000
+                    description: a UUID
+                    format: uuid
+                  - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                    description: a UUID
+                    format: uuid
+                  description: a UUID
+                  format: uuid
+              required:
+              - threadId
+      summary: Add a thread to the bundle
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: True when the thread was newly added; false when it was already in the bundle
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/bundles/{bundle_id}/move:
+    patch:
+      operationId: bundles.move_to
+      parameters:
+      - in: path
+        name: bundle_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                threadIds:
+                  type: array
+                  items:
+                    anyOf:
+                    - type: string
+                      description: a UUID
+                      format: uuid
+                      pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                    - const: 00000000-0000-0000-0000-000000000000
+                      description: a UUID
+                      format: uuid
+                    - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                      description: a UUID
+                      format: uuid
+                    description: a UUID
+                    format: uuid
+              required:
+              - threadIds
+      summary: Move threads to a bundle
+      description: Move threads to a bundle - this is *not* additive, it removes any existing bundle memberships of the same bundle kind (e.g. folder) before adding the threads to the new bundle.
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: Moved
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/bundles/{bundle_id}/threads/{thread_id}:
+    delete:
+      operationId: bundles.remove_thread
+      parameters:
+      - in: path
+        name: bundle_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      - in: path
+        name: thread_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Remove a thread from a category bundle
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: Removed
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/bundles/{bundle_id}/children:
+    patch:
+      operationId: bundles.set_children
+      parameters:
+      - in: path
+        name: bundle_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                childrenIds:
+                  type: array
+                  description: IDs of child bundles to set for the bundle. This will replace any existing children of the bundle.
+                  items:
+                    anyOf:
+                    - type: string
+                      description: a UUID
+                      format: uuid
+                      pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                    - const: 00000000-0000-0000-0000-000000000000
+                      description: a UUID
+                      format: uuid
+                    - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                      description: a UUID
+                      format: uuid
+                    description: a UUID
+                    format: uuid
+              required:
+              - childrenIds
+      summary: Set bundle children
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Folder not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+components:
+  schemas:
+    BundleUpdateResponse:
+      type: object
+      properties:
+        updated:
+          $ref: '#/components/schemas/BundleResponse'
+      required:
+      - updated
+    BundleSetParentRequest:
+      type: object
+      properties:
+        bundleIds:
+          type: array
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+        parentId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+      required:
+      - bundleIds
+      - parentId
+    BundleSetParentResponse:
+      type: object
+      properties:
+        updated:
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleResponse'
+      required:
+      - updated
+    BundleCountResponse:
+      type: object
+      properties:
+        total:
+          type: number
+      required:
+      - total
+    BundleChildrenResponse:
+      type: object
+      properties:
+        bundles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleResponse'
+      required:
+      - bundles
+    BundleCreateResponse:
+      type: object
+      properties:
+        created:
+          $ref: '#/components/schemas/BundleResponse'
+      required:
+      - created
+    BundleListResponse:
+      type: object
+      properties:
+        bundles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleResponse'
+        next:
+          type: string
+          description: Next cursor if available
+        prev:
+          type: string
+          description: Previous cursor if available
+      required:
+      - bundles
+    BundleResponse:
+      type: object
+      properties:
+        bundleId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        childOfId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        createdAt:
+          type: string
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        kind:
+          type: string
+        name:
+          type: string
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        updatedAt:
+          type: string
+        depth:
+          type: number
+        hasChildren:
+          type: boolean
+        idPath:
+          type: array
+          items:
+            type: string
+        isSharedOut:
+          type: boolean
+        path:
+          type: array
+          items:
+            type: string
+        permissions:
+          type: object
+          properties:
+            can_edit:
+              type: boolean
+              default: false
+            can_publish:
+              type: boolean
+              default: false
+            can_share:
+              type: boolean
+              default: false
+            can_transfer:
+              type: boolean
+              default: false
+            can_view:
+              type: boolean
+              default: false
+        threadCount:
+          type: number
+      required:
+      - bundleId
+      - childOfId
+      - createdAt
+      - description
+      - kind
+      - name
+      - ownerId
+      - updatedAt
+    BundleCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        childOfId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        kind:
+          enum:
+          - category
+          - folder
+      required:
+      - name
+    BundleUpdateRequest:
+      type: object
+      properties:
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        name:
+          type: string
+          minLength: 1
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Templates
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

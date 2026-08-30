@@ -1,0 +1,523 @@
+openapi: 3.2.0
+info:
+  title: DUST Notifications API
+  description: DUST Platform API
+  version: 2026.7.4
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Notifications
+  description: Manage user notifications.
+paths:
+  /api/v1/notifications:
+    get:
+      operationId: notifications.list
+      summary: List notifications
+      tags:
+      - Notifications
+      responses:
+        '200':
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  team:
+                    type: object
+                    properties:
+                      links:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            acceptingTeamId:
+                              anyOf:
+                              - type: string
+                                description: a RFC-4122-compliant UUID
+                                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                              - type: 'null'
+                            allow:
+                              type: string
+                            amendmentAcceptedById:
+                              anyOf:
+                              - type: string
+                                description: a RFC-4122-compliant UUID
+                                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                              - type: 'null'
+                            amendmentProposedById:
+                              anyOf:
+                              - type: string
+                                description: a RFC-4122-compliant UUID
+                                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                              - type: 'null'
+                            amendmentProposerTeamId:
+                              anyOf:
+                              - type: string
+                                description: a RFC-4122-compliant UUID
+                                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                              - type: 'null'
+                            amendmentStatus:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            amendmentUpdatedAt:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            code:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            createdAt:
+                              type: string
+                            createdById:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            email:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            pendingAllow:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            requestingTeamId:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            respondedAt:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            responderId:
+                              anyOf:
+                              - type: string
+                                description: a RFC-4122-compliant UUID
+                                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                              - type: 'null'
+                            status:
+                              type: string
+                            updatedAt:
+                              type: string
+                            acceptedBy:
+                              $ref: '#/components/schemas/Principal'
+                            acceptingTeam:
+                              type: object
+                              properties:
+                                createdAt:
+                                  type: string
+                                description:
+                                  anyOf:
+                                  - type: string
+                                  - type: 'null'
+                                detail:
+                                  anyOf:
+                                  - type: string
+                                  - type: 'null'
+                                logo:
+                                  anyOf:
+                                  - type: string
+                                  - type: 'null'
+                                name:
+                                  anyOf:
+                                  - type: string
+                                  - type: 'null'
+                                orgId:
+                                  type: string
+                                  description: a RFC-4122-compliant UUID
+                                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                                teamId:
+                                  type: string
+                                  description: a RFC-4122-compliant UUID
+                                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                                updatedAt:
+                                  type: string
+                                depth:
+                                  type: number
+                                num_members:
+                                  type: number
+                                org:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    orgId:
+                                      type: string
+                                  required:
+                                  - name
+                                  - orgId
+                                path:
+                                  type: string
+                              required:
+                              - createdAt
+                              - description
+                              - detail
+                              - logo
+                              - name
+                              - orgId
+                              - teamId
+                              - updatedAt
+                            requestedBy:
+                              $ref: '#/components/schemas/Principal'
+                            requestingTeam:
+                              type: object
+                              properties:
+                                createdAt:
+                                  type: string
+                                description:
+                                  anyOf:
+                                  - type: string
+                                  - type: 'null'
+                                detail:
+                                  anyOf:
+                                  - type: string
+                                  - type: 'null'
+                                logo:
+                                  anyOf:
+                                  - type: string
+                                  - type: 'null'
+                                name:
+                                  anyOf:
+                                  - type: string
+                                  - type: 'null'
+                                orgId:
+                                  type: string
+                                  description: a RFC-4122-compliant UUID
+                                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                                teamId:
+                                  type: string
+                                  description: a RFC-4122-compliant UUID
+                                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                                updatedAt:
+                                  type: string
+                                depth:
+                                  type: number
+                                num_members:
+                                  type: number
+                                org:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    orgId:
+                                      type: string
+                                  required:
+                                  - name
+                                  - orgId
+                                path:
+                                  type: string
+                              required:
+                              - createdAt
+                              - description
+                              - detail
+                              - logo
+                              - name
+                              - orgId
+                              - teamId
+                              - updatedAt
+                          required:
+                          - acceptingTeamId
+                          - allow
+                          - amendmentAcceptedById
+                          - amendmentProposedById
+                          - amendmentProposerTeamId
+                          - amendmentStatus
+                          - amendmentUpdatedAt
+                          - code
+                          - createdAt
+                          - createdById
+                          - email
+                          - pendingAllow
+                          - requestingTeamId
+                          - respondedAt
+                          - responderId
+                          - status
+                          - updatedAt
+                      total:
+                        type: number
+                    required:
+                    - links
+                    - total
+                  total:
+                    type: number
+                  user:
+                    type: object
+                    properties:
+                      invites:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                              pattern: ^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$
+                              format: email
+                            expiresAt:
+                              type: string
+                            id:
+                              type: string
+                            inviterId:
+                              type: string
+                            organizationId:
+                              type: string
+                            role:
+                              type: string
+                            status:
+                              enum:
+                              - accepted
+                              - canceled
+                              - pending
+                              - rejected
+                            inviter:
+                              type: object
+                              properties:
+                                email:
+                                  type: string
+                                  pattern: ^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$
+                                  format: email
+                                id:
+                                  type: string
+                                image:
+                                  anyOf:
+                                  - type: string
+                                  - type: 'null'
+                                name:
+                                  type: string
+                              required:
+                              - email
+                              - id
+                              - image
+                              - name
+                            organization:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                logo:
+                                  anyOf:
+                                  - type: string
+                                  - type: 'null'
+                                name:
+                                  type: string
+                                slug:
+                                  type: string
+                              required:
+                              - id
+                              - logo
+                              - name
+                              - slug
+                          required:
+                          - email
+                          - expiresAt
+                          - id
+                          - inviterId
+                          - organizationId
+                          - role
+                          - status
+                      total:
+                        type: number
+                    required:
+                    - invites
+                    - total
+                required:
+                - team
+                - total
+                - user
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      parameters:
+      - in: query
+        name: pageIndex
+        schema:
+          type: number
+          default: 0
+      - in: query
+        name: pageSize
+        schema:
+          type: number
+          default: 20
+      - in: query
+        name: status
+        schema:
+          anyOf:
+          - const: accepted
+            description: Filter by status of the notification
+          - const: canceled
+            description: Filter by status of the notification
+          - const: pending
+            description: Filter by status of the notification
+          - const: rejected
+            description: Filter by status of the notification
+        description: Filter by status of the notification
+components:
+  schemas:
+    Principal:
+      type: object
+      properties:
+        avatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+        emailVerified:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        familyName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        kind:
+          enum:
+          - human
+          - service
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+        profileId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        updatedAt:
+          type: string
+        userId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - avatar
+      - createdAt
+      - email
+      - emailVerified
+      - familyName
+      - kind
+      - name
+      - phone
+      - profileId
+      - updatedAt
+      - userId
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Templates
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

@@ -1,0 +1,1773 @@
+openapi: 3.2.0
+info:
+  title: DUST Org Admin API
+  description: DUST Platform API
+  version: 2026.7.4
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Org Admin
+  description: Org-admin management of teams and memberships
+paths:
+  /api/v1/org/teams:
+    post:
+      operationId: org.teams.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TeamCreate'
+      summary: Create one or more teams
+      tags:
+      - Org Admin
+      responses:
+        '201':
+          description: Team created successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    createdAt:
+                      type: string
+                    description:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    detail:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    logo:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    name:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    orgId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    teamId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    updatedAt:
+                      type: string
+                    depth:
+                      type: number
+                    num_members:
+                      type: number
+                    org:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        orgId:
+                          type: string
+                      required:
+                      - name
+                      - orgId
+                    path:
+                      type: string
+                  required:
+                  - createdAt
+                  - description
+                  - detail
+                  - logo
+                  - name
+                  - orgId
+                  - teamId
+                  - updatedAt
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: org-admin
+    get:
+      operationId: org.teams.list
+      parameters:
+      - in: query
+        name: excludeIds
+        schema:
+          type: array
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+      - in: query
+        name: includeLinked
+        schema:
+          enum:
+          - 'false'
+          - 'true'
+      - in: query
+        name: order
+        schema:
+          enum:
+          - asc
+          - desc
+      - in: query
+        name: pageIndex
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: pageSize
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: q
+        schema:
+          type: string
+      - in: query
+        name: role
+        schema:
+          enum:
+          - admin
+          - member
+      - in: query
+        name: rootId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        description: a UUID
+      summary: List all teams in the organization
+      description: List every team in the active organization matching the query, including teams the caller is not a member of.
+      tags:
+      - Org Admin
+      responses:
+        '200':
+          description: List of matching teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  teams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        description:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        detail:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        logo:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        name:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        orgId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        teamId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        updatedAt:
+                          type: string
+                        depth:
+                          type: number
+                        num_members:
+                          type: number
+                        org:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            orgId:
+                              type: string
+                          required:
+                          - name
+                          - orgId
+                        path:
+                          type: string
+                      required:
+                      - createdAt
+                      - description
+                      - detail
+                      - logo
+                      - name
+                      - orgId
+                      - teamId
+                      - updatedAt
+                  total:
+                    type: number
+                required:
+                - teams
+                - total
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-badges:
+      - name: New
+        color: rgb(0, 200, 190)
+        position: after
+      x-scalar-stability: experimental
+      x-required-role: org-admin
+  /api/v1/org/teams/{team_id}:
+    patch:
+      operationId: org.teams.update
+      parameters:
+      - in: path
+        name: team_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                childOfId:
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                description:
+                  type: string
+                logo:
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                name:
+                  type: string
+      summary: Update a team
+      tags:
+      - Org Admin
+      responses:
+        '200':
+          description: Updated team
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  createdAt:
+                    type: string
+                  description:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  detail:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  logo:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  name:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  orgId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  teamId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  updatedAt:
+                    type: string
+                  depth:
+                    type: number
+                  num_members:
+                    type: number
+                  org:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      orgId:
+                        type: string
+                    required:
+                    - name
+                    - orgId
+                  path:
+                    type: string
+                required:
+                - createdAt
+                - description
+                - detail
+                - logo
+                - name
+                - orgId
+                - teamId
+                - updatedAt
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: org-admin
+    delete:
+      operationId: org.teams.delete
+      parameters:
+      - in: path
+        name: team_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Delete a team
+      description: Delete a team by its ID. This is a soft delete, the team will be marked as deleted but not removed from the database.
+      tags:
+      - Org Admin
+      responses:
+        '200':
+          description: Deleted team
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  createdAt:
+                    type: string
+                  description:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  detail:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  logo:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  name:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  orgId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  teamId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  updatedAt:
+                    type: string
+                  depth:
+                    type: number
+                  num_members:
+                    type: number
+                  org:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      orgId:
+                        type: string
+                    required:
+                    - name
+                    - orgId
+                  path:
+                    type: string
+                required:
+                - createdAt
+                - description
+                - detail
+                - logo
+                - name
+                - orgId
+                - teamId
+                - updatedAt
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-scalar-stability: experimental
+      x-required-role: org-admin
+  /api/v1/org/teams/members:
+    post:
+      operationId: org.teams.members_upsert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                memberships:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        enum:
+                        - admin
+                        - member
+                      teamId:
+                        type: string
+                      userId:
+                        type: string
+                      metadata:
+                        type: object
+                    required:
+                    - role
+                    - teamId
+                    - userId
+              required:
+              - memberships
+      summary: Add/Update memberships
+      description: Add or update memberships for a team. This will create memberships if they don't exist, or update metadata if they do.
+      tags:
+      - Org Admin
+      responses:
+        '200':
+          description: Updated memberships
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    createdAt:
+                      type: string
+                    metadata:
+                      anyOf:
+                      - type: number
+                      - type: object
+                      - type: string
+                      - type: boolean
+                      - type: 'null'
+                    role:
+                      type: string
+                    teamId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    updatedAt:
+                      type: string
+                    userId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    depth:
+                      type: number
+                    org:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        logo:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        name:
+                          type: string
+                        orgId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        slug:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        updatedAt:
+                          type: string
+                        website:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                      required:
+                      - createdAt
+                      - logo
+                      - name
+                      - orgId
+                      - slug
+                      - updatedAt
+                      - website
+                    path:
+                      type: string
+                    team:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        description:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        detail:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        logo:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        name:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        orgId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        teamId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        updatedAt:
+                          type: string
+                        depth:
+                          type: number
+                        num_members:
+                          type: number
+                        org:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            orgId:
+                              type: string
+                          required:
+                          - name
+                          - orgId
+                        path:
+                          type: string
+                      required:
+                      - createdAt
+                      - description
+                      - detail
+                      - logo
+                      - name
+                      - orgId
+                      - teamId
+                      - updatedAt
+                    user:
+                      $ref: '#/components/schemas/User'
+                  required:
+                  - createdAt
+                  - metadata
+                  - role
+                  - teamId
+                  - updatedAt
+                  - userId
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: org-admin
+    delete:
+      operationId: org.teams.members_delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                memberships:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      teamId:
+                        type: string
+                      userId:
+                        type: string
+                    required:
+                    - teamId
+                    - userId
+              required:
+              - memberships
+      summary: Remove memberships
+      description: Remove memberships for a team. This will remove the specified users from the team. If a specified user is not a member of the team, it will be ignored.
+      tags:
+      - Org Admin
+      responses:
+        '200':
+          description: Removed memberships
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    createdAt:
+                      type: string
+                    metadata:
+                      anyOf:
+                      - type: number
+                      - type: object
+                      - type: string
+                      - type: boolean
+                      - type: 'null'
+                    role:
+                      type: string
+                    teamId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    updatedAt:
+                      type: string
+                    userId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    depth:
+                      type: number
+                    org:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        logo:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        name:
+                          type: string
+                        orgId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        slug:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        updatedAt:
+                          type: string
+                        website:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                      required:
+                      - createdAt
+                      - logo
+                      - name
+                      - orgId
+                      - slug
+                      - updatedAt
+                      - website
+                    path:
+                      type: string
+                    team:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        description:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        detail:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        logo:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        name:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        orgId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        teamId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        updatedAt:
+                          type: string
+                        depth:
+                          type: number
+                        num_members:
+                          type: number
+                        org:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            orgId:
+                              type: string
+                          required:
+                          - name
+                          - orgId
+                        path:
+                          type: string
+                      required:
+                      - createdAt
+                      - description
+                      - detail
+                      - logo
+                      - name
+                      - orgId
+                      - teamId
+                      - updatedAt
+                    user:
+                      $ref: '#/components/schemas/User'
+                  required:
+                  - createdAt
+                  - metadata
+                  - role
+                  - teamId
+                  - updatedAt
+                  - userId
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: org-admin
+    get:
+      operationId: org.teams.members_list
+      parameters:
+      - in: query
+        name: order
+        schema:
+          enum:
+          - asc
+          - desc
+      - in: query
+        name: pageIndex
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: pageSize
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: q
+        schema:
+          type: string
+      - in: query
+        name: role
+        schema:
+          enum:
+          - admin
+          - member
+      - in: query
+        name: teamId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        description: a UUID
+      - in: query
+        name: userId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        description: a UUID
+      summary: List memberships
+      description: List memberships for a team, optionally filtered by user ID.
+      tags:
+      - Org Admin
+      responses:
+        '200':
+          description: List of team memberships
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  memberships:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        metadata:
+                          anyOf:
+                          - type: number
+                          - type: object
+                          - type: string
+                          - type: boolean
+                          - type: 'null'
+                        role:
+                          type: string
+                        teamId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        updatedAt:
+                          type: string
+                        userId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        depth:
+                          type: number
+                        org:
+                          type: object
+                          properties:
+                            createdAt:
+                              type: string
+                            logo:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            name:
+                              type: string
+                            orgId:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            slug:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            updatedAt:
+                              type: string
+                            website:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                          required:
+                          - createdAt
+                          - logo
+                          - name
+                          - orgId
+                          - slug
+                          - updatedAt
+                          - website
+                        path:
+                          type: string
+                        team:
+                          type: object
+                          properties:
+                            createdAt:
+                              type: string
+                            description:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            detail:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            logo:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            name:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            orgId:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            teamId:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            updatedAt:
+                              type: string
+                            depth:
+                              type: number
+                            num_members:
+                              type: number
+                            org:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                orgId:
+                                  type: string
+                              required:
+                              - name
+                              - orgId
+                            path:
+                              type: string
+                          required:
+                          - createdAt
+                          - description
+                          - detail
+                          - logo
+                          - name
+                          - orgId
+                          - teamId
+                          - updatedAt
+                        user:
+                          $ref: '#/components/schemas/User'
+                      required:
+                      - createdAt
+                      - metadata
+                      - role
+                      - teamId
+                      - updatedAt
+                      - userId
+                  total:
+                    type: number
+                required:
+                - memberships
+                - total
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: org-admin
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        banExpires:
+          anyOf:
+          - type: string
+          - type: 'null'
+        banReason:
+          anyOf:
+          - type: string
+          - type: 'null'
+        banned:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        createdAt:
+          type: string
+        kind:
+          type: string
+        role:
+          type: string
+        twoFactorEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        updatedAt:
+          type: string
+        userId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        auth:
+          type: object
+          properties:
+            banExpires:
+              anyOf:
+              - type: string
+              - type: 'null'
+            banReason:
+              anyOf:
+              - type: string
+              - type: 'null'
+            createdAt:
+              type: string
+            email:
+              type: string
+              pattern: ^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$
+              format: email
+            familyName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            id:
+              type: string
+            image:
+              anyOf:
+              - type: string
+              - type: 'null'
+            name:
+              type: string
+            role:
+              type: string
+            updatedAt:
+              type: string
+            banned:
+              anyOf:
+              - type: boolean
+              - type: 'null'
+              default: false
+            emailVerified:
+              anyOf:
+              - type: boolean
+              - type: 'null'
+              default: false
+            twoFactorEnabled:
+              anyOf:
+              - type: boolean
+              - type: 'null'
+              default: false
+            activeOrgRole:
+              anyOf:
+              - type: string
+              - type: 'null'
+          required:
+          - banExpires
+          - banReason
+          - createdAt
+          - email
+          - familyName
+          - id
+          - image
+          - name
+          - role
+          - updatedAt
+        profile:
+          $ref: '#/components/schemas/Principal'
+      required:
+      - banExpires
+      - banReason
+      - banned
+      - createdAt
+      - kind
+      - role
+      - twoFactorEnabled
+      - updatedAt
+      - userId
+    TeamCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        detail:
+          anyOf:
+          - type: string
+          - type: 'null'
+        logo:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - name
+    Principal:
+      type: object
+      properties:
+        avatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+        emailVerified:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        familyName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        kind:
+          enum:
+          - human
+          - service
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+        profileId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        updatedAt:
+          type: string
+        userId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - avatar
+      - createdAt
+      - email
+      - emailVerified
+      - familyName
+      - kind
+      - name
+      - phone
+      - profileId
+      - updatedAt
+      - userId
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Templates
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

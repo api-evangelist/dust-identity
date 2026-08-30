@@ -1,0 +1,825 @@
+openapi: 3.2.0
+info:
+  title: DUST Thread Relations API
+  description: DUST Platform API
+  version: 2026.7.4
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Thread Relations
+  description: The ways threads can be linked
+paths:
+  /api/v1/relations/{relation_id}:
+    get:
+      operationId: relations.get
+      parameters:
+      - in: path
+        name: relation_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Get relation definition
+      tags:
+      - Thread Relations
+      responses:
+        '200':
+          description: Relation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  archived:
+                    type: boolean
+                  createdAt:
+                    type: string
+                  description:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  forwardLabel:
+                    type: string
+                  inverseLabel:
+                    type: string
+                  metadata:
+                    anyOf:
+                    - type: number
+                    - type: object
+                    - type: string
+                    - type: boolean
+                    - type: 'null'
+                  name:
+                    type: string
+                  ownerId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  relId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  slug:
+                    type: string
+                  updatedAt:
+                    type: string
+                required:
+                - archived
+                - createdAt
+                - description
+                - forwardLabel
+                - inverseLabel
+                - metadata
+                - name
+                - ownerId
+                - relId
+                - slug
+                - updatedAt
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+    delete:
+      operationId: relations.delete
+      parameters:
+      - in: path
+        name: relation_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Delete relation definition
+      description: Remove a relation definition. This will also remove all links that reference this relation definition.
+      tags:
+      - Thread Relations
+      responses:
+        '200':
+          description: Deleted relation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  archived:
+                    type: boolean
+                  createdAt:
+                    type: string
+                  description:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  forwardLabel:
+                    type: string
+                  inverseLabel:
+                    type: string
+                  metadata:
+                    anyOf:
+                    - type: number
+                    - type: object
+                    - type: string
+                    - type: boolean
+                    - type: 'null'
+                  name:
+                    type: string
+                  ownerId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  relId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  slug:
+                    type: string
+                  updatedAt:
+                    type: string
+                required:
+                - archived
+                - createdAt
+                - description
+                - forwardLabel
+                - inverseLabel
+                - metadata
+                - name
+                - ownerId
+                - relId
+                - slug
+                - updatedAt
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+    patch:
+      operationId: relations.update
+      parameters:
+      - in: path
+        name: relation_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                archived:
+                  type: boolean
+                description:
+                  type: string
+                forwardLabel:
+                  type: string
+                inverseLabel:
+                  type: string
+                name:
+                  type: string
+      summary: Update relation definition
+      tags:
+      - Thread Relations
+      responses:
+        '200':
+          description: Updated relation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  archived:
+                    type: boolean
+                  createdAt:
+                    type: string
+                  description:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  forwardLabel:
+                    type: string
+                  inverseLabel:
+                    type: string
+                  metadata:
+                    anyOf:
+                    - type: number
+                    - type: object
+                    - type: string
+                    - type: boolean
+                    - type: 'null'
+                  name:
+                    type: string
+                  ownerId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  relId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  slug:
+                    type: string
+                  updatedAt:
+                    type: string
+                required:
+                - archived
+                - createdAt
+                - description
+                - forwardLabel
+                - inverseLabel
+                - metadata
+                - name
+                - ownerId
+                - relId
+                - slug
+                - updatedAt
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/relations:
+    get:
+      operationId: relations.list
+      parameters:
+      - in: query
+        name: archived
+        schema:
+          anyOf:
+          - const: 'false'
+          - const: 'true'
+          - type: boolean
+      - in: query
+        name: pageIndex
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: pageSize
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: q
+        schema:
+          type: string
+      - in: query
+        name: threadId
+        schema:
+          anyOf:
+          - type: string
+            description: Scope relationship definitions to the owner of this thread
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: Scope relationship definitions to the owner of this thread
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: Scope relationship definitions to the owner of this thread
+            format: uuid
+          format: uuid
+        description: Scope relationship definitions to the owner of this thread
+      summary: List relation definitions
+      tags:
+      - Thread Relations
+      responses:
+        '200':
+          description: Relations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  relations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        archived:
+                          type: boolean
+                        createdAt:
+                          type: string
+                        description:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        forwardLabel:
+                          type: string
+                        inverseLabel:
+                          type: string
+                        metadata:
+                          anyOf:
+                          - type: number
+                          - type: object
+                          - type: string
+                          - type: boolean
+                          - type: 'null'
+                        name:
+                          type: string
+                        ownerId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        relId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        slug:
+                          type: string
+                        updatedAt:
+                          type: string
+                      required:
+                      - archived
+                      - createdAt
+                      - description
+                      - forwardLabel
+                      - inverseLabel
+                      - metadata
+                      - name
+                      - ownerId
+                      - relId
+                      - slug
+                      - updatedAt
+                  total:
+                    type: number
+                required:
+                - relations
+                - total
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+    post:
+      operationId: relations.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                forwardLabel:
+                  type: string
+                inverseLabel:
+                  type: string
+                name:
+                  type: string
+                slug:
+                  type: string
+                description:
+                  type: string
+              required:
+              - forwardLabel
+              - inverseLabel
+              - name
+              - slug
+      summary: Create relation definition
+      tags:
+      - Thread Relations
+      responses:
+        '201':
+          description: Created relation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  archived:
+                    type: boolean
+                  createdAt:
+                    type: string
+                  description:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  forwardLabel:
+                    type: string
+                  inverseLabel:
+                    type: string
+                  metadata:
+                    anyOf:
+                    - type: number
+                    - type: object
+                    - type: string
+                    - type: boolean
+                    - type: 'null'
+                  name:
+                    type: string
+                  ownerId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  relId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  slug:
+                    type: string
+                  updatedAt:
+                    type: string
+                required:
+                - archived
+                - createdAt
+                - description
+                - forwardLabel
+                - inverseLabel
+                - metadata
+                - name
+                - ownerId
+                - relId
+                - slug
+                - updatedAt
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/relations/count:
+    post:
+      operationId: relations.get_link_counts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    anyOf:
+                    - type: string
+                      description: a UUID
+                      format: uuid
+                      pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                    - const: 00000000-0000-0000-0000-000000000000
+                      description: a UUID
+                      format: uuid
+                    - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                      description: a UUID
+                      format: uuid
+                    description: a UUID
+                    format: uuid
+              required:
+              - ids
+      summary: Get relation link counts
+      description: Count the number of links that reference this relation definition.
+      tags:
+      - Thread Relations
+      responses:
+        '200':
+          description: Count results
+          content:
+            application/json:
+              schema:
+                type: object
+                description: A mapping of relation IDs to their respective link counts.
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Templates
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

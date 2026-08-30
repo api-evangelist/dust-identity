@@ -1,0 +1,781 @@
+openapi: 3.2.0
+info:
+  title: DUST Thread Links API
+  description: DUST Platform API
+  version: 2026.7.4
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Thread Links
+  description: Link threads with relations
+paths:
+  /api/v1/links:
+    post:
+      operationId: thread_links.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                links:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      sourceThreadId:
+                        anyOf:
+                        - type: string
+                          description: a UUID
+                          format: uuid
+                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                        - const: 00000000-0000-0000-0000-000000000000
+                          description: a UUID
+                          format: uuid
+                        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                          description: a UUID
+                          format: uuid
+                        description: a UUID
+                        format: uuid
+                      targetThreadId:
+                        anyOf:
+                        - type: string
+                          description: a UUID
+                          format: uuid
+                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                        - const: 00000000-0000-0000-0000-000000000000
+                          description: a UUID
+                          format: uuid
+                        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                          description: a UUID
+                          format: uuid
+                        description: a UUID
+                        format: uuid
+                    required:
+                    - sourceThreadId
+                    - targetThreadId
+                relId:
+                  anyOf:
+                  - type: string
+                    description: a UUID
+                    format: uuid
+                    pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                  - const: 00000000-0000-0000-0000-000000000000
+                    description: a UUID
+                    format: uuid
+                  - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                    description: a UUID
+                    format: uuid
+                  description: a UUID
+                  format: uuid
+                direction:
+                  enum:
+                  - forward
+                  - inverse
+                  default: forward
+              required:
+              - links
+              - relId
+      summary: Create thread links
+      tags:
+      - Thread Links
+      responses:
+        '201':
+          description: Created thread links
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  created:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        direction:
+                          enum:
+                          - forward
+                          - inverse
+                        metadata:
+                          anyOf:
+                          - type: number
+                          - type: object
+                          - type: string
+                          - type: boolean
+                          - type: 'null'
+                        relId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        sourceThreadId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        targetThreadId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        threadLinkId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        updatedAt:
+                          type: string
+                      required:
+                      - createdAt
+                      - direction
+                      - metadata
+                      - relId
+                      - sourceThreadId
+                      - targetThreadId
+                      - threadLinkId
+                      - updatedAt
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        threadId:
+                          type: string
+                      required:
+                      - message
+                      - threadId
+                required:
+                - created
+                - errors
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+    get:
+      operationId: thread_links.list
+      parameters:
+      - in: query
+        name: directionFilter
+        schema:
+          anyOf:
+          - const: forward
+            description: Filter links by direction. If not provided, returns links in both directions.
+          - const: inverse
+            description: Filter links by direction. If not provided, returns links in both directions.
+        description: Filter links by direction. If not provided, returns links in both directions.
+      - in: query
+        name: pageIndex
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: pageSize
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Search query to filter links by thread or relationship name
+      - in: query
+        name: relId
+        schema:
+          anyOf:
+          - type: string
+            description: Filter links by relationship ID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: Filter links by relationship ID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: Filter links by relationship ID
+            format: uuid
+          format: uuid
+        description: Filter links by relationship ID
+      summary: List thread links
+      tags:
+      - Thread Links
+      responses:
+        '200':
+          description: Thread links
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        direction:
+                          enum:
+                          - forward
+                          - inverse
+                        forwardLabel:
+                          type: string
+                        inverseLabel:
+                          type: string
+                        relId:
+                          type: string
+                        relationshipName:
+                          type: string
+                        sourceThreadId:
+                          type: string
+                        sourceThreadName:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        targetThreadId:
+                          type: string
+                        targetThreadName:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        threadLinkId:
+                          type: string
+                      required:
+                      - createdAt
+                      - direction
+                      - forwardLabel
+                      - inverseLabel
+                      - relId
+                      - relationshipName
+                      - sourceThreadId
+                      - sourceThreadName
+                      - targetThreadId
+                      - targetThreadName
+                      - threadLinkId
+                  total:
+                    type: number
+                required:
+                - links
+                - total
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/links/available-threads:
+    get:
+      operationId: thread_links.available_threads
+      parameters:
+      - in: query
+        name: relId
+        schema:
+          anyOf:
+          - type: string
+            description: Relationship type used to determine existing links to exclude from available threads
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: Relationship type used to determine existing links to exclude from available threads
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: Relationship type used to determine existing links to exclude from available threads
+            format: uuid
+          format: uuid
+        required: true
+        description: Relationship type used to determine existing links to exclude from available threads
+      - in: query
+        name: includeArchived
+        schema:
+          anyOf:
+          - const: 'false'
+          - const: 'true'
+          - type: boolean
+      - in: query
+        name: order
+        schema:
+          enum:
+          - asc
+          - desc
+      - in: query
+        name: orderCol
+        schema:
+          enum:
+          - createdAt
+          - name
+          - updatedAt
+      - in: query
+        name: pageIndex
+        schema:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: string
+            pattern: ^(0|[1-9]\d*)$
+      - in: query
+        name: pageSize
+        schema:
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0
+          - type: string
+            pattern: ^[1-9]\d*$
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Search available threads by name or description
+      - in: query
+        name: queryCol
+        schema:
+          enum:
+          - description
+          - name
+      - in: query
+        name: sourceThreadId
+        schema:
+          anyOf:
+          - type: string
+            description: Fixed source thread. Returns target threads available for linking.
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: Fixed source thread. Returns target threads available for linking.
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: Fixed source thread. Returns target threads available for linking.
+            format: uuid
+          format: uuid
+        description: Fixed source thread. Returns target threads available for linking.
+      - in: query
+        name: targetThreadId
+        schema:
+          anyOf:
+          - type: string
+            description: Fixed target thread. Returns source threads available for linking.
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: Fixed target thread. Returns source threads available for linking.
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: Fixed target thread. Returns source threads available for linking.
+            format: uuid
+          format: uuid
+        description: Fixed target thread. Returns source threads available for linking.
+      summary: List available threads for linking
+      tags:
+      - Thread Links
+      responses:
+        '200':
+          description: Available threads
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkAvailableThreadsResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/links/{link_id}:
+    delete:
+      operationId: thread_links.delete
+      parameters:
+      - in: path
+        name: link_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Unlink two threads
+      tags:
+      - Thread Links
+      responses:
+        '200':
+          description: Deleted link
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  createdAt:
+                    type: string
+                  direction:
+                    enum:
+                    - forward
+                    - inverse
+                  metadata:
+                    anyOf:
+                    - type: number
+                    - type: object
+                    - type: string
+                    - type: boolean
+                    - type: 'null'
+                  relId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  sourceThreadId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  targetThreadId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  threadLinkId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  updatedAt:
+                    type: string
+                required:
+                - createdAt
+                - direction
+                - metadata
+                - relId
+                - sourceThreadId
+                - targetThreadId
+                - threadLinkId
+                - updatedAt
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+components:
+  schemas:
+    LinkAvailableThreadItem:
+      type: object
+      properties:
+        name:
+          type: string
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        thumbnail:
+          anyOf:
+          - type: string
+          - type: 'null'
+        updatedAt:
+          type: string
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        bundles:
+          type: array
+          items:
+            type: object
+            properties:
+              bundleId:
+                type: string
+                description: a RFC-4122-compliant UUID
+                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+              childOfId:
+                anyOf:
+                - type: string
+                  description: a RFC-4122-compliant UUID
+                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                - type: 'null'
+              createdAt:
+                type: string
+              description:
+                anyOf:
+                - type: string
+                - type: 'null'
+              kind:
+                type: string
+              name:
+                type: string
+              ownerId:
+                type: string
+                description: a RFC-4122-compliant UUID
+                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+              updatedAt:
+                type: string
+              depth:
+                type: number
+              hasChildren:
+                type: boolean
+              idPath:
+                type: array
+                items:
+                  type: string
+              isSharedOut:
+                type: boolean
+              path:
+                type: array
+                items:
+                  type: string
+              permissions:
+                type: object
+                properties:
+                  can_edit:
+                    type: boolean
+                    default: false
+                  can_publish:
+                    type: boolean
+                    default: false
+                  can_share:
+                    type: boolean
+                    default: false
+                  can_transfer:
+                    type: boolean
+                    default: false
+                  can_view:
+                    type: boolean
+                    default: false
+              threadCount:
+                type: number
+            required:
+            - bundleId
+            - childOfId
+            - createdAt
+            - description
+            - kind
+            - name
+            - ownerId
+            - updatedAt
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - name
+      - threadId
+      - thumbnail
+      - updatedAt
+    LinkAvailableThreadsResponse:
+      type: object
+      properties:
+        threads:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkAvailableThreadItem'
+        total:
+          type: number
+      required:
+      - threads
+      - total
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Templates
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

@@ -1,0 +1,967 @@
+openapi: 3.2.0
+info:
+  title: DUST Users API
+  description: DUST Platform API
+  version: 2026.7.4
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Users
+  description: Manage user accounts and profiles
+paths:
+  /api/v1/users/profile:
+    get:
+      operationId: users.get_profile
+      summary: Get current profile
+      description: Get current profile of authenticated user
+      tags:
+      - Users
+      responses:
+        '200':
+          description: Profile of authenticated user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  orgs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        metadata:
+                          anyOf:
+                          - type: number
+                          - type: object
+                          - type: string
+                          - type: boolean
+                          - type: 'null'
+                        orgId:
+                          anyOf:
+                          - type: string
+                            description: a UUID
+                            format: uuid
+                            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          - const: 00000000-0000-0000-0000-000000000000
+                            description: a UUID
+                            format: uuid
+                          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                            description: a UUID
+                            format: uuid
+                          description: a UUID
+                          format: uuid
+                        role:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        status:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        updatedAt:
+                          type: string
+                        userId:
+                          anyOf:
+                          - type: string
+                            description: a UUID
+                            format: uuid
+                            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          - const: 00000000-0000-0000-0000-000000000000
+                            description: a UUID
+                            format: uuid
+                          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                            description: a UUID
+                            format: uuid
+                          description: a UUID
+                          format: uuid
+                        org:
+                          type: object
+                          properties:
+                            createdAt:
+                              type: string
+                            logo:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            name:
+                              type: string
+                            orgId:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            slug:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            updatedAt:
+                              type: string
+                            website:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                          required:
+                          - createdAt
+                          - logo
+                          - name
+                          - orgId
+                          - slug
+                          - updatedAt
+                          - website
+                      required:
+                      - createdAt
+                      - metadata
+                      - orgId
+                      - role
+                      - status
+                      - updatedAt
+                      - userId
+                  teams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        metadata:
+                          anyOf:
+                          - type: number
+                          - type: object
+                          - type: string
+                          - type: boolean
+                          - type: 'null'
+                        role:
+                          type: string
+                        teamId:
+                          anyOf:
+                          - type: string
+                            description: a UUID
+                            format: uuid
+                            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          - const: 00000000-0000-0000-0000-000000000000
+                            description: a UUID
+                            format: uuid
+                          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                            description: a UUID
+                            format: uuid
+                          description: a UUID
+                          format: uuid
+                        updatedAt:
+                          type: string
+                        userId:
+                          anyOf:
+                          - type: string
+                            description: a UUID
+                            format: uuid
+                            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          - const: 00000000-0000-0000-0000-000000000000
+                            description: a UUID
+                            format: uuid
+                          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                            description: a UUID
+                            format: uuid
+                          description: a UUID
+                          format: uuid
+                        depth:
+                          type: number
+                        path:
+                          type: string
+                        team:
+                          type: object
+                          properties:
+                            createdAt:
+                              type: string
+                            description:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            detail:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            logo:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            name:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            orgId:
+                              anyOf:
+                              - type: string
+                                description: a UUID
+                                format: uuid
+                                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                              - const: 00000000-0000-0000-0000-000000000000
+                                description: a UUID
+                                format: uuid
+                              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                                description: a UUID
+                                format: uuid
+                              description: a UUID
+                              format: uuid
+                            teamId:
+                              anyOf:
+                              - type: string
+                                description: a UUID
+                                format: uuid
+                                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                              - const: 00000000-0000-0000-0000-000000000000
+                                description: a UUID
+                                format: uuid
+                              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                                description: a UUID
+                                format: uuid
+                              description: a UUID
+                              format: uuid
+                            updatedAt:
+                              type: string
+                            depth:
+                              type: number
+                            num_members:
+                              type: number
+                            path:
+                              type: string
+                          required:
+                          - createdAt
+                          - description
+                          - detail
+                          - logo
+                          - name
+                          - orgId
+                          - teamId
+                          - updatedAt
+                      required:
+                      - createdAt
+                      - metadata
+                      - role
+                      - teamId
+                      - updatedAt
+                      - userId
+                required:
+                - user
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+    patch:
+      operationId: users.update_profile
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      summary: Update profile
+      description: Update profile of authenticated user
+      tags:
+      - Users
+      responses:
+        '200':
+          description: Updated Profile information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  avatar:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  createdAt:
+                    type: string
+                  email:
+                    type: string
+                  emailVerified:
+                    type: boolean
+                  familyName:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  name:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  phone:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  profileId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  updatedAt:
+                    type: string
+                required:
+                - avatar
+                - createdAt
+                - email
+                - emailVerified
+                - familyName
+                - name
+                - phone
+                - profileId
+                - updatedAt
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/users/{user_id}:
+    get:
+      operationId: users.get
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Get a user's profile
+      tags:
+      - Users
+      responses:
+        '200':
+          description: User's Profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  orgs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        metadata:
+                          anyOf:
+                          - type: number
+                          - type: object
+                          - type: string
+                          - type: boolean
+                          - type: 'null'
+                        orgId:
+                          anyOf:
+                          - type: string
+                            description: a UUID
+                            format: uuid
+                            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          - const: 00000000-0000-0000-0000-000000000000
+                            description: a UUID
+                            format: uuid
+                          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                            description: a UUID
+                            format: uuid
+                          description: a UUID
+                          format: uuid
+                        role:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        status:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        updatedAt:
+                          type: string
+                        userId:
+                          anyOf:
+                          - type: string
+                            description: a UUID
+                            format: uuid
+                            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          - const: 00000000-0000-0000-0000-000000000000
+                            description: a UUID
+                            format: uuid
+                          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                            description: a UUID
+                            format: uuid
+                          description: a UUID
+                          format: uuid
+                        org:
+                          type: object
+                          properties:
+                            createdAt:
+                              type: string
+                            logo:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            name:
+                              type: string
+                            orgId:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            slug:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            updatedAt:
+                              type: string
+                            website:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                          required:
+                          - createdAt
+                          - logo
+                          - name
+                          - orgId
+                          - slug
+                          - updatedAt
+                          - website
+                      required:
+                      - createdAt
+                      - metadata
+                      - orgId
+                      - role
+                      - status
+                      - updatedAt
+                      - userId
+                  teams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        createdAt:
+                          type: string
+                        metadata:
+                          anyOf:
+                          - type: number
+                          - type: object
+                          - type: string
+                          - type: boolean
+                          - type: 'null'
+                        role:
+                          type: string
+                        teamId:
+                          anyOf:
+                          - type: string
+                            description: a UUID
+                            format: uuid
+                            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          - const: 00000000-0000-0000-0000-000000000000
+                            description: a UUID
+                            format: uuid
+                          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                            description: a UUID
+                            format: uuid
+                          description: a UUID
+                          format: uuid
+                        updatedAt:
+                          type: string
+                        userId:
+                          anyOf:
+                          - type: string
+                            description: a UUID
+                            format: uuid
+                            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          - const: 00000000-0000-0000-0000-000000000000
+                            description: a UUID
+                            format: uuid
+                          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                            description: a UUID
+                            format: uuid
+                          description: a UUID
+                          format: uuid
+                        depth:
+                          type: number
+                        path:
+                          type: string
+                        team:
+                          type: object
+                          properties:
+                            createdAt:
+                              type: string
+                            description:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            detail:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            logo:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            name:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            orgId:
+                              anyOf:
+                              - type: string
+                                description: a UUID
+                                format: uuid
+                                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                              - const: 00000000-0000-0000-0000-000000000000
+                                description: a UUID
+                                format: uuid
+                              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                                description: a UUID
+                                format: uuid
+                              description: a UUID
+                              format: uuid
+                            teamId:
+                              anyOf:
+                              - type: string
+                                description: a UUID
+                                format: uuid
+                                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                              - const: 00000000-0000-0000-0000-000000000000
+                                description: a UUID
+                                format: uuid
+                              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                                description: a UUID
+                                format: uuid
+                              description: a UUID
+                              format: uuid
+                            updatedAt:
+                              type: string
+                            depth:
+                              type: number
+                            num_members:
+                              type: number
+                            path:
+                              type: string
+                          required:
+                          - createdAt
+                          - description
+                          - detail
+                          - logo
+                          - name
+                          - orgId
+                          - teamId
+                          - updatedAt
+                      required:
+                      - createdAt
+                      - metadata
+                      - role
+                      - teamId
+                      - updatedAt
+                      - userId
+                required:
+                - user
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        banExpires:
+          anyOf:
+          - type: string
+          - type: 'null'
+        banReason:
+          anyOf:
+          - type: string
+          - type: 'null'
+        banned:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        createdAt:
+          type: string
+        kind:
+          type: string
+        role:
+          type: string
+        twoFactorEnabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        updatedAt:
+          type: string
+        userId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        auth:
+          type: object
+          properties:
+            banExpires:
+              anyOf:
+              - type: string
+              - type: 'null'
+            banReason:
+              anyOf:
+              - type: string
+              - type: 'null'
+            createdAt:
+              type: string
+            email:
+              type: string
+              pattern: ^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$
+              format: email
+            familyName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            id:
+              type: string
+            image:
+              anyOf:
+              - type: string
+              - type: 'null'
+            name:
+              type: string
+            role:
+              type: string
+            updatedAt:
+              type: string
+            banned:
+              anyOf:
+              - type: boolean
+              - type: 'null'
+              default: false
+            emailVerified:
+              anyOf:
+              - type: boolean
+              - type: 'null'
+              default: false
+            twoFactorEnabled:
+              anyOf:
+              - type: boolean
+              - type: 'null'
+              default: false
+            activeOrgRole:
+              anyOf:
+              - type: string
+              - type: 'null'
+          required:
+          - banExpires
+          - banReason
+          - createdAt
+          - email
+          - familyName
+          - id
+          - image
+          - name
+          - role
+          - updatedAt
+        profile:
+          $ref: '#/components/schemas/Principal'
+      required:
+      - banExpires
+      - banReason
+      - banned
+      - createdAt
+      - kind
+      - role
+      - twoFactorEnabled
+      - updatedAt
+      - userId
+    UpdateProfileRequest:
+      type: object
+      properties:
+        familyName:
+          type: string
+        image:
+          anyOf:
+          - description: A file object representing the user's profile image. Can be null to remove the existing image.
+          - type: 'null'
+            description: A file object representing the user's profile image. Can be null to remove the existing image.
+          description: A file object representing the user's profile image. Can be null to remove the existing image.
+        name:
+          type: string
+    Principal:
+      type: object
+      properties:
+        avatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+        emailVerified:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        familyName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        kind:
+          enum:
+          - human
+          - service
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+        profileId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        updatedAt:
+          type: string
+        userId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - avatar
+      - createdAt
+      - email
+      - emailVerified
+      - familyName
+      - kind
+      - name
+      - phone
+      - profileId
+      - updatedAt
+      - userId
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Templates
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers
