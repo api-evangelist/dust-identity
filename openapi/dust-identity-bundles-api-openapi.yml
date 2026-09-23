@@ -1122,13 +1122,35 @@ paths:
                 - status
 components:
   schemas:
-    BundleUpdateResponse:
+    BundleCreateRequest:
       type: object
       properties:
-        updated:
-          $ref: '#/components/schemas/BundleResponse'
+        name:
+          type: string
+          minLength: 1
+        childOfId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        kind:
+          enum:
+          - category
+          - folder
       required:
-      - updated
+      - name
     BundleSetParentRequest:
       type: object
       properties:
@@ -1164,15 +1186,6 @@ components:
       required:
       - bundleIds
       - parentId
-    BundleSetParentResponse:
-      type: object
-      properties:
-        updated:
-          type: array
-          items:
-            $ref: '#/components/schemas/BundleResponse'
-      required:
-      - updated
     BundleCountResponse:
       type: object
       properties:
@@ -1180,15 +1193,13 @@ components:
           type: number
       required:
       - total
-    BundleChildrenResponse:
+    BundleUpdateResponse:
       type: object
       properties:
-        bundles:
-          type: array
-          items:
-            $ref: '#/components/schemas/BundleResponse'
+        updated:
+          $ref: '#/components/schemas/BundleResponse'
       required:
-      - bundles
+      - updated
     BundleCreateResponse:
       type: object
       properties:
@@ -1196,6 +1207,16 @@ components:
           $ref: '#/components/schemas/BundleResponse'
       required:
       - created
+    BundleUpdateRequest:
+      type: object
+      properties:
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        name:
+          type: string
+          minLength: 1
     BundleListResponse:
       type: object
       properties:
@@ -1209,6 +1230,15 @@ components:
         prev:
           type: string
           description: Previous cursor if available
+      required:
+      - bundles
+    BundleChildrenResponse:
+      type: object
+      properties:
+        bundles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleResponse'
       required:
       - bundles
     BundleResponse:
@@ -1283,45 +1313,15 @@ components:
       - name
       - ownerId
       - updatedAt
-    BundleCreateRequest:
+    BundleSetParentResponse:
       type: object
       properties:
-        name:
-          type: string
-          minLength: 1
-        childOfId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        kind:
-          enum:
-          - category
-          - folder
+        updated:
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleResponse'
       required:
-      - name
-    BundleUpdateRequest:
-      type: object
-      properties:
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        name:
-          type: string
-          minLength: 1
+      - updated
   securitySchemes:
     Bearer:
       type: http

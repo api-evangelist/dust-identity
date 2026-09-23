@@ -98,6 +98,61 @@ paths:
                 - status
 components:
   schemas:
+    MeFeatureFlagsResponse:
+      type: object
+      properties:
+        is_assemblies_module_enabled:
+          type: boolean
+        is_assembly_import_enabled:
+          type: boolean
+        is_categories_module_enabled:
+          type: boolean
+        is_certificates_module_enabled:
+          type: boolean
+        is_developer_tooling_enabled:
+          type: boolean
+        is_document_validation_enabled:
+          type: boolean
+        is_fabric_alt_views_enabled:
+          type: boolean
+        is_fusion_module_enabled:
+          type: boolean
+        is_group_connections_enabled:
+          type: boolean
+        is_identifiable_dust_enabled:
+          type: boolean
+        is_organization_management_enabled:
+          type: boolean
+        is_sharing_enabled:
+          type: boolean
+        is_show_uncategorized_threads_enabled:
+          type: boolean
+        is_slicing_module_enabled:
+          type: boolean
+        is_transfers_module_enabled:
+          type: boolean
+        is_verify_only_enabled:
+          type: boolean
+        is_workflows_quick_create_enabled:
+          type: boolean
+      required:
+      - is_assemblies_module_enabled
+      - is_assembly_import_enabled
+      - is_categories_module_enabled
+      - is_certificates_module_enabled
+      - is_developer_tooling_enabled
+      - is_document_validation_enabled
+      - is_fabric_alt_views_enabled
+      - is_fusion_module_enabled
+      - is_group_connections_enabled
+      - is_identifiable_dust_enabled
+      - is_organization_management_enabled
+      - is_sharing_enabled
+      - is_show_uncategorized_threads_enabled
+      - is_slicing_module_enabled
+      - is_transfers_module_enabled
+      - is_verify_only_enabled
+      - is_workflows_quick_create_enabled
     MeResponse:
       type: object
       properties:
@@ -164,61 +219,6 @@ components:
       - organizations
       - sessionId
       - userId
-    MeFeatureFlagsResponse:
-      type: object
-      properties:
-        is_assemblies_module_enabled:
-          type: boolean
-        is_assembly_import_enabled:
-          type: boolean
-        is_categories_module_enabled:
-          type: boolean
-        is_certificates_module_enabled:
-          type: boolean
-        is_developer_tooling_enabled:
-          type: boolean
-        is_document_validation_enabled:
-          type: boolean
-        is_fabric_alt_views_enabled:
-          type: boolean
-        is_fusion_module_enabled:
-          type: boolean
-        is_group_connections_enabled:
-          type: boolean
-        is_identifiable_dust_enabled:
-          type: boolean
-        is_organization_management_enabled:
-          type: boolean
-        is_sharing_enabled:
-          type: boolean
-        is_show_uncategorized_threads_enabled:
-          type: boolean
-        is_slicing_module_enabled:
-          type: boolean
-        is_transfers_module_enabled:
-          type: boolean
-        is_verify_only_enabled:
-          type: boolean
-        is_workflows_quick_create_enabled:
-          type: boolean
-      required:
-      - is_assemblies_module_enabled
-      - is_assembly_import_enabled
-      - is_categories_module_enabled
-      - is_certificates_module_enabled
-      - is_developer_tooling_enabled
-      - is_document_validation_enabled
-      - is_fabric_alt_views_enabled
-      - is_fusion_module_enabled
-      - is_group_connections_enabled
-      - is_identifiable_dust_enabled
-      - is_organization_management_enabled
-      - is_sharing_enabled
-      - is_show_uncategorized_threads_enabled
-      - is_slicing_module_enabled
-      - is_transfers_module_enabled
-      - is_verify_only_enabled
-      - is_workflows_quick_create_enabled
   securitySchemes:
     Bearer:
       type: http

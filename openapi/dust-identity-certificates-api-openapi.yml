@@ -21,7 +21,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CertificatePreflightRequest'
-      summary: Preflight a Certificate Form against a Thread.
+      summary: Preflight a Certificate Form against a Thread
       description: 'Read-only compliance check: which bindings resolve against this Thread.'
       tags:
       - Certificates
@@ -101,7 +101,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CertificatePreflightBatchRequest'
-      summary: Batch preflight (read-only) for the Dice batch workflow.
+      summary: Batch preflight (read-only) for the Dice batch workflow
       description: Per-Thread compliance for up to 100 Threads. This is a READ, not bulk issuance.
       tags:
       - Certificates
@@ -183,7 +183,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CertificatePreviewFormRequest'
-      summary: Render a Certificate Form preview with placeholder data.
+      summary: Render a Certificate Form preview with placeholder data
       description: Server-side render of a (possibly unsaved) design with sample values; returns the PDF as base64.
       tags:
       - Certificates
@@ -243,7 +243,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CertificatePreviewFormForThreadRequest'
-      summary: Render a Certificate Form preview resolved against a Thread.
+      summary: Render a Certificate Form preview resolved against a Thread
       description: Server-side render of a (possibly unsaved) design with values resolved against a Thread (same resolution as issuance preflight); returns the PDF as base64 plus the preflight gap list. Requires can_view on the Thread.
       tags:
       - Certificates
@@ -343,7 +343,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CertificateResolveFormValuesRequest'
-      summary: Resolve a Certificate Form's bindings against a Thread (values only, no PDF).
+      summary: Resolve a Certificate Form's bindings against a Thread (values only, no PDF)
       description: Resolves a (possibly unsaved) design's bindings against a Thread using the same resolution as issuance preflight, and returns the per-zone renderable values (text + inline image data URLs) for the Live Design Canvas. No PDF is rendered. Requires can_view on the Thread.
       tags:
       - Certificates
@@ -443,7 +443,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CertificateGenerateRequest'
-      summary: Generate (issue) a single Certificate.
+      summary: Generate (issue) a single Certificate
       description: Render the PDF, compute its SHA-256, enforce the same-Thread duplicate-checksum guard, and store the immutable Certificate. Requires can_edit on the Thread.
       tags:
       - Certificates
@@ -543,7 +543,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CertificateVoidRequest'
-      summary: Void a Certificate.
+      summary: Void a Certificate
       description: Mark an issued Certificate as voided (owner-team admin only). Internal lifecycle status in R1.
       tags:
       - Certificates
@@ -663,7 +663,7 @@ paths:
             - 'false'
             - 'true'
           - type: boolean
-      summary: List a Thread's Certificates.
+      summary: List a Thread's Certificates
       description: List a Thread's Certificates. Includes voided Certificates by default; pass includeVoided=false to return only issued ones. Follows Thread can_view.
       tags:
       - Certificates
@@ -739,7 +739,7 @@ paths:
   /api/v1/certificates/{certificateId}:
     get:
       operationId: certificates.get
-      summary: Get a Certificate.
+      summary: Get a Certificate
       tags:
       - Certificates
       responses:
@@ -797,213 +797,74 @@ paths:
         required: true
 components:
   schemas:
-    CertificateResolveFormValuesResponse:
+    CertificateResponse:
       type: object
       properties:
-        zones:
-          type: array
-          items:
-            $ref: '#/components/schemas/CertificateResolvedZone'
-      required:
-      - zones
-    CertificatePreviewFormForThreadResponse:
-      type: object
-      properties:
-        pdfBase64:
+        certificateId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        checksum:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
           type: string
-        preflight:
-          $ref: '#/components/schemas/CertificatePreviewPreflight'
-      required:
-      - pdfBase64
-      - preflight
-    CertificateResolveFormValuesRequest:
-      type: object
-      properties:
-        bindings:
-          type: array
-          items:
-            anyOf:
-            - type: object
-              properties:
-                kind:
-                  enum:
-                  - boolean
-                  - date
-                  - image
-                  - number
-                  - text
-                primaryName:
-                  type: string
-                required:
-                  type: boolean
-                source:
-                  const: field
-                zoneId:
-                  type: string
-                aliases:
-                  type: array
-                  items:
-                    type: string
-                dateFormat:
-                  type: string
-                format:
-                  type: object
-                  properties:
-                    align:
-                      enum:
-                      - center
-                      - left
-                      - right
-                    backgroundColor:
-                      type: string
-                    barColor:
-                      type: string
-                    fontColor:
-                      type: string
-                    fontName:
-                      type: string
-                    fontSize:
-                      type: number
-                    opacity:
-                      type: number
-                    rotate:
-                      type: number
-                    showText:
-                      type: boolean
-                renderAs:
-                  enum:
-                  - code128
-                  - code39
-                  - pdf417
-                  - qrcode
-                  - text
-                systemAliases:
-                  type: array
-                  items:
-                    enum:
-                    - certificate.issueDate
-                    - issuer.familyName
-                    - issuer.firstName
-                    - issuer.fullName
-                    - issuer.teamName
-                    - thread.description
-                    - thread.identifiers
-                    - thread.name
-                    - thread.thumbnail
-                    - thread.uuid
-              required:
-              - kind
-              - primaryName
-              - required
-              - source
-              - zoneId
-            - type: object
-              properties:
-                required:
-                  type: boolean
-                source:
-                  const: static
-                staticKind:
-                  const: text
-                text:
-                  type: string
-                zoneId:
-                  type: string
-                format:
-                  type: object
-                  properties:
-                    align:
-                      enum:
-                      - center
-                      - left
-                      - right
-                    backgroundColor:
-                      type: string
-                    barColor:
-                      type: string
-                    fontColor:
-                      type: string
-                    fontName:
-                      type: string
-                    fontSize:
-                      type: number
-                    opacity:
-                      type: number
-                    rotate:
-                      type: number
-                    showText:
-                      type: boolean
-                renderAs:
-                  enum:
-                  - code128
-                  - code39
-                  - pdf417
-                  - qrcode
-                  - text
-              required:
-              - required
-              - source
-              - staticKind
-              - text
-              - zoneId
-            - type: object
-              properties:
-                required:
-                  type: boolean
-                source:
-                  const: system
-                systemKey:
-                  enum:
-                  - certificate.issueDate
-                  - issuer.familyName
-                  - issuer.firstName
-                  - issuer.fullName
-                  - issuer.teamName
-                  - thread.description
-                  - thread.identifiers
-                  - thread.name
-                  - thread.thumbnail
-                  - thread.uuid
-                zoneId:
-                  type: string
-                dateFormat:
-                  type: string
-                format:
-                  type: object
-                  properties:
-                    align:
-                      enum:
-                      - center
-                      - left
-                      - right
-                    backgroundColor:
-                      type: string
-                    barColor:
-                      type: string
-                    fontColor:
-                      type: string
-                    fontName:
-                      type: string
-                    fontSize:
-                      type: number
-                    opacity:
-                      type: number
-                    rotate:
-                      type: number
-                    showText:
-                      type: boolean
-                renderAs:
-                  enum:
-                  - code128
-                  - code39
-                  - pdf417
-                  - qrcode
-                  - text
-              required:
-              - required
-              - source
-              - systemKey
-              - zoneId
+        downloadUrl:
+          anyOf:
+          - type: string
+          - type: 'null'
+        filename:
+          anyOf:
+          - type: string
+          - type: 'null'
+        formId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        formName:
+          type: string
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        resId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        status:
+          enum:
+          - issued
+          - voided
         threadId:
           anyOf:
           - type: string
@@ -1018,11 +879,47 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-        teamName:
-          type: string
+        voidInternalNote:
+          anyOf:
+          - type: string
+          - type: 'null'
+        voidReasonCode:
+          anyOf:
+          - type: string
+          - type: 'null'
+        voidedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        voidedById:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
       required:
-      - bindings
+      - certificateId
+      - checksum
+      - createdAt
+      - downloadUrl
+      - filename
+      - formId
+      - formName
+      - name
+      - resId
+      - status
       - threadId
+      - voidInternalNote
+      - voidReasonCode
+      - voidedAt
+      - voidedById
     CertificatePreflightResult:
       type: object
       properties:
@@ -1110,6 +1007,13 @@ components:
       - requiredResolved
       - requiredTotal
       - threadId
+    CertificatePreviewFormResponse:
+      type: object
+      properties:
+        pdfBase64:
+          type: string
+      required:
+      - pdfBase64
     CertificatePreviewFormForThreadRequest:
       type: object
       properties:
@@ -1382,6 +1286,38 @@ components:
       - bindings
       - template
       - threadId
+    CertificateResolvedZone:
+      type: object
+      properties:
+        imageDataUrl:
+          anyOf:
+          - type: string
+          - type: 'null'
+        label:
+          type: string
+        required:
+          type: boolean
+        status:
+          enum:
+          - ambiguous
+          - empty
+          - missing
+          - resolved
+          - type_mismatch
+          - unencodable
+        text:
+          anyOf:
+          - type: string
+          - type: 'null'
+        zoneId:
+          type: string
+      required:
+      - imageDataUrl
+      - label
+      - required
+      - status
+      - text
+      - zoneId
     CertificateVoidRequest:
       type: object
       properties:
@@ -1413,6 +1349,325 @@ components:
       required:
       - certificateId
       - reasonCode
+    CertificateGenerateRequest:
+      type: object
+      properties:
+        formId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        name:
+          type: string
+      required:
+      - formId
+      - threadId
+    CertificateResolveFormValuesRequest:
+      type: object
+      properties:
+        bindings:
+          type: array
+          items:
+            anyOf:
+            - type: object
+              properties:
+                kind:
+                  enum:
+                  - boolean
+                  - date
+                  - image
+                  - number
+                  - text
+                primaryName:
+                  type: string
+                required:
+                  type: boolean
+                source:
+                  const: field
+                zoneId:
+                  type: string
+                aliases:
+                  type: array
+                  items:
+                    type: string
+                dateFormat:
+                  type: string
+                format:
+                  type: object
+                  properties:
+                    align:
+                      enum:
+                      - center
+                      - left
+                      - right
+                    backgroundColor:
+                      type: string
+                    barColor:
+                      type: string
+                    fontColor:
+                      type: string
+                    fontName:
+                      type: string
+                    fontSize:
+                      type: number
+                    opacity:
+                      type: number
+                    rotate:
+                      type: number
+                    showText:
+                      type: boolean
+                renderAs:
+                  enum:
+                  - code128
+                  - code39
+                  - pdf417
+                  - qrcode
+                  - text
+                systemAliases:
+                  type: array
+                  items:
+                    enum:
+                    - certificate.issueDate
+                    - issuer.familyName
+                    - issuer.firstName
+                    - issuer.fullName
+                    - issuer.teamName
+                    - thread.description
+                    - thread.identifiers
+                    - thread.name
+                    - thread.thumbnail
+                    - thread.uuid
+              required:
+              - kind
+              - primaryName
+              - required
+              - source
+              - zoneId
+            - type: object
+              properties:
+                required:
+                  type: boolean
+                source:
+                  const: static
+                staticKind:
+                  const: text
+                text:
+                  type: string
+                zoneId:
+                  type: string
+                format:
+                  type: object
+                  properties:
+                    align:
+                      enum:
+                      - center
+                      - left
+                      - right
+                    backgroundColor:
+                      type: string
+                    barColor:
+                      type: string
+                    fontColor:
+                      type: string
+                    fontName:
+                      type: string
+                    fontSize:
+                      type: number
+                    opacity:
+                      type: number
+                    rotate:
+                      type: number
+                    showText:
+                      type: boolean
+                renderAs:
+                  enum:
+                  - code128
+                  - code39
+                  - pdf417
+                  - qrcode
+                  - text
+              required:
+              - required
+              - source
+              - staticKind
+              - text
+              - zoneId
+            - type: object
+              properties:
+                required:
+                  type: boolean
+                source:
+                  const: system
+                systemKey:
+                  enum:
+                  - certificate.issueDate
+                  - issuer.familyName
+                  - issuer.firstName
+                  - issuer.fullName
+                  - issuer.teamName
+                  - thread.description
+                  - thread.identifiers
+                  - thread.name
+                  - thread.thumbnail
+                  - thread.uuid
+                zoneId:
+                  type: string
+                dateFormat:
+                  type: string
+                format:
+                  type: object
+                  properties:
+                    align:
+                      enum:
+                      - center
+                      - left
+                      - right
+                    backgroundColor:
+                      type: string
+                    barColor:
+                      type: string
+                    fontColor:
+                      type: string
+                    fontName:
+                      type: string
+                    fontSize:
+                      type: number
+                    opacity:
+                      type: number
+                    rotate:
+                      type: number
+                    showText:
+                      type: boolean
+                renderAs:
+                  enum:
+                  - code128
+                  - code39
+                  - pdf417
+                  - qrcode
+                  - text
+              required:
+              - required
+              - source
+              - systemKey
+              - zoneId
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        teamName:
+          type: string
+      required:
+      - bindings
+      - threadId
+    CertificateResolveFormValuesResponse:
+      type: object
+      properties:
+        zones:
+          type: array
+          items:
+            $ref: '#/components/schemas/CertificateResolvedZone'
+      required:
+      - zones
+    CertificatePreviewFormForThreadResponse:
+      type: object
+      properties:
+        pdfBase64:
+          type: string
+        preflight:
+          $ref: '#/components/schemas/CertificatePreviewPreflight'
+      required:
+      - pdfBase64
+      - preflight
+    CertificatePreviewPreflight:
+      type: object
+      properties:
+        bindings:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              matchedFieldName:
+                anyOf:
+                - type: string
+                - type: 'null'
+              message:
+                anyOf:
+                - type: string
+                - type: 'null'
+              nonExact:
+                type: boolean
+              required:
+                type: boolean
+              source:
+                enum:
+                - field
+                - static
+                - system
+              status:
+                enum:
+                - ambiguous
+                - empty
+                - missing
+                - resolved
+                - type_mismatch
+                - unencodable
+              zoneId:
+                type: string
+            required:
+            - label
+            - matchedFieldName
+            - message
+            - nonExact
+            - required
+            - source
+            - status
+            - zoneId
+        compatible:
+          type: boolean
+        requiredResolved:
+          type: number
+        requiredTotal:
+          type: number
+      required:
+      - bindings
+      - compatible
+      - requiredResolved
+      - requiredTotal
     CertificatePreflightRequest:
       type: object
       properties:
@@ -1484,204 +1739,6 @@ components:
       required:
       - formId
       - threadIds
-    CertificatePreviewFormResponse:
-      type: object
-      properties:
-        pdfBase64:
-          type: string
-      required:
-      - pdfBase64
-    CertificateResolvedZone:
-      type: object
-      properties:
-        imageDataUrl:
-          anyOf:
-          - type: string
-          - type: 'null'
-        label:
-          type: string
-        required:
-          type: boolean
-        status:
-          enum:
-          - ambiguous
-          - empty
-          - missing
-          - resolved
-          - type_mismatch
-          - unencodable
-        text:
-          anyOf:
-          - type: string
-          - type: 'null'
-        zoneId:
-          type: string
-      required:
-      - imageDataUrl
-      - label
-      - required
-      - status
-      - text
-      - zoneId
-    CertificateResponse:
-      type: object
-      properties:
-        certificateId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        checksum:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        downloadUrl:
-          anyOf:
-          - type: string
-          - type: 'null'
-        filename:
-          anyOf:
-          - type: string
-          - type: 'null'
-        formId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          - type: 'null'
-        formName:
-          type: string
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        resId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        status:
-          enum:
-          - issued
-          - voided
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        voidInternalNote:
-          anyOf:
-          - type: string
-          - type: 'null'
-        voidReasonCode:
-          anyOf:
-          - type: string
-          - type: 'null'
-        voidedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        voidedById:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          - type: 'null'
-      required:
-      - certificateId
-      - checksum
-      - createdAt
-      - downloadUrl
-      - filename
-      - formId
-      - formName
-      - name
-      - resId
-      - status
-      - threadId
-      - voidInternalNote
-      - voidReasonCode
-      - voidedAt
-      - voidedById
-    CertificateGenerateRequest:
-      type: object
-      properties:
-        formId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        name:
-          type: string
-      required:
-      - formId
-      - threadId
     CertificatePreviewFormRequest:
       type: object
       properties:
@@ -1939,63 +1996,6 @@ components:
       required:
       - bindings
       - template
-    CertificatePreviewPreflight:
-      type: object
-      properties:
-        bindings:
-          type: array
-          items:
-            type: object
-            properties:
-              label:
-                type: string
-              matchedFieldName:
-                anyOf:
-                - type: string
-                - type: 'null'
-              message:
-                anyOf:
-                - type: string
-                - type: 'null'
-              nonExact:
-                type: boolean
-              required:
-                type: boolean
-              source:
-                enum:
-                - field
-                - static
-                - system
-              status:
-                enum:
-                - ambiguous
-                - empty
-                - missing
-                - resolved
-                - type_mismatch
-                - unencodable
-              zoneId:
-                type: string
-            required:
-            - label
-            - matchedFieldName
-            - message
-            - nonExact
-            - required
-            - source
-            - status
-            - zoneId
-        compatible:
-          type: boolean
-        requiredResolved:
-          type: number
-        requiredTotal:
-          type: number
-      required:
-      - bindings
-      - compatible
-      - requiredResolved
-      - requiredTotal
   securitySchemes:
     Bearer:
       type: http

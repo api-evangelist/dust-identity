@@ -37,7 +37,7 @@ paths:
                   description: In multipart submissions, provide a JSON string of [TagExtractRequestMetadata](#model/TagExtractRequestMetadata); otherwise, a direct object is also accepted.
               required:
               - data
-      summary: Extract a tag identifier.
+      summary: Extract a tag identifier
       description: Extract a tag identifier from an uploaded resource. This creates the tag and its identifier scan in the system, but does not bind it to a thread
       tags:
       - Tags
@@ -135,7 +135,7 @@ paths:
               - $ref: '#/components/schemas/BindTextTag'
               - $ref: '#/components/schemas/BindDustImage'
               - $ref: '#/components/schemas/BindDustFingerprint'
-      summary: Bind a tag identifier.
+      summary: Bind a tag identifier
       description: Bind a tag identifier to an existing thread.
       tags:
       - Tags
@@ -1018,7 +1018,7 @@ paths:
   /api/v1/tags/text:
     post:
       operationId: tags.set_text
-      summary: Set the text on a tag.
+      summary: Set the text on a tag
       tags:
       - Tags
       responses:
@@ -1165,7 +1165,7 @@ paths:
   /api/v1/tags/update:
     post:
       operationId: tags.update
-      summary: Update identifier lifecycle state.
+      summary: Update identifier lifecycle state
       description: Update an identifier's name, description, privacy, and archive state. Archiving hides the identifier from default listings without deleting it; passing a null archivedAt restores it. The value and type are immutable.
       tags:
       - Tags
@@ -1265,7 +1265,7 @@ paths:
   /api/v1/tags/unbind:
     post:
       operationId: tags.unbind
-      summary: Unbind a tag from a thread.
+      summary: Unbind a tag from a thread
       description: Unbind a tag from a thread. This does not delete the tag or its identifier scan, but simply removes the association between the tag and the thread.
       tags:
       - Tags
@@ -1397,188 +1397,23 @@ paths:
               - threadId
 components:
   schemas:
-    IdentifyTextTagPayload:
-      type: object
-      properties:
-        data:
-          type: string
-        tagType:
-          enum:
-          - BAR_CODE
-          - DATA_MATRIX
-          - NFC
-          - QR
-        options:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/TagOptions'
-        searchTeamIds:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-          - $ref: '#/components/schemas/UuidList'
-          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-      required:
-      - data
-      - tagType
-    IdentifyDustPayload:
-      type: object
-      properties:
-        data:
-          anyOf:
-          - type: string
-            description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
-            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
-          - description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
-          description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
-        tagType:
-          const: DUST
-        options:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string of [DustTagOptions](#model/DustTagOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/DustTagOptions'
-        searchTeamIds:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-          - $ref: '#/components/schemas/UuidList'
-          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-      required:
-      - data
-      - tagType
-    TagUpdateRequest:
-      type: object
-      description: Update an identifier's name, description, privacy, and archive state. The value/type are immutable.
-      properties:
-        tagId:
-          anyOf:
-          - type: string
-            description: ID of the tag to update
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: ID of the tag to update
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: ID of the tag to update
-            format: uuid
-          description: ID of the tag to update
-          format: uuid
-        threadId:
-          anyOf:
-          - type: string
-            description: ID of the thread the tag is bound to
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: ID of the thread the tag is bound to
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: ID of the thread the tag is bound to
-            format: uuid
-          description: ID of the thread the tag is bound to
-          format: uuid
-        archivedAt:
-          anyOf:
-          - type: string
-            description: ISO 8601 timestamp to archive the identifier, or null to restore
-          - type: 'null'
-            description: ISO 8601 timestamp to archive the identifier, or null to restore
-          description: ISO 8601 timestamp to archive the identifier, or null to restore
-        description:
-          anyOf:
-          - type: string
-            description: New description to set for the tag
-          - type: 'null'
-            description: New description to set for the tag
-          description: New description to set for the tag
-        isPrivate:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-            description: New name to set for the tag
-          - type: 'null'
-            description: New name to set for the tag
-          description: New name to set for the tag
-      required:
-      - tagId
-      - threadId
-    IdentifyTagIdOnlyPayload:
-      type: object
-      properties:
-        tagId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
+    UuidList:
+      type: array
+      description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+      items:
+        anyOf:
+        - type: string
           description: a UUID
           format: uuid
-        tagType:
-          const: ANY
-        searchTeamIds:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-          - $ref: '#/components/schemas/UuidList'
-          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-      required:
-      - tagId
-      - tagType
-    BindDustFingerprint:
-      type: object
-      properties:
-        fingerprintId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
+          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+        - const: 00000000-0000-0000-0000-000000000000
           description: a UUID
           format: uuid
-        tagType:
-          const: DUST
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
+        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
           description: a UUID
           format: uuid
-        options:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string of [BindDustFingerprintOptions](#model/BindDustFingerprintOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/BindDustFingerprintOptions'
-        tagDescription:
-          type: string
-      required:
-      - fingerprintId
-      - tagType
-      - threadId
-      additionalProperties: false
+        description: a UUID
+        format: uuid
     TagExtractRequestMetadata:
       type: object
       description: In multipart submissions, provide a JSON string of [TagExtractRequestMetadata](#model/TagExtractRequestMetadata); otherwise, a direct object is also accepted.
@@ -1841,146 +1676,6 @@ components:
                 description: A number or a string that can be parsed into a number
                 pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
               - type: 'null'
-    BindDustFingerprintOptions:
-      type: object
-      description: In multipart submissions, provide a JSON string of [BindDustFingerprintOptions](#model/BindDustFingerprintOptions); otherwise, a direct object is also accepted.
-      properties:
-        enrollmentSessionId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        indexing:
-          enum:
-          - default
-          - none
-        metadata:
-          type: object
-          properties:
-            format:
-              enum:
-              - auspost
-              - azteccode
-              - azteccodecompact
-              - aztecrune
-              - bc412
-              - channelcode
-              - codablockf
-              - code11
-              - code128
-              - code16k
-              - code2of5
-              - code32
-              - code39
-              - code39ext
-              - code49
-              - code93
-              - code93ext
-              - codeone
-              - coop2of5
-              - daft
-              - databarexpanded
-              - databarexpandedcomposite
-              - databarexpandedstacked
-              - databarexpandedstackedcomposite
-              - databarlimited
-              - databarlimitedcomposite
-              - databaromni
-              - databaromnicomposite
-              - databarstacked
-              - databarstackedcomposite
-              - databarstackedomni
-              - databarstackedomnicomposite
-              - databartruncated
-              - databartruncatedcomposite
-              - datalogic2of5
-              - datamatrix
-              - datamatrixrectangular
-              - datamatrixrectangularextension
-              - dotcode
-              - ean13
-              - ean13composite
-              - ean14
-              - ean2
-              - ean5
-              - ean8
-              - ean8composite
-              - flattermarken
-              - gs1-128
-              - gs1-128composite
-              - gs1-cc
-              - gs1datamatrix
-              - gs1datamatrixrectangular
-              - gs1dldatamatrix
-              - gs1dlqrcode
-              - gs1dotcode
-              - gs1northamericancoupon
-              - gs1qrcode
-              - hanxin
-              - hibcazteccode
-              - hibccodablockf
-              - hibccode128
-              - hibccode39
-              - hibcdatamatrix
-              - hibcdatamatrixrectangular
-              - hibcmicropdf417
-              - hibcpdf417
-              - hibcqrcode
-              - iata2of5
-              - identcode
-              - industrial2of5
-              - interleaved2of5
-              - isbn
-              - ismn
-              - issn
-              - itf14
-              - japanpost
-              - kix
-              - leitcode
-              - mailmark
-              - mands
-              - matrix2of5
-              - maxicode
-              - micropdf417
-              - microqrcode
-              - msi
-              - onecode
-              - pdf417
-              - pdf417compact
-              - pharmacode
-              - pharmacode2
-              - planet
-              - plessey
-              - posicode
-              - postnet
-              - pzn
-              - qrcode
-              - rationalizedCodabar
-              - raw
-              - rectangularmicroqrcode
-              - royalmail
-              - sscc18
-              - swissqrcode
-              - symbol
-              - telepen
-              - telepennumeric
-              - ultracode
-              - upca
-              - upcacomposite
-              - upce
-              - upcecomposite
-        returnAnnotatedImage:
-          type: boolean
-          description: Optionally, return the annotated image as a data URL in the response
     BindDustImageOptions:
       type: object
       description: In multipart submissions, provide a JSON string of [BindDustImageOptions](#model/BindDustImageOptions); otherwise, a direct object is also accepted.
@@ -2369,152 +2064,35 @@ components:
                 description: A number or a string that can be parsed into a number
                 pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
               - type: 'null'
-    UuidList:
-      type: array
-      description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-      items:
-        anyOf:
-        - type: string
-          description: a UUID
-          format: uuid
-          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-        - const: 00000000-0000-0000-0000-000000000000
-          description: a UUID
-          format: uuid
-        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-          description: a UUID
-          format: uuid
-        description: a UUID
-        format: uuid
-    TagOptions:
-      type: object
-      description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
-      properties:
-        metadata:
-          type: object
-          properties:
-            format:
-              enum:
-              - auspost
-              - azteccode
-              - azteccodecompact
-              - aztecrune
-              - bc412
-              - channelcode
-              - codablockf
-              - code11
-              - code128
-              - code16k
-              - code2of5
-              - code32
-              - code39
-              - code39ext
-              - code49
-              - code93
-              - code93ext
-              - codeone
-              - coop2of5
-              - daft
-              - databarexpanded
-              - databarexpandedcomposite
-              - databarexpandedstacked
-              - databarexpandedstackedcomposite
-              - databarlimited
-              - databarlimitedcomposite
-              - databaromni
-              - databaromnicomposite
-              - databarstacked
-              - databarstackedcomposite
-              - databarstackedomni
-              - databarstackedomnicomposite
-              - databartruncated
-              - databartruncatedcomposite
-              - datalogic2of5
-              - datamatrix
-              - datamatrixrectangular
-              - datamatrixrectangularextension
-              - dotcode
-              - ean13
-              - ean13composite
-              - ean14
-              - ean2
-              - ean5
-              - ean8
-              - ean8composite
-              - flattermarken
-              - gs1-128
-              - gs1-128composite
-              - gs1-cc
-              - gs1datamatrix
-              - gs1datamatrixrectangular
-              - gs1dldatamatrix
-              - gs1dlqrcode
-              - gs1dotcode
-              - gs1northamericancoupon
-              - gs1qrcode
-              - hanxin
-              - hibcazteccode
-              - hibccodablockf
-              - hibccode128
-              - hibccode39
-              - hibcdatamatrix
-              - hibcdatamatrixrectangular
-              - hibcmicropdf417
-              - hibcpdf417
-              - hibcqrcode
-              - iata2of5
-              - identcode
-              - industrial2of5
-              - interleaved2of5
-              - isbn
-              - ismn
-              - issn
-              - itf14
-              - japanpost
-              - kix
-              - leitcode
-              - mailmark
-              - mands
-              - matrix2of5
-              - maxicode
-              - micropdf417
-              - microqrcode
-              - msi
-              - onecode
-              - pdf417
-              - pdf417compact
-              - pharmacode
-              - pharmacode2
-              - planet
-              - plessey
-              - posicode
-              - postnet
-              - pzn
-              - qrcode
-              - rationalizedCodabar
-              - raw
-              - rectangularmicroqrcode
-              - royalmail
-              - sscc18
-              - swissqrcode
-              - symbol
-              - telepen
-              - telepennumeric
-              - ultracode
-              - upca
-              - upcacomposite
-              - upce
-              - upcecomposite
-    TagUpdateResponse:
+    IdentifyTextTagPayload:
       type: object
       properties:
-        archivedAt:
+        data:
+          type: string
+        tagType:
+          enum:
+          - BAR_CODE
+          - DATA_MATRIX
+          - NFC
+          - QR
+        options:
           anyOf:
           - type: string
-          - type: 'null'
-        isPrivate:
-          type: boolean
-        tagId:
+            description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/TagOptions'
+        searchTeamIds:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+          - $ref: '#/components/schemas/UuidList'
+          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+      required:
+      - data
+      - tagType
+    BindDustFingerprint:
+      type: object
+      properties:
+        fingerprintId:
           anyOf:
           - type: string
             description: a UUID
@@ -2528,20 +2106,6 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-      required:
-      - archivedAt
-      - isPrivate
-      - tagId
-    BindDustImage:
-      type: object
-      properties:
-        data:
-          anyOf:
-          - type: string
-            description: File or base64-encoded image data of the DUST tag to be bound.
-            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
-          - description: File or base64-encoded image data of the DUST tag to be bound.
-          description: File or base64-encoded image data of the DUST tag to be bound.
         tagType:
           const: DUST
         threadId:
@@ -2561,15 +2125,41 @@ components:
         options:
           anyOf:
           - type: string
-            description: In multipart submissions, provide a JSON string of [BindDustImageOptions](#model/BindDustImageOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/BindDustImageOptions'
+            description: In multipart submissions, provide a JSON string of [BindDustFingerprintOptions](#model/BindDustFingerprintOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/BindDustFingerprintOptions'
         tagDescription:
           type: string
       required:
-      - data
+      - fingerprintId
       - tagType
       - threadId
       additionalProperties: false
+    IdentifyDustPayload:
+      type: object
+      properties:
+        data:
+          anyOf:
+          - type: string
+            description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
+            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
+          - description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
+          description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
+        tagType:
+          const: DUST
+        options:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string of [DustTagOptions](#model/DustTagOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/DustTagOptions'
+        searchTeamIds:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+          - $ref: '#/components/schemas/UuidList'
+          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+      required:
+      - data
+      - tagType
     DustTagOptions:
       type: object
       description: In multipart submissions, provide a JSON string of [DustTagOptions](#model/DustTagOptions); otherwise, a direct object is also accepted.
@@ -2941,36 +2531,33 @@ components:
                 description: A number or a string that can be parsed into a number
                 pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
               - type: 'null'
-    BulkVerifyTagList:
-      type: array
-      description: In multipart submissions, provide a JSON string array of tags to verify against; otherwise, a direct array is also accepted. If more than one tag is provided, verification will succeed if any single tag matches the thread.
-      items:
-        type: object
-        properties:
-          tagId:
-            anyOf:
-            - type: string
-              description: a UUID
-              format: uuid
-              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-            - const: 00000000-0000-0000-0000-000000000000
-              description: a UUID
-              format: uuid
-            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-              description: a UUID
-              format: uuid
+    TagUpdateResponse:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        isPrivate:
+          type: boolean
+        tagId:
+          anyOf:
+          - type: string
             description: a UUID
             format: uuid
-          tagType:
-            enum:
-            - BAR_CODE
-            - DATA_MATRIX
-            - DUST
-            - NFC
-            - QR
-        required:
-        - tagId
-        - tagType
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - archivedAt
+      - isPrivate
+      - tagId
     BindTextTag:
       type: object
       properties:
@@ -3008,6 +2595,419 @@ components:
       - tagType
       - threadId
       additionalProperties: false
+    TagOptions:
+      type: object
+      description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
+      properties:
+        metadata:
+          type: object
+          properties:
+            format:
+              enum:
+              - auspost
+              - azteccode
+              - azteccodecompact
+              - aztecrune
+              - bc412
+              - channelcode
+              - codablockf
+              - code11
+              - code128
+              - code16k
+              - code2of5
+              - code32
+              - code39
+              - code39ext
+              - code49
+              - code93
+              - code93ext
+              - codeone
+              - coop2of5
+              - daft
+              - databarexpanded
+              - databarexpandedcomposite
+              - databarexpandedstacked
+              - databarexpandedstackedcomposite
+              - databarlimited
+              - databarlimitedcomposite
+              - databaromni
+              - databaromnicomposite
+              - databarstacked
+              - databarstackedcomposite
+              - databarstackedomni
+              - databarstackedomnicomposite
+              - databartruncated
+              - databartruncatedcomposite
+              - datalogic2of5
+              - datamatrix
+              - datamatrixrectangular
+              - datamatrixrectangularextension
+              - dotcode
+              - ean13
+              - ean13composite
+              - ean14
+              - ean2
+              - ean5
+              - ean8
+              - ean8composite
+              - flattermarken
+              - gs1-128
+              - gs1-128composite
+              - gs1-cc
+              - gs1datamatrix
+              - gs1datamatrixrectangular
+              - gs1dldatamatrix
+              - gs1dlqrcode
+              - gs1dotcode
+              - gs1northamericancoupon
+              - gs1qrcode
+              - hanxin
+              - hibcazteccode
+              - hibccodablockf
+              - hibccode128
+              - hibccode39
+              - hibcdatamatrix
+              - hibcdatamatrixrectangular
+              - hibcmicropdf417
+              - hibcpdf417
+              - hibcqrcode
+              - iata2of5
+              - identcode
+              - industrial2of5
+              - interleaved2of5
+              - isbn
+              - ismn
+              - issn
+              - itf14
+              - japanpost
+              - kix
+              - leitcode
+              - mailmark
+              - mands
+              - matrix2of5
+              - maxicode
+              - micropdf417
+              - microqrcode
+              - msi
+              - onecode
+              - pdf417
+              - pdf417compact
+              - pharmacode
+              - pharmacode2
+              - planet
+              - plessey
+              - posicode
+              - postnet
+              - pzn
+              - qrcode
+              - rationalizedCodabar
+              - raw
+              - rectangularmicroqrcode
+              - royalmail
+              - sscc18
+              - swissqrcode
+              - symbol
+              - telepen
+              - telepennumeric
+              - ultracode
+              - upca
+              - upcacomposite
+              - upce
+              - upcecomposite
+    IdentifyTagIdOnlyPayload:
+      type: object
+      properties:
+        tagId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        tagType:
+          const: ANY
+        searchTeamIds:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+          - $ref: '#/components/schemas/UuidList'
+          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+      required:
+      - tagId
+      - tagType
+    BindDustImage:
+      type: object
+      properties:
+        data:
+          anyOf:
+          - type: string
+            description: File or base64-encoded image data of the DUST tag to be bound.
+            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
+          - description: File or base64-encoded image data of the DUST tag to be bound.
+          description: File or base64-encoded image data of the DUST tag to be bound.
+        tagType:
+          const: DUST
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        options:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string of [BindDustImageOptions](#model/BindDustImageOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/BindDustImageOptions'
+        tagDescription:
+          type: string
+      required:
+      - data
+      - tagType
+      - threadId
+      additionalProperties: false
+    BulkVerifyTagList:
+      type: array
+      description: In multipart submissions, provide a JSON string array of tags to verify against; otherwise, a direct array is also accepted. If more than one tag is provided, verification will succeed if any single tag matches the thread.
+      items:
+        type: object
+        properties:
+          tagId:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+          tagType:
+            enum:
+            - BAR_CODE
+            - DATA_MATRIX
+            - DUST
+            - NFC
+            - QR
+        required:
+        - tagId
+        - tagType
+    BindDustFingerprintOptions:
+      type: object
+      description: In multipart submissions, provide a JSON string of [BindDustFingerprintOptions](#model/BindDustFingerprintOptions); otherwise, a direct object is also accepted.
+      properties:
+        enrollmentSessionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        indexing:
+          enum:
+          - default
+          - none
+        metadata:
+          type: object
+          properties:
+            format:
+              enum:
+              - auspost
+              - azteccode
+              - azteccodecompact
+              - aztecrune
+              - bc412
+              - channelcode
+              - codablockf
+              - code11
+              - code128
+              - code16k
+              - code2of5
+              - code32
+              - code39
+              - code39ext
+              - code49
+              - code93
+              - code93ext
+              - codeone
+              - coop2of5
+              - daft
+              - databarexpanded
+              - databarexpandedcomposite
+              - databarexpandedstacked
+              - databarexpandedstackedcomposite
+              - databarlimited
+              - databarlimitedcomposite
+              - databaromni
+              - databaromnicomposite
+              - databarstacked
+              - databarstackedcomposite
+              - databarstackedomni
+              - databarstackedomnicomposite
+              - databartruncated
+              - databartruncatedcomposite
+              - datalogic2of5
+              - datamatrix
+              - datamatrixrectangular
+              - datamatrixrectangularextension
+              - dotcode
+              - ean13
+              - ean13composite
+              - ean14
+              - ean2
+              - ean5
+              - ean8
+              - ean8composite
+              - flattermarken
+              - gs1-128
+              - gs1-128composite
+              - gs1-cc
+              - gs1datamatrix
+              - gs1datamatrixrectangular
+              - gs1dldatamatrix
+              - gs1dlqrcode
+              - gs1dotcode
+              - gs1northamericancoupon
+              - gs1qrcode
+              - hanxin
+              - hibcazteccode
+              - hibccodablockf
+              - hibccode128
+              - hibccode39
+              - hibcdatamatrix
+              - hibcdatamatrixrectangular
+              - hibcmicropdf417
+              - hibcpdf417
+              - hibcqrcode
+              - iata2of5
+              - identcode
+              - industrial2of5
+              - interleaved2of5
+              - isbn
+              - ismn
+              - issn
+              - itf14
+              - japanpost
+              - kix
+              - leitcode
+              - mailmark
+              - mands
+              - matrix2of5
+              - maxicode
+              - micropdf417
+              - microqrcode
+              - msi
+              - onecode
+              - pdf417
+              - pdf417compact
+              - pharmacode
+              - pharmacode2
+              - planet
+              - plessey
+              - posicode
+              - postnet
+              - pzn
+              - qrcode
+              - rationalizedCodabar
+              - raw
+              - rectangularmicroqrcode
+              - royalmail
+              - sscc18
+              - swissqrcode
+              - symbol
+              - telepen
+              - telepennumeric
+              - ultracode
+              - upca
+              - upcacomposite
+              - upce
+              - upcecomposite
+        returnAnnotatedImage:
+          type: boolean
+          description: Optionally, return the annotated image as a data URL in the response
+    TagUpdateRequest:
+      type: object
+      description: Update an identifier's name, description, privacy, and archive state. The value/type are immutable.
+      properties:
+        tagId:
+          anyOf:
+          - type: string
+            description: ID of the tag to update
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: ID of the tag to update
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: ID of the tag to update
+            format: uuid
+          description: ID of the tag to update
+          format: uuid
+        threadId:
+          anyOf:
+          - type: string
+            description: ID of the thread the tag is bound to
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: ID of the thread the tag is bound to
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: ID of the thread the tag is bound to
+            format: uuid
+          description: ID of the thread the tag is bound to
+          format: uuid
+        archivedAt:
+          anyOf:
+          - type: string
+            description: ISO 8601 timestamp to archive the identifier, or null to restore
+          - type: 'null'
+            description: ISO 8601 timestamp to archive the identifier, or null to restore
+          description: ISO 8601 timestamp to archive the identifier, or null to restore
+        description:
+          anyOf:
+          - type: string
+            description: New description to set for the tag
+          - type: 'null'
+            description: New description to set for the tag
+          description: New description to set for the tag
+        isPrivate:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+            description: New name to set for the tag
+          - type: 'null'
+            description: New name to set for the tag
+          description: New name to set for the tag
+      required:
+      - tagId
+      - threadId
   securitySchemes:
     Bearer:
       type: http
