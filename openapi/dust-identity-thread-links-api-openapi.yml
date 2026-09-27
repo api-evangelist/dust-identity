@@ -623,18 +623,6 @@ paths:
                 - status
 components:
   schemas:
-    LinkAvailableThreadsResponse:
-      type: object
-      properties:
-        threads:
-          type: array
-          items:
-            $ref: '#/components/schemas/LinkAvailableThreadItem'
-        total:
-          type: number
-      required:
-      - threads
-      - total
     LinkAvailableThreadItem:
       type: object
       properties:
@@ -747,6 +735,18 @@ components:
       - threadId
       - thumbnail
       - updatedAt
+    LinkAvailableThreadsResponse:
+      type: object
+      properties:
+        threads:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkAvailableThreadItem'
+        total:
+          type: number
+      required:
+      - threads
+      - total
   securitySchemes:
     Bearer:
       type: http

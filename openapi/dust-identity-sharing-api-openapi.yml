@@ -562,6 +562,79 @@ paths:
                 - status
 components:
   schemas:
+    ShareUpdateRequest:
+      type: object
+      properties:
+        relation:
+          enum:
+          - admin
+          - attached
+          - container
+          - creator
+          - editor
+          - member
+          - owner
+          - parent
+          - private
+          - protected
+          - publish
+          - sender
+          - share
+          - transfer
+          - viewer
+      required:
+      - relation
+    ShareRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+              item:
+                enum:
+                - bundle
+                - thread
+              relation:
+                enum:
+                - editor
+                - viewer
+              teamId:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+            required:
+            - id
+            - item
+            - relation
+            - teamId
+      required:
+      - items
     PartnerInventoryResponse:
       type: object
       properties:
@@ -1809,101 +1882,6 @@ components:
       required:
       - total
       - tuples
-    ShareUpdateRequest:
-      type: object
-      properties:
-        relation:
-          enum:
-          - admin
-          - attached
-          - container
-          - creator
-          - editor
-          - member
-          - owner
-          - parent
-          - private
-          - protected
-          - publish
-          - sender
-          - share
-          - transfer
-          - viewer
-      required:
-      - relation
-    ShareRemoveRequest:
-      type: object
-      properties:
-        ids:
-          type: array
-          description: Sharing instance ids
-          items:
-            anyOf:
-            - type: string
-              description: a UUID
-              format: uuid
-              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-            - const: 00000000-0000-0000-0000-000000000000
-              description: a UUID
-              format: uuid
-            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-              description: a UUID
-              format: uuid
-            description: a UUID
-            format: uuid
-      required:
-      - ids
-    ShareRequest:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                description: a UUID
-                format: uuid
-              item:
-                enum:
-                - bundle
-                - thread
-              relation:
-                enum:
-                - editor
-                - viewer
-              teamId:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                description: a UUID
-                format: uuid
-            required:
-            - id
-            - item
-            - relation
-            - teamId
-      required:
-      - items
     AccessSummaryResponse:
       type: object
       properties:
@@ -2093,6 +2071,28 @@ components:
       required:
       - canManage
       - entries
+    ShareRemoveRequest:
+      type: object
+      properties:
+        ids:
+          type: array
+          description: Sharing instance ids
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+      required:
+      - ids
   securitySchemes:
     Bearer:
       type: http

@@ -65,21 +65,21 @@ paths:
                 $ref: '#/components/schemas/HealthErrorResponse'
 components:
   schemas:
-    HealthErrorResponse:
-      type: object
-      properties:
-        status:
-          const: error
-        timestamp:
-          type: string
-      required:
-      - status
-      - timestamp
     HealthResponse:
       type: object
       properties:
         status:
           const: ok
+        timestamp:
+          type: string
+      required:
+      - status
+      - timestamp
+    HealthErrorResponse:
+      type: object
+      properties:
+        status:
+          const: error
         timestamp:
           type: string
       required:

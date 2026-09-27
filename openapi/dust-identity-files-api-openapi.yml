@@ -3757,517 +3757,53 @@ paths:
                 - status
 components:
   schemas:
+    UploadResourceRequest:
+      type: object
+      properties:
+        filename:
+          type: string
+          minLength: 1
+        resId:
+          anyOf:
+          - type: string
+            description: temporary upload id returned by the TUS upload endpoint
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: temporary upload id returned by the TUS upload endpoint
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: temporary upload id returned by the TUS upload endpoint
+            format: uuid
+          description: temporary upload id returned by the TUS upload endpoint
+          format: uuid
+        size:
+          type: number
+        fieldId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        isPrivate:
+          anyOf:
+          - enum:
+            - 'false'
+            - 'true'
+          - type: boolean
+      required:
+      - filename
+      - resId
+      - size
     ResourceSignedUrlList:
-      type: array
-      items:
-        type: object
-        properties:
-          archivedAt:
-            anyOf:
-            - type: string
-            - type: 'null'
-          checksum:
-            anyOf:
-            - type: string
-              maxLength: 64
-            - type: 'null'
-          createdAt:
-            type: string
-          createdBy:
-            type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          filename:
-            anyOf:
-            - type: string
-            - type: 'null'
-          imageUris:
-            anyOf:
-            - type: array
-              items:
-                type: string
-            - type: 'null'
-          isPrivate:
-            type: boolean
-          metadata:
-            anyOf:
-            - type: number
-            - type: object
-            - type: string
-            - type: boolean
-            - type: 'null'
-          mimeType:
-            anyOf:
-            - type: string
-            - type: 'null'
-          name:
-            anyOf:
-            - type: string
-            - type: 'null'
-          ownerId:
-            anyOf:
-            - type: string
-              description: a RFC-4122-compliant UUID
-              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-            - type: 'null'
-          resId:
-            type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          size:
-            anyOf:
-            - type: integer
-              maximum: 9007199254740991
-              minimum: -9007199254740991
-            - type: 'null'
-          status:
-            anyOf:
-            - type: string
-            - type: 'null'
-          thumbnail: {}
-          transferId:
-            anyOf:
-            - type: string
-              description: a RFC-4122-compliant UUID
-              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-            - type: 'null'
-          transferredAt:
-            anyOf:
-            - type: string
-            - type: 'null'
-          type:
-            anyOf:
-            - type: string
-            - type: 'null'
-          updatedAt:
-            type: string
-          url:
-            type: string
-          signatures:
-            anyOf:
-            - type: array
-              items:
-                type: object
-                properties:
-                  affiliation:
-                    anyOf:
-                    - type: string
-                    - type: 'null'
-                  authorization:
-                    anyOf:
-                    - type: string
-                    - type: 'null'
-                  date:
-                    anyOf:
-                    - type: string
-                    - type: 'null'
-                  name:
-                    anyOf:
-                    - type: string
-                    - type: 'null'
-                  resId:
-                    type: string
-                    description: a RFC-4122-compliant UUID
-                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                  signature:
-                    anyOf:
-                    - type: string
-                    - type: 'null'
-                  signatureHash:
-                    anyOf:
-                    - type: string
-                    - type: 'null'
-                  resource:
-                    type: object
-                    properties:
-                      archivedAt:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      bucket:
-                        type: string
-                      checksum:
-                        anyOf:
-                        - type: string
-                          maxLength: 64
-                        - type: 'null'
-                      createdAt:
-                        type: string
-                      createdBy:
-                        type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      filename:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      imageUris:
-                        anyOf:
-                        - type: array
-                          items:
-                            type: string
-                        - type: 'null'
-                      isPrivate:
-                        type: boolean
-                      key:
-                        type: string
-                      metadata:
-                        anyOf:
-                        - type: number
-                        - type: object
-                        - type: string
-                        - type: boolean
-                        - type: 'null'
-                      mimeType:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      name:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      ownerId:
-                        anyOf:
-                        - type: string
-                          description: a RFC-4122-compliant UUID
-                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                        - type: 'null'
-                      resId:
-                        type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      size:
-                        anyOf:
-                        - type: integer
-                          maximum: 9007199254740991
-                          minimum: -9007199254740991
-                        - type: 'null'
-                      status:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      thumbnail: {}
-                      transferId:
-                        anyOf:
-                        - type: string
-                          description: a RFC-4122-compliant UUID
-                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                        - type: 'null'
-                      transferredAt:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      type:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      updatedAt:
-                        type: string
-                    required:
-                    - archivedAt
-                    - bucket
-                    - checksum
-                    - createdAt
-                    - createdBy
-                    - filename
-                    - imageUris
-                    - isPrivate
-                    - key
-                    - metadata
-                    - mimeType
-                    - name
-                    - ownerId
-                    - resId
-                    - size
-                    - status
-                    - thumbnail
-                    - transferId
-                    - transferredAt
-                    - type
-                    - updatedAt
-                  thread:
-                    type: object
-                    properties:
-                      archivedAt:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      createdAt:
-                        type: string
-                      createdById:
-                        type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      description:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      kind:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      labels:
-                        anyOf:
-                        - type: number
-                        - type: object
-                        - type: string
-                        - type: boolean
-                        - type: 'null'
-                      lifecycleStatus:
-                        type: string
-                      name:
-                        type: string
-                      ownerId:
-                        type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      processingLockedAt:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      processingOperationId:
-                        anyOf:
-                        - type: string
-                          description: a RFC-4122-compliant UUID
-                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                        - type: 'null'
-                      templateId:
-                        anyOf:
-                        - type: string
-                          description: a RFC-4122-compliant UUID
-                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                        - type: 'null'
-                      threadId:
-                        type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      thumbnail: {}
-                      thumbnailId:
-                        anyOf:
-                        - type: string
-                          description: a RFC-4122-compliant UUID
-                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                        - type: 'null'
-                      transferId:
-                        anyOf:
-                        - type: string
-                          description: a RFC-4122-compliant UUID
-                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                        - type: 'null'
-                      transferredAt:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      updatedAt:
-                        type: string
-                    required:
-                    - archivedAt
-                    - createdAt
-                    - createdById
-                    - description
-                    - kind
-                    - labels
-                    - lifecycleStatus
-                    - name
-                    - ownerId
-                    - processingLockedAt
-                    - processingOperationId
-                    - templateId
-                    - threadId
-                    - thumbnail
-                    - thumbnailId
-                    - transferId
-                    - transferredAt
-                    - updatedAt
-                  verification:
-                    type: object
-                    properties:
-                      created:
-                        type: string
-                      documentOrientation:
-                        anyOf:
-                        - type: number
-                          maximum: 9007199254740991
-                          minimum: -9007199254740991
-                        - type: 'null'
-                      documentQualityScore:
-                        anyOf:
-                        - type: number
-                          maximum: 9007199254740991
-                          minimum: -9007199254740991
-                        - type: 'null'
-                      lineItems:
-                        anyOf:
-                        - type: number
-                        - type: object
-                        - type: string
-                        - type: boolean
-                        - type: 'null'
-                      processingTime:
-                        anyOf:
-                        - type: number
-                          maximum: 9007199254740991
-                          minimum: -9007199254740991
-                        - type: 'null'
-                      resId:
-                        type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      result:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      status:
-                        type: string
-                      teamId:
-                        type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      userId:
-                        type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      version:
-                        type: integer
-                        maximum: 2147483647
-                        minimum: -2147483648
-                    required:
-                    - created
-                    - documentOrientation
-                    - documentQualityScore
-                    - lineItems
-                    - processingTime
-                    - resId
-                    - result
-                    - status
-                    - teamId
-                    - userId
-                    - version
-                required:
-                - affiliation
-                - authorization
-                - date
-                - name
-                - resId
-                - signature
-                - signatureHash
-            - type: 'null'
-          threads:
-            anyOf:
-            - type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    anyOf:
-                    - type: string
-                    - type: 'null'
-                  threadId:
-                    anyOf:
-                    - type: string
-                      description: a UUID
-                      format: uuid
-                      pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                    - const: 00000000-0000-0000-0000-000000000000
-                      description: a UUID
-                      format: uuid
-                    - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                      description: a UUID
-                      format: uuid
-                    description: a UUID
-                    format: uuid
-                required:
-                - name
-                - threadId
-            - type: 'null'
-          verification:
-            anyOf:
-            - type: object
-              properties:
-                created:
-                  type: string
-                documentOrientation:
-                  anyOf:
-                  - type: number
-                    maximum: 9007199254740991
-                    minimum: -9007199254740991
-                  - type: 'null'
-                documentQualityScore:
-                  anyOf:
-                  - type: number
-                    maximum: 9007199254740991
-                    minimum: -9007199254740991
-                  - type: 'null'
-                lineItems:
-                  anyOf:
-                  - type: number
-                  - type: object
-                  - type: string
-                  - type: boolean
-                  - type: 'null'
-                processingTime:
-                  anyOf:
-                  - type: number
-                    maximum: 9007199254740991
-                    minimum: -9007199254740991
-                  - type: 'null'
-                resId:
-                  type: string
-                  description: a RFC-4122-compliant UUID
-                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                result:
-                  anyOf:
-                  - type: string
-                  - type: 'null'
-                status:
-                  type: string
-                teamId:
-                  type: string
-                  description: a RFC-4122-compliant UUID
-                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                userId:
-                  type: string
-                  description: a RFC-4122-compliant UUID
-                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                version:
-                  type: integer
-                  maximum: 2147483647
-                  minimum: -2147483648
-              required:
-              - created
-              - documentOrientation
-              - documentQualityScore
-              - lineItems
-              - processingTime
-              - resId
-              - result
-              - status
-              - teamId
-              - userId
-              - version
-            - type: 'null'
-        required:
-        - archivedAt
-        - checksum
-        - createdAt
-        - createdBy
-        - filename
-        - imageUris
-        - isPrivate
-        - metadata
-        - mimeType
-        - name
-        - ownerId
-        - resId
-        - size
-        - status
-        - thumbnail
-        - transferId
-        - transferredAt
-        - type
-        - updatedAt
-        - url
-    ResourceUploadResponse:
       type: array
       items:
         type: object
@@ -4840,48 +4376,6 @@ components:
       - teamId
       - userId
       - version
-    ResourceUploadForm:
-      type: object
-      properties:
-        file: {}
-        expectedUpdatedAt:
-          type: string
-        fieldId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        isPrivate:
-          anyOf:
-          - enum:
-            - 'false'
-            - 'true'
-          - type: boolean
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-      required:
-      - file
     DocLineItem:
       type: object
       properties:
@@ -4935,28 +4429,12 @@ components:
       - description
       - status
       - title
-    UploadResourceRequest:
+    ResourceUploadForm:
       type: object
       properties:
-        filename:
+        file: {}
+        expectedUpdatedAt:
           type: string
-          minLength: 1
-        resId:
-          anyOf:
-          - type: string
-            description: temporary upload id returned by the TUS upload endpoint
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: temporary upload id returned by the TUS upload endpoint
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: temporary upload id returned by the TUS upload endpoint
-            format: uuid
-          description: temporary upload id returned by the TUS upload endpoint
-          format: uuid
-        size:
-          type: number
         fieldId:
           anyOf:
           - type: string
@@ -4977,10 +4455,532 @@ components:
             - 'false'
             - 'true'
           - type: boolean
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
       required:
-      - filename
-      - resId
-      - size
+      - file
+    ResourceUploadResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          archivedAt:
+            anyOf:
+            - type: string
+            - type: 'null'
+          checksum:
+            anyOf:
+            - type: string
+              maxLength: 64
+            - type: 'null'
+          createdAt:
+            type: string
+          createdBy:
+            type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          filename:
+            anyOf:
+            - type: string
+            - type: 'null'
+          imageUris:
+            anyOf:
+            - type: array
+              items:
+                type: string
+            - type: 'null'
+          isPrivate:
+            type: boolean
+          metadata:
+            anyOf:
+            - type: number
+            - type: object
+            - type: string
+            - type: boolean
+            - type: 'null'
+          mimeType:
+            anyOf:
+            - type: string
+            - type: 'null'
+          name:
+            anyOf:
+            - type: string
+            - type: 'null'
+          ownerId:
+            anyOf:
+            - type: string
+              description: a RFC-4122-compliant UUID
+              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+            - type: 'null'
+          resId:
+            type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          size:
+            anyOf:
+            - type: integer
+              maximum: 9007199254740991
+              minimum: -9007199254740991
+            - type: 'null'
+          status:
+            anyOf:
+            - type: string
+            - type: 'null'
+          thumbnail: {}
+          transferId:
+            anyOf:
+            - type: string
+              description: a RFC-4122-compliant UUID
+              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+            - type: 'null'
+          transferredAt:
+            anyOf:
+            - type: string
+            - type: 'null'
+          type:
+            anyOf:
+            - type: string
+            - type: 'null'
+          updatedAt:
+            type: string
+          url:
+            type: string
+          signatures:
+            anyOf:
+            - type: array
+              items:
+                type: object
+                properties:
+                  affiliation:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  authorization:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  date:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  name:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  resId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  signature:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  signatureHash:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  resource:
+                    type: object
+                    properties:
+                      archivedAt:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      bucket:
+                        type: string
+                      checksum:
+                        anyOf:
+                        - type: string
+                          maxLength: 64
+                        - type: 'null'
+                      createdAt:
+                        type: string
+                      createdBy:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      filename:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      imageUris:
+                        anyOf:
+                        - type: array
+                          items:
+                            type: string
+                        - type: 'null'
+                      isPrivate:
+                        type: boolean
+                      key:
+                        type: string
+                      metadata:
+                        anyOf:
+                        - type: number
+                        - type: object
+                        - type: string
+                        - type: boolean
+                        - type: 'null'
+                      mimeType:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      name:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      ownerId:
+                        anyOf:
+                        - type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        - type: 'null'
+                      resId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      size:
+                        anyOf:
+                        - type: integer
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        - type: 'null'
+                      status:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      thumbnail: {}
+                      transferId:
+                        anyOf:
+                        - type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        - type: 'null'
+                      transferredAt:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      type:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      updatedAt:
+                        type: string
+                    required:
+                    - archivedAt
+                    - bucket
+                    - checksum
+                    - createdAt
+                    - createdBy
+                    - filename
+                    - imageUris
+                    - isPrivate
+                    - key
+                    - metadata
+                    - mimeType
+                    - name
+                    - ownerId
+                    - resId
+                    - size
+                    - status
+                    - thumbnail
+                    - transferId
+                    - transferredAt
+                    - type
+                    - updatedAt
+                  thread:
+                    type: object
+                    properties:
+                      archivedAt:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      createdAt:
+                        type: string
+                      createdById:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      description:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      kind:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      labels:
+                        anyOf:
+                        - type: number
+                        - type: object
+                        - type: string
+                        - type: boolean
+                        - type: 'null'
+                      lifecycleStatus:
+                        type: string
+                      name:
+                        type: string
+                      ownerId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      processingLockedAt:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      processingOperationId:
+                        anyOf:
+                        - type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        - type: 'null'
+                      templateId:
+                        anyOf:
+                        - type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        - type: 'null'
+                      threadId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      thumbnail: {}
+                      thumbnailId:
+                        anyOf:
+                        - type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        - type: 'null'
+                      transferId:
+                        anyOf:
+                        - type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        - type: 'null'
+                      transferredAt:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      updatedAt:
+                        type: string
+                    required:
+                    - archivedAt
+                    - createdAt
+                    - createdById
+                    - description
+                    - kind
+                    - labels
+                    - lifecycleStatus
+                    - name
+                    - ownerId
+                    - processingLockedAt
+                    - processingOperationId
+                    - templateId
+                    - threadId
+                    - thumbnail
+                    - thumbnailId
+                    - transferId
+                    - transferredAt
+                    - updatedAt
+                  verification:
+                    type: object
+                    properties:
+                      created:
+                        type: string
+                      documentOrientation:
+                        anyOf:
+                        - type: number
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        - type: 'null'
+                      documentQualityScore:
+                        anyOf:
+                        - type: number
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        - type: 'null'
+                      lineItems:
+                        anyOf:
+                        - type: number
+                        - type: object
+                        - type: string
+                        - type: boolean
+                        - type: 'null'
+                      processingTime:
+                        anyOf:
+                        - type: number
+                          maximum: 9007199254740991
+                          minimum: -9007199254740991
+                        - type: 'null'
+                      resId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      result:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      status:
+                        type: string
+                      teamId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      userId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      version:
+                        type: integer
+                        maximum: 2147483647
+                        minimum: -2147483648
+                    required:
+                    - created
+                    - documentOrientation
+                    - documentQualityScore
+                    - lineItems
+                    - processingTime
+                    - resId
+                    - result
+                    - status
+                    - teamId
+                    - userId
+                    - version
+                required:
+                - affiliation
+                - authorization
+                - date
+                - name
+                - resId
+                - signature
+                - signatureHash
+            - type: 'null'
+          threads:
+            anyOf:
+            - type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  threadId:
+                    anyOf:
+                    - type: string
+                      description: a UUID
+                      format: uuid
+                      pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                    - const: 00000000-0000-0000-0000-000000000000
+                      description: a UUID
+                      format: uuid
+                    - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                      description: a UUID
+                      format: uuid
+                    description: a UUID
+                    format: uuid
+                required:
+                - name
+                - threadId
+            - type: 'null'
+          verification:
+            anyOf:
+            - type: object
+              properties:
+                created:
+                  type: string
+                documentOrientation:
+                  anyOf:
+                  - type: number
+                    maximum: 9007199254740991
+                    minimum: -9007199254740991
+                  - type: 'null'
+                documentQualityScore:
+                  anyOf:
+                  - type: number
+                    maximum: 9007199254740991
+                    minimum: -9007199254740991
+                  - type: 'null'
+                lineItems:
+                  anyOf:
+                  - type: number
+                  - type: object
+                  - type: string
+                  - type: boolean
+                  - type: 'null'
+                processingTime:
+                  anyOf:
+                  - type: number
+                    maximum: 9007199254740991
+                    minimum: -9007199254740991
+                  - type: 'null'
+                resId:
+                  type: string
+                  description: a RFC-4122-compliant UUID
+                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                result:
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                status:
+                  type: string
+                teamId:
+                  type: string
+                  description: a RFC-4122-compliant UUID
+                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                userId:
+                  type: string
+                  description: a RFC-4122-compliant UUID
+                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                version:
+                  type: integer
+                  maximum: 2147483647
+                  minimum: -2147483648
+              required:
+              - created
+              - documentOrientation
+              - documentQualityScore
+              - lineItems
+              - processingTime
+              - resId
+              - result
+              - status
+              - teamId
+              - userId
+              - version
+            - type: 'null'
+        required:
+        - archivedAt
+        - checksum
+        - createdAt
+        - createdBy
+        - filename
+        - imageUris
+        - isPrivate
+        - metadata
+        - mimeType
+        - name
+        - ownerId
+        - resId
+        - size
+        - status
+        - thumbnail
+        - transferId
+        - transferredAt
+        - type
+        - updatedAt
+        - url
   securitySchemes:
     Bearer:
       type: http

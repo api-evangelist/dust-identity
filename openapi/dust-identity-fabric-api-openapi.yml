@@ -2183,29 +2183,1452 @@ paths:
                 - status
 components:
   schemas:
-    FabricNotificationsResponse:
+    FabricLinkDisclosureEntry:
       type: object
       properties:
-        notifications:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricNotificationEntry'
+        assetId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        kind:
+          type: string
+        snapshot:
+          anyOf:
+          - type: object
+          - type: 'null'
+        status:
+          type: string
+        statusUpdatedAt:
+          type: string
       required:
-      - notifications
-    FabricLinkEventsResponse:
+      - assetId
+      - kind
+      - snapshot
+      - status
+      - statusUpdatedAt
+    ThreadFieldDefinitionLongText:
       type: object
       properties:
-        eventCursorOccurredAt:
+        name:
+          type: string
+        type:
+          const: long-text
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 7ce96e4f-38d0-4c7d-8bd3-3f735aa0a2d9
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
           anyOf:
           - type: string
           - type: 'null'
-        events:
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldDefinitionJson:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: object
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: f46e1465-eb29-4520-98af-b220e982e6e2
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+            description: a JSON string
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldText:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: text
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldTextValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldDateRange:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: date-range
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldDateRangeValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldDefinitionSelect:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: select
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 5744fc81-01ea-47ed-b407-a7416b54703e
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: object
+            properties:
+              options:
+                type: array
+                items:
+                  type: string
+              selected:
+                type: string
+            required:
+            - options
+            - selected
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    FabricLinkTimelineResponse:
+      type: object
+      properties:
+        revisions:
           type: array
           items:
-            $ref: '#/components/schemas/FabricDisclosedEvent'
+            $ref: '#/components/schemas/FabricLinkRevisionEntry'
+      required:
+      - revisions
+    ThreadFieldBoolean:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: boolean
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldBooleanValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    FabricDisclosurePushPreviewResponse:
+      type: object
+      properties:
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricDisclosurePushPreviewAsset'
+        chainVisibility:
+          const: visible_to_downstream_chain
+        currentCursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+        cursorAdvances:
+          type: boolean
+        eventCursorOccurredAt:
+          type: string
+        visibleEventGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricDisclosurePushPreviewGroup'
+      required:
+      - assets
+      - chainVisibility
+      - currentCursor
+      - cursorAdvances
+      - eventCursorOccurredAt
+      - visibleEventGroups
+    ThreadFieldTextValue:
+      type: object
+      properties:
+        text:
+          type: string
+      required:
+      - text
+    ThreadFieldNumberValue:
+      type: object
+      properties:
+        number:
+          type: number
+          maximum: 140737488355327
+          minimum: -140737488355328
+      required:
+      - number
+    ThreadFieldTagsValue:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+      required:
+      - tags
+    ThreadFieldUrl:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: url
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldUrlValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldResourceValue:
+      type: object
+      properties:
+        resId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+      required:
+      - resId
+    HideDisclosedAssetLocalCopyRequest:
+      type: object
+      properties:
+        datumId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        datumKind:
+          enum:
+          - certificate
+          - field
+          - resource
+          - tag
+          - thread
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - datumId
+      - datumKind
+    ThreadFieldDateValue:
+      type: object
+      properties:
+        date:
+          type: string
+      required:
+      - date
+    RejectFabricNotificationRequest:
+      type: object
+      properties:
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+    AdoptDisclosedAssetRequest:
+      type: object
+      properties:
+        datumId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        datumKind:
+          enum:
+          - certificate
+          - field
+          - resource
+          - tag
+          - thread
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - datumId
+      - datumKind
+    FabricCursorAdvanceRequest:
+      type: object
+      properties:
+        eventCursorOccurredAt:
+          type: string
+        reason:
+          type: string
       required:
       - eventCursorOccurredAt
-      - events
+      - reason
+    FabricDisclosurePushRequest:
+      type: object
+      properties:
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricDisclosureAssetRef'
+        eventCursorOccurredAt:
+          type: string
+        reason:
+          type: string
+          minLength: 1
+      required:
+      - assets
+      - eventCursorOccurredAt
+      - reason
+    ThreadFieldJsonValue:
+      type: object
+      properties:
+        json:
+          anyOf:
+          - type: number
+          - type: object
+          - type: string
+          - type: boolean
+          - type: 'null'
+      required:
+      - json
+    ThreadFieldEmailValue:
+      type: object
+      properties:
+        email:
+          type: string
+      required:
+      - email
+    FabricThreadVersionsResponse:
+      type: object
+      properties:
+        liveThreadAccess:
+          type: boolean
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricThreadVersion'
+      required:
+      - liveThreadAccess
+      - threadId
+      - versions
+    ThreadFieldDefinitionTags:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: tags
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: fa827b77-6f8f-4dcf-b7f9-77e702d9e133
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldDefinitionBoolean:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: boolean
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: b12119c2-cc44-4694-bce7-b533d24fa2a3
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldBooleanValue:
+      type: object
+      properties:
+        bool:
+          type: boolean
+      required:
+      - bool
+    FabricLinkAssemblyResponse:
+      type: object
+      properties:
+        assemblyThreadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        linkId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricLinkAssemblyPart'
+      required:
+      - assemblyThreadId
+      - linkId
+      - parts
+    ThreadFieldDatetime:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: date-time
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldDatetimeValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldUrlValue:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+      - url
+    FabricDisclosurePreviewRequest:
+      type: object
+      properties:
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricDisclosureAssetRef'
+      required:
+      - assets
+    ThreadFieldTimeValue:
+      type: object
+      properties:
+        time:
+          type: string
+      required:
+      - time
+    FabricGraphEdge:
+      type: object
+      properties:
+        derivationTime:
+          type: string
+        kind:
+          type: string
+        linkId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        operationId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        rootId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        sourceId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        sourceName:
+          type: string
+        sourceTeamId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        targetId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        targetTeamId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        sourceTeam:
+          $ref: '#/components/schemas/FabricTeamDisplay'
+        targetTeam:
+          $ref: '#/components/schemas/FabricTeamDisplay'
+      required:
+      - derivationTime
+      - kind
+      - linkId
+      - operationId
+      - rootId
+      - sourceId
+      - sourceName
+      - sourceTeamId
+      - targetId
+      - targetTeamId
+    FabricStateChangeReason:
+      type: object
+      properties:
+        createdAt:
+          type: string
+        fromState:
+          enum:
+          - abandoned
+          - canceled
+          - change_request
+          - completed
+          - draft
+          - failed_retryable
+          - processing
+          - rejected
+          - sent
+        id:
+          type: string
+        message:
+          type: string
+        toState:
+          enum:
+          - abandoned
+          - canceled
+          - change_request
+          - completed
+          - draft
+          - failed_retryable
+          - processing
+          - rejected
+          - sent
+        userEmail:
+          type: string
+        userId:
+          type: string
+        teamId:
+          anyOf:
+          - type: string
+          - type: 'null'
+        userAvatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+        userName:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - createdAt
+      - fromState
+      - id
+      - message
+      - toState
+      - userEmail
+      - userId
+    ThreadTemplateSpec:
+      type: array
+      items:
+        anyOf:
+        - $ref: '#/components/schemas/ThreadFieldDefinitionResource'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionBoolean'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionDate'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionDateRange'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionDatetime'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionDuration'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionEmail'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionLongText'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionNumber'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionJson'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionPhone'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionSelect'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionSelectMany'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionTags'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionText'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionTime'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionUrl'
+    FabricDisclosureChangeRequest:
+      type: object
+      properties:
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricDisclosureAssetRef'
+        reason:
+          type: string
+      required:
+      - assets
+      - reason
+    ThreadFieldDefinitionSelectMany:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: select-many
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 48c7ffbe-23b4-4f01-a457-140a4531b7e3
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: object
+            properties:
+              options:
+                type: array
+                items:
+                  type: string
+              selections:
+                anyOf:
+                - type: array
+                  items:
+                    type: string
+                - type: 'null'
+            required:
+            - options
+            - selections
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    FabricDecisionResponse:
+      type: object
+      properties:
+        decision:
+          type: object
+        notification:
+          anyOf:
+          - type: object
+          - type: 'null'
+        preview:
+          $ref: '#/components/schemas/FabricDecisionPreviewResponse'
+        outgoingDisclosureRedactionRequired:
+          type: boolean
+      required:
+      - decision
+      - notification
+      - preview
+    ThreadFieldDefinitionText:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: text
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: f61578f3-7867-4b10-b964-71be2cca90ec
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    FabricDisclosurePushResponse:
+      type: object
+      properties:
+        cursorAdvanced:
+          type: boolean
+        eventCursorOccurredAt:
+          type: string
+        pushedAssetCount:
+          type: number
+        revision:
+          type: object
+      required:
+      - cursorAdvanced
+      - eventCursorOccurredAt
+      - pushedAssetCount
+      - revision
+    FabricLinkSyncResponse:
+      type: object
+      properties:
+        consumerLinkId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricSyncRow'
+        sourceLinkId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        sourceName:
+          type: string
+        upstreamThreadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - consumerLinkId
+      - rows
+      - sourceLinkId
+      - sourceName
+      - upstreamThreadId
+    FabricTransferReceipt:
+      type: object
+      properties:
+        derivationTime:
+          type: string
+        kind:
+          const: transfer
+        linkId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        operationId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        rootId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        sourceId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        sourceName:
+          type: string
+        sourceTeamId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        targetTeamId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        sourceTeam:
+          $ref: '#/components/schemas/FabricTeamDisplay'
+        targetTeam:
+          $ref: '#/components/schemas/FabricTeamDisplay'
+      required:
+      - derivationTime
+      - kind
+      - linkId
+      - operationId
+      - rootId
+      - sourceId
+      - sourceName
+      - sourceTeamId
+      - targetTeamId
+    ThreadFieldThreadValue:
+      type: object
+      properties:
+        threadId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+      required:
+      - threadId
+    DismissFabricNotificationsRequest:
+      type: object
+      properties:
+        targetThreadIds:
+          type: array
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+      required:
+      - targetThreadIds
+    ThreadFieldDefinitionDatetime:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: date-time
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: e8358975-3c3d-4b07-84ab-5a9e4810f34c
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
     FabricGraphNode:
       type: object
       properties:
@@ -2302,380 +3725,169 @@ components:
       - threadId
       - thumbnail
       - versionCount
-    FabricCursorAdvanceRequest:
+    ThreadFieldDefinitionNumber:
       type: object
       properties:
+        name:
+          type: string
+        type:
+          const: number
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 88007de5-4857-4391-890f-0e22663116b9
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: number
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldDefinitionTime:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: time
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 88398b08-4bbe-4d51-98da-82bc2a63e7a1
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldNumber:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: number
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldNumberValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    FabricThreadVersion:
+      type: object
+      properties:
+        derivationTime:
+          type: string
+        disclosures:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricLinkDisclosureEntry'
         eventCursorOccurredAt:
-          type: string
-        reason:
-          type: string
-      required:
-      - eventCursorOccurredAt
-      - reason
-    FabricSyncRow:
-      type: object
-      properties:
-        actionable:
-          type: boolean
-        changes:
-          type: array
-          items:
-            type: object
-            properties:
-              after: {}
-              before: {}
-              path:
-                type: string
-            required:
-            - after
-            - before
-            - path
-        conflictCodes:
-          type: array
-          items:
-            type: string
-        conflicts:
-          type: array
-          items:
-            type: string
-        datum:
-          type: object
-          properties:
-            id:
-              anyOf:
-              - type: string
-                description: a UUID
-                format: uuid
-                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-              - const: 00000000-0000-0000-0000-000000000000
-                description: a UUID
-                format: uuid
-              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                description: a UUID
-                format: uuid
-              description: a UUID
-              format: uuid
-            kind:
-              type: string
-          required:
-          - id
-          - kind
-        decided:
-          anyOf:
-          - type: object
-            properties:
-              atCurrentRevision:
-                type: boolean
-              createdAt:
-                type: string
-              decision:
-                type: string
-              reason:
-                type: string
-              revisionId:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                - type: 'null'
-            required:
-            - atCurrentRevision
-            - createdAt
-            - decision
-            - reason
-            - revisionId
-          - type: 'null'
-        disclosedAt:
           anyOf:
           - type: string
           - type: 'null'
-        disclosureStatus:
+        kind:
           type: string
         linkId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        notificationId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          - type: 'null'
-        revisionId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          - type: 'null'
-        snapshot:
-          anyOf:
-          - type: object
-          - type: 'null'
-        status:
-          enum:
-          - accepted-locally-changed
-          - adoptable-new
-          - cert-review
-          - conflict
-          - declined
-          - hidden
-          - in-sync
-          - update-available
-          - withdrawn
-        target:
-          anyOf:
-          - type: object
-            properties:
-              assetId:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                description: a UUID
-                format: uuid
-              threadId:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                description: a UUID
-                format: uuid
-            required:
-            - assetId
-            - threadId
-          - type: 'null'
-        upstreamThreadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        adoption:
-          type: boolean
-        position:
-          anyOf:
-          - $ref: '#/components/schemas/FabricPositionResolution'
-          - type: 'null'
-      required:
-      - actionable
-      - changes
-      - conflictCodes
-      - conflicts
-      - datum
-      - decided
-      - disclosedAt
-      - disclosureStatus
-      - linkId
-      - notificationId
-      - revisionId
-      - snapshot
-      - status
-      - target
-      - upstreamThreadId
-    ThreadFieldDefinitionDuration:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: duration
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 43b8da40-adf9-499f-989d-79c6bfed671e
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-            pattern: ^P(\d+Y)?(\d+M)?(\d+D)?T(\d+H)?(\d+M)?(\d+S)?$
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldDateValue:
-      type: object
-      properties:
-        date:
-          type: string
-      required:
-      - date
-    FabricLinkAssemblyResponse:
-      type: object
-      properties:
-        assemblyThreadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        linkId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        parts:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricLinkAssemblyPart'
-      required:
-      - assemblyThreadId
-      - linkId
-      - parts
-    ThreadFieldDefinitionUrl:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: url
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 03cae506-0c80-40be-8225-6e4dd35139a7
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-            format: uri
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldTimeValue:
-      type: object
-      properties:
-        time:
-          type: string
-      required:
-      - time
-    FabricLinkSyncResponse:
-      type: object
-      properties:
-        consumerLinkId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        rows:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricSyncRow'
-        sourceLinkId:
           anyOf:
           - type: string
             description: a UUID
@@ -2691,7 +3903,7 @@ components:
           format: uuid
         sourceName:
           type: string
-        upstreamThreadId:
+        sourceThreadId:
           anyOf:
           - type: string
             description: a UUID
@@ -2705,12 +3917,172 @@ components:
             format: uuid
           description: a UUID
           format: uuid
+        targetThreadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        thread:
+          anyOf:
+          - $ref: '#/components/schemas/FabricThreadProfile'
+          - type: 'null'
       required:
-      - consumerLinkId
-      - rows
-      - sourceLinkId
+      - derivationTime
+      - disclosures
+      - eventCursorOccurredAt
+      - kind
+      - linkId
       - sourceName
-      - upstreamThreadId
+      - sourceThreadId
+      - targetThreadId
+      - thread
+    AdoptDisclosedAssetsRequest:
+      type: object
+      properties:
+        datums:
+          type: array
+          items:
+            type: object
+            properties:
+              datumId:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+              datumKind:
+                enum:
+                - certificate
+                - field
+                - resource
+                - tag
+                - thread
+            required:
+            - datumId
+            - datumKind
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - datums
+    FabricLinkEventsResponse:
+      type: object
+      properties:
+        eventCursorOccurredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricDisclosedEvent'
+      required:
+      - eventCursorOccurredAt
+      - events
+    FabricLinkResourceContentResponse:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+      - url
+    AcceptFabricNotificationRequest:
+      type: object
+      properties:
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+    ThreadFieldTags:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: tags
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldTagsValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
     FabricDisclosurePushPreviewEvent:
       type: object
       properties:
@@ -3482,649 +4854,100 @@ components:
       - userId
       - userOrgId
       - userTeamId
-    Resource:
+    FabricDisclosurePushPreviewGroup:
       type: object
       properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        bucket:
+        eventCount:
+          type: number
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricDisclosurePushPreviewEvent'
+        id:
           type: string
-        checksum:
-          anyOf:
-          - type: string
-            maxLength: 64
-          - type: 'null'
-        createdAt:
-          type: string
-        createdBy:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        filename:
-          anyOf:
-          - type: string
-          - type: 'null'
-        imageUris:
-          anyOf:
-          - type: array
-            items:
-              type: string
-          - type: 'null'
-        isPrivate:
+        kind:
+          enum:
+          - fabric_operation
+          - runner_operation
+        newlyVisible:
           type: boolean
-        key:
+        occurred:
           type: string
-        metadata:
-          anyOf:
-          - type: number
-          - type: object
-          - type: string
-          - type: boolean
-          - type: 'null'
-        mimeType:
-          anyOf:
-          - type: string
-          - type: 'null'
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        resId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        size:
-          anyOf:
-          - type: integer
-            maximum: 9007199254740991
-            minimum: -9007199254740991
-          - type: 'null'
-        status:
-          anyOf:
-          - type: string
-          - type: 'null'
-        thumbnail: {}
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          anyOf:
-          - type: string
-          - type: 'null'
-        updatedAt:
-          type: string
-        signatures:
-          anyOf:
-          - type: array
-            items:
-              type: object
-              properties:
-                affiliation:
-                  anyOf:
-                  - type: string
-                  - type: 'null'
-                authorization:
-                  anyOf:
-                  - type: string
-                  - type: 'null'
-                date:
-                  anyOf:
-                  - type: string
-                  - type: 'null'
-                name:
-                  anyOf:
-                  - type: string
-                  - type: 'null'
-                resId:
-                  type: string
-                  description: a RFC-4122-compliant UUID
-                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                signature:
-                  anyOf:
-                  - type: string
-                  - type: 'null'
-                signatureHash:
-                  anyOf:
-                  - type: string
-                  - type: 'null'
-                resource:
-                  type: object
-                  properties:
-                    archivedAt:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    bucket:
-                      type: string
-                    checksum:
-                      anyOf:
-                      - type: string
-                        maxLength: 64
-                      - type: 'null'
-                    createdAt:
-                      type: string
-                    createdBy:
-                      type: string
-                      description: a RFC-4122-compliant UUID
-                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                    filename:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    imageUris:
-                      anyOf:
-                      - type: array
-                        items:
-                          type: string
-                      - type: 'null'
-                    isPrivate:
-                      type: boolean
-                    key:
-                      type: string
-                    metadata:
-                      anyOf:
-                      - type: number
-                      - type: object
-                      - type: string
-                      - type: boolean
-                      - type: 'null'
-                    mimeType:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    name:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    ownerId:
-                      anyOf:
-                      - type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      - type: 'null'
-                    resId:
-                      type: string
-                      description: a RFC-4122-compliant UUID
-                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                    size:
-                      anyOf:
-                      - type: integer
-                        maximum: 9007199254740991
-                        minimum: -9007199254740991
-                      - type: 'null'
-                    status:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    thumbnail: {}
-                    transferId:
-                      anyOf:
-                      - type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      - type: 'null'
-                    transferredAt:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    type:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    updatedAt:
-                      type: string
-                  required:
-                  - archivedAt
-                  - bucket
-                  - checksum
-                  - createdAt
-                  - createdBy
-                  - filename
-                  - imageUris
-                  - isPrivate
-                  - key
-                  - metadata
-                  - mimeType
-                  - name
-                  - ownerId
-                  - resId
-                  - size
-                  - status
-                  - thumbnail
-                  - transferId
-                  - transferredAt
-                  - type
-                  - updatedAt
-                thread:
-                  type: object
-                  properties:
-                    archivedAt:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    createdAt:
-                      type: string
-                    createdById:
-                      type: string
-                      description: a RFC-4122-compliant UUID
-                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                    description:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    kind:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    labels:
-                      anyOf:
-                      - type: number
-                      - type: object
-                      - type: string
-                      - type: boolean
-                      - type: 'null'
-                    lifecycleStatus:
-                      type: string
-                    name:
-                      type: string
-                    ownerId:
-                      type: string
-                      description: a RFC-4122-compliant UUID
-                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                    processingLockedAt:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    processingOperationId:
-                      anyOf:
-                      - type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      - type: 'null'
-                    templateId:
-                      anyOf:
-                      - type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      - type: 'null'
-                    threadId:
-                      type: string
-                      description: a RFC-4122-compliant UUID
-                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                    thumbnail: {}
-                    thumbnailId:
-                      anyOf:
-                      - type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      - type: 'null'
-                    transferId:
-                      anyOf:
-                      - type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      - type: 'null'
-                    transferredAt:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    updatedAt:
-                      type: string
-                  required:
-                  - archivedAt
-                  - createdAt
-                  - createdById
-                  - description
-                  - kind
-                  - labels
-                  - lifecycleStatus
-                  - name
-                  - ownerId
-                  - processingLockedAt
-                  - processingOperationId
-                  - templateId
-                  - threadId
-                  - thumbnail
-                  - thumbnailId
-                  - transferId
-                  - transferredAt
-                  - updatedAt
-                verification:
-                  type: object
-                  properties:
-                    created:
-                      type: string
-                    documentOrientation:
-                      anyOf:
-                      - type: number
-                        maximum: 9007199254740991
-                        minimum: -9007199254740991
-                      - type: 'null'
-                    documentQualityScore:
-                      anyOf:
-                      - type: number
-                        maximum: 9007199254740991
-                        minimum: -9007199254740991
-                      - type: 'null'
-                    lineItems:
-                      anyOf:
-                      - type: number
-                      - type: object
-                      - type: string
-                      - type: boolean
-                      - type: 'null'
-                    processingTime:
-                      anyOf:
-                      - type: number
-                        maximum: 9007199254740991
-                        minimum: -9007199254740991
-                      - type: 'null'
-                    resId:
-                      type: string
-                      description: a RFC-4122-compliant UUID
-                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                    result:
-                      anyOf:
-                      - type: string
-                      - type: 'null'
-                    status:
-                      type: string
-                    teamId:
-                      type: string
-                      description: a RFC-4122-compliant UUID
-                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                    userId:
-                      type: string
-                      description: a RFC-4122-compliant UUID
-                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                    version:
-                      type: integer
-                      maximum: 2147483647
-                      minimum: -2147483648
-                  required:
-                  - created
-                  - documentOrientation
-                  - documentQualityScore
-                  - lineItems
-                  - processingTime
-                  - resId
-                  - result
-                  - status
-                  - teamId
-                  - userId
-                  - version
-              required:
-              - affiliation
-              - authorization
-              - date
-              - name
-              - resId
-              - signature
-              - signatureHash
-          - type: 'null'
-        threads:
-          anyOf:
-          - type: array
-            items:
-              type: object
-              properties:
-                name:
-                  anyOf:
-                  - type: string
-                  - type: 'null'
-                threadId:
-                  anyOf:
-                  - type: string
-                    description: a UUID
-                    format: uuid
-                    pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                  - const: 00000000-0000-0000-0000-000000000000
-                    description: a UUID
-                    format: uuid
-                  - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                    description: a UUID
-                    format: uuid
-                  description: a UUID
-                  format: uuid
-              required:
-              - name
-              - threadId
-          - type: 'null'
-        verification:
-          anyOf:
-          - type: object
-            properties:
-              created:
-                type: string
-              documentOrientation:
-                anyOf:
-                - type: number
-                  maximum: 9007199254740991
-                  minimum: -9007199254740991
-                - type: 'null'
-              documentQualityScore:
-                anyOf:
-                - type: number
-                  maximum: 9007199254740991
-                  minimum: -9007199254740991
-                - type: 'null'
-              lineItems:
-                anyOf:
-                - type: number
-                - type: object
-                - type: string
-                - type: boolean
-                - type: 'null'
-              processingTime:
-                anyOf:
-                - type: number
-                  maximum: 9007199254740991
-                  minimum: -9007199254740991
-                - type: 'null'
-              resId:
-                type: string
-                description: a RFC-4122-compliant UUID
-                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-              result:
-                anyOf:
-                - type: string
-                - type: 'null'
-              status:
-                type: string
-              teamId:
-                type: string
-                description: a RFC-4122-compliant UUID
-                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-              userId:
-                type: string
-                description: a RFC-4122-compliant UUID
-                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-              version:
-                type: integer
-                maximum: 2147483647
-                minimum: -2147483648
-            required:
-            - created
-            - documentOrientation
-            - documentQualityScore
-            - lineItems
-            - processingTime
-            - resId
-            - result
-            - status
-            - teamId
-            - userId
-            - version
-          - type: 'null'
-      required:
-      - archivedAt
-      - bucket
-      - checksum
-      - createdAt
-      - createdBy
-      - filename
-      - imageUris
-      - isPrivate
-      - key
-      - metadata
-      - mimeType
-      - name
-      - ownerId
-      - resId
-      - size
-      - status
-      - thumbnail
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-    FabricDisclosurePreviewResponse:
-      type: object
-      properties:
-        chainVisibility:
-          const: visible_to_downstream_chain
-        datums:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricDisclosureAssetRef'
-      required:
-      - chainVisibility
-      - datums
-    AdoptDisclosedAssetsRequest:
-      type: object
-      properties:
-        datums:
-          type: array
-          items:
-            type: object
-            properties:
-              datumId:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                description: a UUID
-                format: uuid
-              datumKind:
-                enum:
-                - certificate
-                - field
-                - resource
-                - tag
-                - thread
-            required:
-            - datumId
-            - datumKind
-        reason:
+        title:
           anyOf:
           - type: string
           - type: 'null'
       required:
-      - datums
-    Principal:
+      - eventCount
+      - events
+      - id
+      - kind
+      - newlyVisible
+      - occurred
+    FabricDisclosurePushPreviewAsset:
       type: object
       properties:
-        avatar:
+        assetId:
           anyOf:
           - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        email:
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        disposition:
           anyOf:
-          - type: string
+          - const: new
+          - const: noop
+          - const: refresh
           - type: 'null'
-        emailVerified:
+        ineligibleReason:
           anyOf:
-          - type: boolean
-          - type: 'null'
-        familyName:
-          anyOf:
-          - type: string
+          - const: private_or_missing
+          - const: redacted
+          - const: removed
           - type: 'null'
         kind:
           enum:
-          - human
-          - service
-        name:
+          - field
+          - resource
+          - tag
+          - thread
+        label:
           anyOf:
           - type: string
           - type: 'null'
-        phone:
-          anyOf:
-          - type: string
-          - type: 'null'
-        profileId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        updatedAt:
-          type: string
-        userId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
+        status:
+          enum:
+          - eligible
+          - ineligible
       required:
-      - avatar
-      - createdAt
-      - email
-      - emailVerified
-      - familyName
+      - assetId
+      - disposition
+      - ineligibleReason
       - kind
-      - name
-      - phone
-      - profileId
-      - updatedAt
-      - userId
-    ThreadFieldDefinitionDatetime:
+      - label
+      - status
+    FabricCursorPreviewRequest:
+      type: object
+      properties:
+        eventCursorOccurredAt:
+          type: string
+      required:
+      - eventCursorOccurredAt
+    ThreadFieldDefinitionDuration:
       type: object
       properties:
         name:
           type: string
         type:
-          const: date-time
+          const: duration
         id:
           anyOf:
           - type: string
@@ -4139,7 +4962,7 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-          default: e8358975-3c3d-4b07-84ab-5a9e4810f34c
+          default: 43b8da40-adf9-499f-989d-79c6bfed671e
         isPrivate:
           type: boolean
           default: false
@@ -4149,22 +4972,63 @@ components:
         default:
           anyOf:
           - type: string
+            pattern: ^P(\d+Y)?(\d+M)?(\d+D)?T(\d+H)?(\d+M)?(\d+S)?$
           - type: 'null'
         description:
           type: string
       required:
       - name
       - type
-    FabricLinkAssemblyPart:
+    FabricCursorPreviewResponse:
       type: object
       properties:
-        isSubassembly:
-          type: boolean
-        name:
+        currentCursor:
           anyOf:
           - type: string
           - type: 'null'
-        parentAssemblyThreadId:
+        newlyVisible:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricDisclosedEvent'
+      required:
+      - currentCursor
+      - newlyVisible
+    ThreadFieldDatetimeValue:
+      type: object
+      properties:
+        datetime:
+          type: string
+      required:
+      - datetime
+    FabricNotificationsResponse:
+      type: object
+      properties:
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricNotificationEntry'
+      required:
+      - notifications
+    ThreadFieldSelectValue:
+      type: object
+      properties:
+        options:
+          type: array
+          items:
+            type: string
+        selected:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - options
+      - selected
+    FabricLinkRevisionEntry:
+      type: object
+      properties:
+        createdAt:
+          type: string
+        createdById:
           anyOf:
           - type: string
             description: a UUID
@@ -4177,12 +5041,15 @@ components:
             description: a UUID
             format: uuid
           - type: 'null'
-        relation:
+        disclosures:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricLinkDisclosureEntry'
+        eventCursorOccurredAt:
           anyOf:
-          - const: default
-          - const: private
+          - type: string
           - type: 'null'
-        threadId:
+        id:
           anyOf:
           - type: string
             description: a UUID
@@ -4196,13 +5063,24 @@ components:
             format: uuid
           description: a UUID
           format: uuid
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+        sourceName:
+          type: string
+        type:
+          type: string
       required:
-      - isSubassembly
-      - name
-      - parentAssemblyThreadId
-      - relation
-      - threadId
-    ThreadFieldUrl:
+      - createdAt
+      - createdById
+      - disclosures
+      - eventCursorOccurredAt
+      - id
+      - reason
+      - sourceName
+      - type
+    ThreadFieldSelectMany:
       type: object
       properties:
         archivedAt:
@@ -4252,12 +5130,12 @@ components:
           - type: string
           - type: 'null'
         type:
-          const: url
+          const: select-many
         updatedAt:
           type: string
         value:
           anyOf:
-          - $ref: '#/components/schemas/ThreadFieldUrlValue'
+          - $ref: '#/components/schemas/ThreadFieldSelectManyValue'
           - type: 'null'
       required:
       - archivedAt
@@ -4275,111 +5153,16 @@ components:
       - type
       - updatedAt
       - value
-    FabricDisclosurePushResponse:
+    ThreadFieldDateRangeValue:
       type: object
       properties:
-        cursorAdvanced:
-          type: boolean
-        eventCursorOccurredAt:
+        from:
           type: string
-        pushedAssetCount:
-          type: number
-        revision:
-          type: object
-      required:
-      - cursorAdvanced
-      - eventCursorOccurredAt
-      - pushedAssetCount
-      - revision
-    ThreadFieldDefinitionJson:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: object
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: f46e1465-eb29-4520-98af-b220e982e6e2
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-            description: a JSON string
-          - type: 'null'
-        description:
+        to:
           type: string
       required:
-      - name
-      - type
-    ThreadFieldDefinitionTime:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: time
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 88398b08-4bbe-4d51-98da-82bc2a63e7a1
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    FabricCursorPreviewResponse:
-      type: object
-      properties:
-        currentCursor:
-          anyOf:
-          - type: string
-          - type: 'null'
-        newlyVisible:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricDisclosedEvent'
-      required:
-      - currentCursor
-      - newlyVisible
+      - from
+      - to
     FabricTeamDisplay:
       type: object
       properties:
@@ -4415,28 +5198,109 @@ components:
           - type: 'null'
       required:
       - teamId
-    ThreadFieldSelectValue:
+    FabricSourceThreadContextResponse:
       type: object
       properties:
-        options:
+        disclosures:
           type: array
           items:
-            type: string
-        selected:
+            $ref: '#/components/schemas/FabricLinkDisclosureEntry'
+        eventCursorOccurredAt:
           anyOf:
           - type: string
           - type: 'null'
+        thread:
+          $ref: '#/components/schemas/FabricSourceThreadContextThread'
       required:
-      - options
-      - selected
-    ThreadFieldDefinitionSelect:
+      - disclosures
+      - eventCursorOccurredAt
+      - thread
+    ThreadFieldDate:
       type: object
       properties:
-        name:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
           type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
         type:
-          const: select
-        id:
+          const: date
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldDateValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldDurationValue:
+      type: object
+      properties:
+        duration:
+          type: string
+      required:
+      - duration
+    FabricSourceThreadContextThread:
+      type: object
+      properties:
+        sourceName:
+          type: string
+        sourceTeamId:
           anyOf:
           - type: string
             description: a UUID
@@ -4450,40 +5314,7 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-          default: 5744fc81-01ea-47ed-b407-a7416b54703e
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: object
-            properties:
-              options:
-                type: array
-                items:
-                  type: string
-              selected:
-                type: string
-            required:
-            - options
-            - selected
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldDefinitionSelectMany:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: select-many
-        id:
+        threadId:
           anyOf:
           - type: string
             description: a UUID
@@ -4497,36 +5328,10 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-          default: 48c7ffbe-23b4-4f01-a457-140a4531b7e3
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: object
-            properties:
-              options:
-                type: array
-                items:
-                  type: string
-              selections:
-                anyOf:
-                - type: array
-                  items:
-                    type: string
-                - type: 'null'
-            required:
-            - options
-            - selections
-          - type: 'null'
-        description:
-          type: string
       required:
-      - name
-      - type
+      - sourceName
+      - sourceTeamId
+      - threadId
     FabricDecisionPreviewResponse:
       type: object
       properties:
@@ -4684,7 +5489,7 @@ components:
       - snapshot
       - target
       - upstreamThreadId
-    ThreadFieldTime:
+    ThreadFieldEmail:
       type: object
       properties:
         archivedAt:
@@ -4734,12 +5539,12 @@ components:
           - type: string
           - type: 'null'
         type:
-          const: time
+          const: email
         updatedAt:
           type: string
         value:
           anyOf:
-          - $ref: '#/components/schemas/ThreadFieldTimeValue'
+          - $ref: '#/components/schemas/ThreadFieldEmailValue'
           - type: 'null'
       required:
       - archivedAt
@@ -4757,13 +5562,163 @@ components:
       - type
       - updatedAt
       - value
-    DismissFabricNotificationsResponse:
+    ThreadTemplate:
       type: object
       properties:
-        dismissed:
+        createdAt:
+          type: string
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        image: {}
+        name:
+          type: string
+        ownerId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        slug:
+          type: string
+        spec:
+          $ref: '#/components/schemas/ThreadTemplateSpec'
+        templateId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        updatedAt:
+          type: string
+        owner:
+          type: object
+          properties:
+            createdAt:
+              type: string
+            description:
+              anyOf:
+              - type: string
+              - type: 'null'
+            detail:
+              anyOf:
+              - type: string
+              - type: 'null'
+            logo:
+              anyOf:
+              - type: string
+              - type: 'null'
+            name:
+              anyOf:
+              - type: string
+              - type: 'null'
+            orgId:
+              type: string
+              description: a RFC-4122-compliant UUID
+              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+            teamId:
+              type: string
+              description: a RFC-4122-compliant UUID
+              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+            updatedAt:
+              type: string
+            depth:
+              type: number
+            num_members:
+              type: number
+            org:
+              type: object
+              properties:
+                name:
+                  type: string
+                orgId:
+                  type: string
+              required:
+              - name
+              - orgId
+            path:
+              type: string
+          required:
+          - createdAt
+          - description
+          - detail
+          - logo
+          - name
+          - orgId
+          - teamId
+          - updatedAt
+        totalCount:
           type: number
       required:
-      - dismissed
+      - createdAt
+      - description
+      - image
+      - name
+      - ownerId
+      - slug
+      - spec
+      - templateId
+      - updatedAt
+    ThreadFieldDefinitionResource:
+      type: object
+      properties:
+        default:
+          type: 'null'
+        name:
+          type: string
+        type:
+          enum:
+          - audio
+          - doc
+          - file
+          - image
+          - pdf
+          - video
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 709f77e0-7134-4158-87b4-71f276af235a
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        description:
+          type: string
+      required:
+      - default
+      - name
+      - type
+    FabricThreadProfile:
+      type: object
+      properties:
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        thumbnail:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - description
+      - name
+      - thumbnail
     FabricDisclosedEvent:
       type: object
       properties:
@@ -5532,53 +6487,7 @@ components:
       - userId
       - userOrgId
       - userTeamId
-    FabricDisclosurePushPreviewGroup:
-      type: object
-      properties:
-        eventCount:
-          type: number
-        events:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricDisclosurePushPreviewEvent'
-        id:
-          type: string
-        kind:
-          enum:
-          - fabric_operation
-          - runner_operation
-        newlyVisible:
-          type: boolean
-        occurred:
-          type: string
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-      required:
-      - eventCount
-      - events
-      - id
-      - kind
-      - newlyVisible
-      - occurred
-    ThreadFieldTagsValue:
-      type: object
-      properties:
-        tags:
-          type: array
-          items:
-            type: string
-      required:
-      - tags
-    RejectFabricNotificationRequest:
-      type: object
-      properties:
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-    ThreadFieldDateRange:
+    ThreadFieldThread:
       type: object
       properties:
         archivedAt:
@@ -5628,12 +6537,12 @@ components:
           - type: string
           - type: 'null'
         type:
-          const: date-range
+          const: thread
         updatedAt:
           type: string
         value:
           anyOf:
-          - $ref: '#/components/schemas/ThreadFieldDateRangeValue'
+          - $ref: '#/components/schemas/ThreadFieldThreadValue'
           - type: 'null'
       required:
       - archivedAt
@@ -5651,78 +6560,7 @@ components:
       - type
       - updatedAt
       - value
-    ThreadTemplateSpec:
-      type: array
-      items:
-        anyOf:
-        - $ref: '#/components/schemas/ThreadFieldDefinitionResource'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionBoolean'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionDate'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionDateRange'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionDatetime'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionDuration'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionEmail'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionLongText'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionNumber'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionJson'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionPhone'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionSelect'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionSelectMany'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionTags'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionText'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionTime'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionUrl'
-    FabricDisclosurePushPreviewAsset:
-      type: object
-      properties:
-        assetId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        disposition:
-          anyOf:
-          - const: new
-          - const: noop
-          - const: refresh
-          - type: 'null'
-        ineligibleReason:
-          anyOf:
-          - const: private_or_missing
-          - const: redacted
-          - const: removed
-          - type: 'null'
-        kind:
-          enum:
-          - field
-          - resource
-          - tag
-          - thread
-        label:
-          anyOf:
-          - type: string
-          - type: 'null'
-        status:
-          enum:
-          - eligible
-          - ineligible
-      required:
-      - assetId
-      - disposition
-      - ineligibleReason
-      - kind
-      - label
-      - status
-    ThreadFieldPhone:
+    ThreadFieldResource:
       type: object
       properties:
         archivedAt:
@@ -5771,194 +6609,44 @@ components:
           anyOf:
           - type: string
           - type: 'null'
+        type:
+          enum:
+          - audio
+          - doc
+          - file
+          - image
+          - pdf
+          - video
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldResourceValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldDefinitionPhone:
+      type: object
+      properties:
+        name:
+          type: string
         type:
           const: phone
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldPhoneValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldDate:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: date
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldDateValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldText:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: text
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldTextValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldEmailValue:
-      type: object
-      properties:
-        email:
-          type: string
-      required:
-      - email
-    FabricLinkResourceContentResponse:
-      type: object
-      properties:
-        url:
-          type: string
-      required:
-      - url
-    AdoptDisclosedAssetRequest:
-      type: object
-      properties:
-        datumId:
+        id:
           anyOf:
           - type: string
             description: a UUID
@@ -5972,174 +6660,727 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-        datumKind:
-          enum:
-          - certificate
-          - field
-          - resource
-          - tag
-          - thread
-        reason:
+          default: 4f65f255-250b-4ffb-b8f5-64144d2c3ecf
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
           anyOf:
           - type: string
+            pattern: ^(?:\+?\d{1,4})?[-.\s]*?\(?\d{1,3}?\)?[-.\s]*?\d{1,4}[-.\s]*?\d{1,4}[-.\s]?\d{1,9}$
           - type: 'null'
+        description:
+          type: string
       required:
-      - datumId
-      - datumKind
-    ThreadTemplate:
+      - name
+      - type
+    ThreadFieldDefinitionEmail:
       type: object
       properties:
-        createdAt:
+        name:
           type: string
+        type:
+          const: email
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: d3974814-0222-45da-bc9e-dc241e802784
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+            pattern: ^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$
+            format: email
+          - type: 'null'
         description:
+          type: string
+      required:
+      - name
+      - type
+    Resource:
+      type: object
+      properties:
+        archivedAt:
           anyOf:
           - type: string
           - type: 'null'
-        image: {}
-        name:
+        bucket:
           type: string
+        checksum:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+        createdAt:
+          type: string
+        createdBy:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        filename:
+          anyOf:
+          - type: string
+          - type: 'null'
+        imageUris:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+        isPrivate:
+          type: boolean
+        key:
+          type: string
+        metadata:
+          anyOf:
+          - type: number
+          - type: object
+          - type: string
+          - type: boolean
+          - type: 'null'
+        mimeType:
+          anyOf:
+          - type: string
+          - type: 'null'
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
         ownerId:
           anyOf:
           - type: string
             description: a RFC-4122-compliant UUID
             pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
           - type: 'null'
-        slug:
-          type: string
-        spec:
-          $ref: '#/components/schemas/ThreadTemplateSpec'
-        templateId:
+        resId:
           type: string
           description: a RFC-4122-compliant UUID
           pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        size:
+          anyOf:
+          - type: integer
+            maximum: 9007199254740991
+            minimum: -9007199254740991
+          - type: 'null'
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+        thumbnail: {}
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
         updatedAt:
           type: string
-        owner:
-          type: object
-          properties:
-            createdAt:
-              type: string
-            description:
-              anyOf:
-              - type: string
-              - type: 'null'
-            detail:
-              anyOf:
-              - type: string
-              - type: 'null'
-            logo:
-              anyOf:
-              - type: string
-              - type: 'null'
-            name:
-              anyOf:
-              - type: string
-              - type: 'null'
-            orgId:
-              type: string
-              description: a RFC-4122-compliant UUID
-              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-            teamId:
-              type: string
-              description: a RFC-4122-compliant UUID
-              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-            updatedAt:
-              type: string
-            depth:
-              type: number
-            num_members:
-              type: number
-            org:
+        signatures:
+          anyOf:
+          - type: array
+            items:
+              type: object
+              properties:
+                affiliation:
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                authorization:
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                date:
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                name:
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                resId:
+                  type: string
+                  description: a RFC-4122-compliant UUID
+                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                signature:
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                signatureHash:
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                resource:
+                  type: object
+                  properties:
+                    archivedAt:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    bucket:
+                      type: string
+                    checksum:
+                      anyOf:
+                      - type: string
+                        maxLength: 64
+                      - type: 'null'
+                    createdAt:
+                      type: string
+                    createdBy:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    filename:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    imageUris:
+                      anyOf:
+                      - type: array
+                        items:
+                          type: string
+                      - type: 'null'
+                    isPrivate:
+                      type: boolean
+                    key:
+                      type: string
+                    metadata:
+                      anyOf:
+                      - type: number
+                      - type: object
+                      - type: string
+                      - type: boolean
+                      - type: 'null'
+                    mimeType:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    name:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    ownerId:
+                      anyOf:
+                      - type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      - type: 'null'
+                    resId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    size:
+                      anyOf:
+                      - type: integer
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                      - type: 'null'
+                    status:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    thumbnail: {}
+                    transferId:
+                      anyOf:
+                      - type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      - type: 'null'
+                    transferredAt:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    type:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    updatedAt:
+                      type: string
+                  required:
+                  - archivedAt
+                  - bucket
+                  - checksum
+                  - createdAt
+                  - createdBy
+                  - filename
+                  - imageUris
+                  - isPrivate
+                  - key
+                  - metadata
+                  - mimeType
+                  - name
+                  - ownerId
+                  - resId
+                  - size
+                  - status
+                  - thumbnail
+                  - transferId
+                  - transferredAt
+                  - type
+                  - updatedAt
+                thread:
+                  type: object
+                  properties:
+                    archivedAt:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    createdAt:
+                      type: string
+                    createdById:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    description:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    kind:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    labels:
+                      anyOf:
+                      - type: number
+                      - type: object
+                      - type: string
+                      - type: boolean
+                      - type: 'null'
+                    lifecycleStatus:
+                      type: string
+                    name:
+                      type: string
+                    ownerId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    processingLockedAt:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    processingOperationId:
+                      anyOf:
+                      - type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      - type: 'null'
+                    templateId:
+                      anyOf:
+                      - type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      - type: 'null'
+                    threadId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    thumbnail: {}
+                    thumbnailId:
+                      anyOf:
+                      - type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      - type: 'null'
+                    transferId:
+                      anyOf:
+                      - type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      - type: 'null'
+                    transferredAt:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    updatedAt:
+                      type: string
+                  required:
+                  - archivedAt
+                  - createdAt
+                  - createdById
+                  - description
+                  - kind
+                  - labels
+                  - lifecycleStatus
+                  - name
+                  - ownerId
+                  - processingLockedAt
+                  - processingOperationId
+                  - templateId
+                  - threadId
+                  - thumbnail
+                  - thumbnailId
+                  - transferId
+                  - transferredAt
+                  - updatedAt
+                verification:
+                  type: object
+                  properties:
+                    created:
+                      type: string
+                    documentOrientation:
+                      anyOf:
+                      - type: number
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                      - type: 'null'
+                    documentQualityScore:
+                      anyOf:
+                      - type: number
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                      - type: 'null'
+                    lineItems:
+                      anyOf:
+                      - type: number
+                      - type: object
+                      - type: string
+                      - type: boolean
+                      - type: 'null'
+                    processingTime:
+                      anyOf:
+                      - type: number
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                      - type: 'null'
+                    resId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    result:
+                      anyOf:
+                      - type: string
+                      - type: 'null'
+                    status:
+                      type: string
+                    teamId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    userId:
+                      type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    version:
+                      type: integer
+                      maximum: 2147483647
+                      minimum: -2147483648
+                  required:
+                  - created
+                  - documentOrientation
+                  - documentQualityScore
+                  - lineItems
+                  - processingTime
+                  - resId
+                  - result
+                  - status
+                  - teamId
+                  - userId
+                  - version
+              required:
+              - affiliation
+              - authorization
+              - date
+              - name
+              - resId
+              - signature
+              - signatureHash
+          - type: 'null'
+        threads:
+          anyOf:
+          - type: array
+            items:
               type: object
               properties:
                 name:
-                  type: string
-                orgId:
-                  type: string
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                threadId:
+                  anyOf:
+                  - type: string
+                    description: a UUID
+                    format: uuid
+                    pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                  - const: 00000000-0000-0000-0000-000000000000
+                    description: a UUID
+                    format: uuid
+                  - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                    description: a UUID
+                    format: uuid
+                  description: a UUID
+                  format: uuid
               required:
               - name
-              - orgId
-            path:
-              type: string
-          required:
-          - createdAt
-          - description
-          - detail
-          - logo
-          - name
-          - orgId
-          - teamId
-          - updatedAt
-        totalCount:
-          type: number
+              - threadId
+          - type: 'null'
+        verification:
+          anyOf:
+          - type: object
+            properties:
+              created:
+                type: string
+              documentOrientation:
+                anyOf:
+                - type: number
+                  maximum: 9007199254740991
+                  minimum: -9007199254740991
+                - type: 'null'
+              documentQualityScore:
+                anyOf:
+                - type: number
+                  maximum: 9007199254740991
+                  minimum: -9007199254740991
+                - type: 'null'
+              lineItems:
+                anyOf:
+                - type: number
+                - type: object
+                - type: string
+                - type: boolean
+                - type: 'null'
+              processingTime:
+                anyOf:
+                - type: number
+                  maximum: 9007199254740991
+                  minimum: -9007199254740991
+                - type: 'null'
+              resId:
+                type: string
+                description: a RFC-4122-compliant UUID
+                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+              result:
+                anyOf:
+                - type: string
+                - type: 'null'
+              status:
+                type: string
+              teamId:
+                type: string
+                description: a RFC-4122-compliant UUID
+                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+              userId:
+                type: string
+                description: a RFC-4122-compliant UUID
+                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+              version:
+                type: integer
+                maximum: 2147483647
+                minimum: -2147483648
+            required:
+            - created
+            - documentOrientation
+            - documentQualityScore
+            - lineItems
+            - processingTime
+            - resId
+            - result
+            - status
+            - teamId
+            - userId
+            - version
+          - type: 'null'
       required:
+      - archivedAt
+      - bucket
+      - checksum
       - createdAt
-      - description
-      - image
+      - createdBy
+      - filename
+      - imageUris
+      - isPrivate
+      - key
+      - metadata
+      - mimeType
       - name
       - ownerId
-      - slug
-      - spec
-      - templateId
+      - resId
+      - size
+      - status
+      - thumbnail
+      - transferId
+      - transferredAt
+      - type
       - updatedAt
-    ThreadFieldSelectManyValue:
+    ThreadFieldJson:
       type: object
       properties:
-        options:
-          type: array
-          items:
-            type: string
-        selections:
-          type: array
-          items:
-            type: string
-      required:
-      - options
-      - selections
-    ThreadFieldBooleanValue:
-      type: object
-      properties:
-        bool:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
           type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: object
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldJsonValue'
+          - type: 'null'
       required:
-      - bool
-    FabricDisclosurePreviewRequest:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    FabricRevisionMutationResponse:
+      type: object
+      properties:
+        notified:
+          type: number
+        revision:
+          type: object
+      required:
+      - notified
+      - revision
+    FabricLinkAssemblyPart:
+      type: object
+      properties:
+        isSubassembly:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        parentAssemblyThreadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        relation:
+          anyOf:
+          - const: default
+          - const: private
+          - type: 'null'
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - isSubassembly
+      - name
+      - parentAssemblyThreadId
+      - relation
+      - threadId
+    FabricDisclosurePushPreviewRequest:
       type: object
       properties:
         assets:
           type: array
           items:
             $ref: '#/components/schemas/FabricDisclosureAssetRef'
+        eventCursorOccurredAt:
+          type: string
+        excludeActionFilter:
+          type: string
       required:
       - assets
-    FabricDisclosureAssetRef:
+      - eventCursorOccurredAt
+    FabricAdoptBatchResponse:
       type: object
       properties:
-        assetId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        kind:
-          enum:
-          - certificate
-          - field
-          - resource
-          - tag
-          - thread
+        adopted:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricDecisionResponse'
       required:
-      - assetId
-      - kind
-    ThreadFieldDatetime:
+      - adopted
+    ThreadFieldSelect:
       type: object
       properties:
         archivedAt:
@@ -6189,12 +7430,12 @@ components:
           - type: string
           - type: 'null'
         type:
-          const: date-time
+          const: select
         updatedAt:
           type: string
         value:
           anyOf:
-          - $ref: '#/components/schemas/ThreadFieldDatetimeValue'
+          - $ref: '#/components/schemas/ThreadFieldSelectValue'
           - type: 'null'
       required:
       - archivedAt
@@ -6243,155 +7484,13 @@ components:
       required:
       - datumId
       - datumKind
-    FabricLinkDisclosureEntry:
-      type: object
-      properties:
-        assetId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        kind:
-          type: string
-        snapshot:
-          anyOf:
-          - type: object
-          - type: 'null'
-        status:
-          type: string
-        statusUpdatedAt:
-          type: string
-      required:
-      - assetId
-      - kind
-      - snapshot
-      - status
-      - statusUpdatedAt
-    ThreadFieldEmail:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: email
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldEmailValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    FabricSourceThreadContextResponse:
-      type: object
-      properties:
-        disclosures:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricLinkDisclosureEntry'
-        eventCursorOccurredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        thread:
-          $ref: '#/components/schemas/FabricSourceThreadContextThread'
-      required:
-      - disclosures
-      - eventCursorOccurredAt
-      - thread
-    FabricGraphResponse:
-      type: object
-      properties:
-        edges:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricGraphEdge'
-        nodes:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricGraphNode'
-        receipts:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricTransferReceipt'
-      required:
-      - edges
-      - nodes
-      - receipts
-    ThreadFieldDefinitionEmail:
+    ThreadFieldDefinitionDateRange:
       type: object
       properties:
         name:
           type: string
         type:
-          const: email
+          const: date-range
         id:
           anyOf:
           - type: string
@@ -6406,7 +7505,7 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-          default: d3974814-0222-45da-bc9e-dc241e802784
+          default: 778b2689-0293-403b-8036-366f1f6ef9b3
         isPrivate:
           type: boolean
           default: false
@@ -6415,137 +7514,38 @@ components:
           default: false
         default:
           anyOf:
-          - type: string
-            pattern: ^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$
-            format: email
+          - type: object
+            properties:
+              from:
+                type: string
+              to:
+                type: string
+            required:
+            - from
+            - to
           - type: 'null'
         description:
           type: string
       required:
       - name
       - type
-    FabricGraphEdge:
+    FabricLinkContextResponse:
       type: object
       properties:
-        derivationTime:
-          type: string
-        kind:
-          type: string
-        linkId:
+        disclosures:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricLinkDisclosureEntry'
+        eventCursorOccurredAt:
           anyOf:
           - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        operationId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        rootId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        sourceId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        sourceName:
-          type: string
-        sourceTeamId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        targetId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        targetTeamId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        sourceTeam:
-          $ref: '#/components/schemas/FabricTeamDisplay'
-        targetTeam:
-          $ref: '#/components/schemas/FabricTeamDisplay'
+          - type: 'null'
+        link:
+          $ref: '#/components/schemas/FabricGraphEdge'
       required:
-      - derivationTime
-      - kind
-      - linkId
-      - operationId
-      - rootId
-      - sourceId
-      - sourceName
-      - sourceTeamId
-      - targetId
-      - targetTeamId
+      - disclosures
+      - eventCursorOccurredAt
+      - link
     FabricNotificationEntry:
       type: object
       properties:
@@ -6662,812 +7662,187 @@ components:
       - targetThreadId
       - targetThreadName
       - upstreamThreadId
-    ThreadFieldJson:
+    FabricGraphResponse:
       type: object
       properties:
-        archivedAt:
+        edges:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricGraphEdge'
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricGraphNode'
+        receipts:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricTransferReceipt'
+      required:
+      - edges
+      - nodes
+      - receipts
+    DismissFabricNotificationsResponse:
+      type: object
+      properties:
+        dismissed:
+          type: number
+      required:
+      - dismissed
+    Principal:
+      type: object
+      properties:
+        avatar:
           anyOf:
           - type: string
           - type: 'null'
         createdAt:
           type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
+        email:
           anyOf:
           - type: string
           - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
+        emailVerified:
           anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: object
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldJsonValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    FabricDisclosurePushPreviewResponse:
-      type: object
-      properties:
-        assets:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricDisclosurePushPreviewAsset'
-        chainVisibility:
-          const: visible_to_downstream_chain
-        currentCursor:
-          anyOf:
-          - type: string
-          - type: 'null'
-        cursorAdvances:
-          type: boolean
-        eventCursorOccurredAt:
-          type: string
-        visibleEventGroups:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricDisclosurePushPreviewGroup'
-      required:
-      - assets
-      - chainVisibility
-      - currentCursor
-      - cursorAdvances
-      - eventCursorOccurredAt
-      - visibleEventGroups
-    ThreadFieldJsonValue:
-      type: object
-      properties:
-        json:
-          anyOf:
-          - type: number
-          - type: object
-          - type: string
           - type: boolean
           - type: 'null'
-      required:
-      - json
-    FabricThreadVersion:
-      type: object
-      properties:
-        derivationTime:
-          type: string
-        disclosures:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricLinkDisclosureEntry'
-        eventCursorOccurredAt:
+        familyName:
           anyOf:
           - type: string
           - type: 'null'
         kind:
-          type: string
-        linkId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        sourceName:
-          type: string
-        sourceThreadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        targetThreadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          - type: 'null'
-        thread:
-          anyOf:
-          - $ref: '#/components/schemas/FabricThreadProfile'
-          - type: 'null'
-      required:
-      - derivationTime
-      - disclosures
-      - eventCursorOccurredAt
-      - kind
-      - linkId
-      - sourceName
-      - sourceThreadId
-      - targetThreadId
-      - thread
-    DismissFabricNotificationsRequest:
-      type: object
-      properties:
-        targetThreadIds:
-          type: array
-          items:
-            anyOf:
-            - type: string
-              description: a UUID
-              format: uuid
-              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-            - const: 00000000-0000-0000-0000-000000000000
-              description: a UUID
-              format: uuid
-            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-              description: a UUID
-              format: uuid
-            description: a UUID
-            format: uuid
-      required:
-      - targetThreadIds
-    ThreadFieldDurationValue:
-      type: object
-      properties:
-        duration:
-          type: string
-      required:
-      - duration
-    FabricLinkContextResponse:
-      type: object
-      properties:
-        disclosures:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricLinkDisclosureEntry'
-        eventCursorOccurredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        link:
-          $ref: '#/components/schemas/FabricGraphEdge'
-      required:
-      - disclosures
-      - eventCursorOccurredAt
-      - link
-    HideDisclosedAssetLocalCopyRequest:
-      type: object
-      properties:
-        datumId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        datumKind:
           enum:
-          - certificate
-          - field
-          - resource
-          - tag
-          - thread
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-      required:
-      - datumId
-      - datumKind
-    ThreadFieldUrlValue:
-      type: object
-      properties:
-        url:
-          type: string
-      required:
-      - url
-    ThreadFieldDefinitionResource:
-      type: object
-      properties:
-        default:
-          type: 'null'
-        name:
-          type: string
-        type:
-          enum:
-          - audio
-          - doc
-          - file
-          - image
-          - pdf
-          - video
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 709f77e0-7134-4158-87b4-71f276af235a
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        description:
-          type: string
-      required:
-      - default
-      - name
-      - type
-    FabricSourceThreadContextThread:
-      type: object
-      properties:
-        sourceName:
-          type: string
-        sourceTeamId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-      required:
-      - sourceName
-      - sourceTeamId
-      - threadId
-    FabricRevisionMutationResponse:
-      type: object
-      properties:
-        notified:
-          type: number
-        revision:
-          type: object
-      required:
-      - notified
-      - revision
-    ThreadFieldBoolean:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
+          - human
+          - service
         name:
           anyOf:
           - type: string
           - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
+        phone:
           anyOf:
           - type: string
           - type: 'null'
-        type:
-          const: boolean
+        profileId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
         updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldBooleanValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldNumber:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: number
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldNumberValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    FabricDisclosurePushRequest:
-      type: object
-      properties:
-        assets:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricDisclosureAssetRef'
-        eventCursorOccurredAt:
-          type: string
-        reason:
-          type: string
-          minLength: 1
-      required:
-      - assets
-      - eventCursorOccurredAt
-      - reason
-    ThreadFieldThread:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: thread
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldThreadValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    FabricStateChangeReason:
-      type: object
-      properties:
-        createdAt:
-          type: string
-        fromState:
-          enum:
-          - abandoned
-          - canceled
-          - change_request
-          - completed
-          - draft
-          - failed_retryable
-          - processing
-          - rejected
-          - sent
-        id:
-          type: string
-        message:
-          type: string
-        toState:
-          enum:
-          - abandoned
-          - canceled
-          - change_request
-          - completed
-          - draft
-          - failed_retryable
-          - processing
-          - rejected
-          - sent
-        userEmail:
           type: string
         userId:
-          type: string
-        teamId:
           anyOf:
           - type: string
-          - type: 'null'
-        userAvatar:
-          anyOf:
-          - type: string
-          - type: 'null'
-        userName:
-          anyOf:
-          - type: string
-          - type: 'null'
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
       required:
+      - avatar
       - createdAt
-      - fromState
-      - id
-      - message
-      - toState
-      - userEmail
-      - userId
-    FabricCursorPreviewRequest:
-      type: object
-      properties:
-        eventCursorOccurredAt:
-          type: string
-      required:
-      - eventCursorOccurredAt
-    ThreadFieldDatetimeValue:
-      type: object
-      properties:
-        datetime:
-          type: string
-      required:
-      - datetime
-    FabricPositionResolution:
-      type: object
-      properties:
-        attachRequired:
-          type: boolean
-        resolvedName:
-          anyOf:
-          - type: string
-          - type: 'null'
-        resolvedThreadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          - type: 'null'
-        upstreamThreadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-      required:
-      - attachRequired
-      - resolvedName
-      - resolvedThreadId
-      - upstreamThreadId
-    AcceptFabricNotificationRequest:
-      type: object
-      properties:
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-    FabricThreadVersionsResponse:
-      type: object
-      properties:
-        liveThreadAccess:
-          type: boolean
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        versions:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricThreadVersion'
-      required:
-      - liveThreadAccess
-      - threadId
-      - versions
-    ThreadFieldPhoneValue:
-      type: object
-      properties:
-        phone:
-          type: string
-      required:
+      - email
+      - emailVerified
+      - familyName
+      - kind
+      - name
       - phone
-    ThreadFieldDefinitionLongText:
+      - profileId
+      - updatedAt
+      - userId
+    ThreadFieldPhone:
       type: object
       properties:
-        name:
-          type: string
-        type:
-          const: long-text
-        id:
+        archivedAt:
           anyOf:
           - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 7ce96e4f-38d0-4c7d-8bd3-3f735aa0a2d9
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
         isPrivate:
           type: boolean
-          default: false
         isRequired:
           type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    FabricThreadProfile:
-      type: object
-      properties:
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
         name:
           anyOf:
           - type: string
           - type: 'null'
-        thumbnail:
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
           anyOf:
           - type: string
           - type: 'null'
+        type:
+          const: phone
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldPhoneValue'
+          - type: 'null'
       required:
+      - archivedAt
+      - createdAt
+      - defId
       - description
+      - fieldId
+      - isPrivate
+      - isRequired
       - name
-      - thumbnail
-    ThreadFieldDefinitionNumber:
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldDefinitionDate:
       type: object
       properties:
         name:
           type: string
         type:
-          const: number
+          const: date
         id:
           anyOf:
           - type: string
@@ -7482,7 +7857,7 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-          default: 88007de5-4857-4391-890f-0e22663116b9
+          default: 386ff857-2e20-41e6-b97f-6a626481fa89
         isPrivate:
           type: boolean
           default: false
@@ -7491,7 +7866,7 @@ components:
           default: false
         default:
           anyOf:
-          - type: number
+          - type: string
           - type: 'null'
         description:
           type: string
@@ -7571,14 +7946,10 @@ components:
       - type
       - updatedAt
       - value
-    ThreadFieldDefinitionBoolean:
+    FabricDisclosureAssetRef:
       type: object
       properties:
-        name:
-          type: string
-        type:
-          const: boolean
-        id:
+        assetId:
           anyOf:
           - type: string
             description: a UUID
@@ -7592,23 +7963,36 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-          default: b12119c2-cc44-4694-bce7-b533d24fa2a3
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-        description:
+        kind:
+          enum:
+          - certificate
+          - field
+          - resource
+          - tag
+          - thread
+      required:
+      - assetId
+      - kind
+    ThreadFieldPhoneValue:
+      type: object
+      properties:
+        phone:
           type: string
       required:
-      - name
-      - type
-    ThreadFieldSelect:
+      - phone
+    FabricDisclosurePreviewResponse:
+      type: object
+      properties:
+        chainVisibility:
+          const: visible_to_downstream_chain
+        datums:
+          type: array
+          items:
+            $ref: '#/components/schemas/FabricDisclosureAssetRef'
+      required:
+      - chainVisibility
+      - datums
+    ThreadFieldTime:
       type: object
       properties:
         archivedAt:
@@ -7658,12 +8042,12 @@ components:
           - type: string
           - type: 'null'
         type:
-          const: select
+          const: time
         updatedAt:
           type: string
         value:
           anyOf:
-          - $ref: '#/components/schemas/ThreadFieldSelectValue'
+          - $ref: '#/components/schemas/ThreadFieldTimeValue'
           - type: 'null'
       required:
       - archivedAt
@@ -7681,13 +8065,13 @@ components:
       - type
       - updatedAt
       - value
-    ThreadFieldDefinitionPhone:
+    ThreadFieldDefinitionUrl:
       type: object
       properties:
         name:
           type: string
         type:
-          const: phone
+          const: url
         id:
           anyOf:
           - type: string
@@ -7702,7 +8086,7 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-          default: 4f65f255-250b-4ffb-b8f5-64144d2c3ecf
+          default: 03cae506-0c80-40be-8225-6e4dd35139a7
         isPrivate:
           type: boolean
           default: false
@@ -7712,92 +8096,99 @@ components:
         default:
           anyOf:
           - type: string
-            pattern: ^(?:\+?\d{1,4})?[-.\s]*?\(?\d{1,3}?\)?[-.\s]*?\d{1,4}[-.\s]*?\d{1,4}[-.\s]?\d{1,9}$
+            format: uri
           - type: 'null'
         description:
           type: string
       required:
       - name
       - type
-    ThreadFieldTextValue:
+    FabricSyncRow:
       type: object
       properties:
-        text:
-          type: string
-      required:
-      - text
-    ThreadFieldDateRangeValue:
-      type: object
-      properties:
-        from:
-          type: string
-        to:
-          type: string
-      required:
-      - from
-      - to
-    FabricAdoptBatchResponse:
-      type: object
-      properties:
-        adopted:
+        actionable:
+          type: boolean
+        changes:
           type: array
           items:
-            $ref: '#/components/schemas/FabricDecisionResponse'
-      required:
-      - adopted
-    ThreadFieldResourceValue:
-      type: object
-      properties:
-        resId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-      required:
-      - resId
-    ThreadFieldDefinitionDate:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: date
-        id:
+            type: object
+            properties:
+              after: {}
+              before: {}
+              path:
+                type: string
+            required:
+            - after
+            - before
+            - path
+        conflictCodes:
+          type: array
+          items:
+            type: string
+        conflicts:
+          type: array
+          items:
+            type: string
+        datum:
+          type: object
+          properties:
+            id:
+              anyOf:
+              - type: string
+                description: a UUID
+                format: uuid
+                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+              - const: 00000000-0000-0000-0000-000000000000
+                description: a UUID
+                format: uuid
+              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                description: a UUID
+                format: uuid
+              description: a UUID
+              format: uuid
+            kind:
+              type: string
+          required:
+          - id
+          - kind
+        decided:
           anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 386ff857-2e20-41e6-b97f-6a626481fa89
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
+          - type: object
+            properties:
+              atCurrentRevision:
+                type: boolean
+              createdAt:
+                type: string
+              decision:
+                type: string
+              reason:
+                type: string
+              revisionId:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                - type: 'null'
+            required:
+            - atCurrentRevision
+            - createdAt
+            - decision
+            - reason
+            - revisionId
+          - type: 'null'
+        disclosedAt:
           anyOf:
           - type: string
           - type: 'null'
-        description:
+        disclosureStatus:
           type: string
-      required:
-      - name
-      - type
-    FabricTransferReceipt:
-      type: object
-      properties:
-        derivationTime:
-          type: string
-        kind:
-          const: transfer
         linkId:
           anyOf:
           - type: string
@@ -7812,7 +8203,84 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-        operationId:
+        notificationId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        revisionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        snapshot:
+          anyOf:
+          - type: object
+          - type: 'null'
+        status:
+          enum:
+          - accepted-locally-changed
+          - adoptable-new
+          - cert-review
+          - conflict
+          - declined
+          - hidden
+          - in-sync
+          - update-available
+          - withdrawn
+        target:
+          anyOf:
+          - type: object
+            properties:
+              assetId:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+              threadId:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+            required:
+            - assetId
+            - threadId
+          - type: 'null'
+        upstreamThreadId:
           anyOf:
           - type: string
             description: a UUID
@@ -7826,78 +8294,28 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-        rootId:
+        adoption:
+          type: boolean
+        position:
           anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        sourceId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        sourceName:
-          type: string
-        sourceTeamId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        targetTeamId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        sourceTeam:
-          $ref: '#/components/schemas/FabricTeamDisplay'
-        targetTeam:
-          $ref: '#/components/schemas/FabricTeamDisplay'
+          - $ref: '#/components/schemas/FabricPositionResolution'
+          - type: 'null'
       required:
-      - derivationTime
-      - kind
+      - actionable
+      - changes
+      - conflictCodes
+      - conflicts
+      - datum
+      - decided
+      - disclosedAt
+      - disclosureStatus
       - linkId
-      - operationId
-      - rootId
-      - sourceId
-      - sourceName
-      - sourceTeamId
-      - targetTeamId
+      - notificationId
+      - revisionId
+      - snapshot
+      - status
+      - target
+      - upstreamThreadId
     ThreadFieldDuration:
       type: object
       properties:
@@ -7971,56 +8389,16 @@ components:
       - type
       - updatedAt
       - value
-    FabricDisclosurePushPreviewRequest:
+    FabricPositionResolution:
       type: object
       properties:
-        assets:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricDisclosureAssetRef'
-        eventCursorOccurredAt:
-          type: string
-        excludeActionFilter:
-          type: string
-      required:
-      - assets
-      - eventCursorOccurredAt
-    FabricDisclosureChangeRequest:
-      type: object
-      properties:
-        assets:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricDisclosureAssetRef'
-        reason:
-          type: string
-      required:
-      - assets
-      - reason
-    ThreadFieldThreadValue:
-      type: object
-      properties:
-        threadId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-      required:
-      - threadId
-    ThreadFieldNumberValue:
-      type: object
-      properties:
-        number:
-          type: number
-          maximum: 140737488355327
-          minimum: -140737488355328
-      required:
-      - number
-    FabricLinkRevisionEntry:
-      type: object
-      properties:
-        createdAt:
-          type: string
-        createdById:
+        attachRequired:
+          type: boolean
+        resolvedName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        resolvedThreadId:
           anyOf:
           - type: string
             description: a UUID
@@ -8033,15 +8411,7 @@ components:
             description: a UUID
             format: uuid
           - type: 'null'
-        disclosures:
-          type: array
-          items:
-            $ref: '#/components/schemas/FabricLinkDisclosureEntry'
-        eventCursorOccurredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        id:
+        upstreamThreadId:
           anyOf:
           - type: string
             description: a UUID
@@ -8055,395 +8425,25 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-        sourceName:
-          type: string
-        type:
-          type: string
       required:
-      - createdAt
-      - createdById
-      - disclosures
-      - eventCursorOccurredAt
-      - id
-      - reason
-      - sourceName
-      - type
-    ThreadFieldDefinitionTags:
+      - attachRequired
+      - resolvedName
+      - resolvedThreadId
+      - upstreamThreadId
+    ThreadFieldSelectManyValue:
       type: object
       properties:
-        name:
-          type: string
-        type:
-          const: tags
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: fa827b77-6f8f-4dcf-b7f9-77e702d9e133
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: array
-            items:
-              type: string
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    FabricDecisionResponse:
-      type: object
-      properties:
-        decision:
-          type: object
-        notification:
-          anyOf:
-          - type: object
-          - type: 'null'
-        preview:
-          $ref: '#/components/schemas/FabricDecisionPreviewResponse'
-        outgoingDisclosureRedactionRequired:
-          type: boolean
-      required:
-      - decision
-      - notification
-      - preview
-    ThreadFieldResource:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          enum:
-          - audio
-          - doc
-          - file
-          - image
-          - pdf
-          - video
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldResourceValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldSelectMany:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: select-many
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldSelectManyValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldDefinitionDateRange:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: date-range
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 778b2689-0293-403b-8036-366f1f6ef9b3
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: object
-            properties:
-              from:
-                type: string
-              to:
-                type: string
-            required:
-            - from
-            - to
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldTags:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: tags
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldTagsValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    FabricLinkTimelineResponse:
-      type: object
-      properties:
-        revisions:
+        options:
           type: array
           items:
-            $ref: '#/components/schemas/FabricLinkRevisionEntry'
+            type: string
+        selections:
+          type: array
+          items:
+            type: string
       required:
-      - revisions
-    ThreadFieldDefinitionText:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: text
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: f61578f3-7867-4b10-b964-71be2cca90ec
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
+      - options
+      - selections
   securitySchemes:
     Bearer:
       type: http

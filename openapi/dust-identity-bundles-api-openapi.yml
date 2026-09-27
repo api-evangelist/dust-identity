@@ -1122,84 +1122,15 @@ paths:
                 - status
 components:
   schemas:
-    BundleCreateRequest:
+    BundleChildrenResponse:
       type: object
       properties:
-        name:
-          type: string
-          minLength: 1
-        childOfId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        kind:
-          enum:
-          - category
-          - folder
-      required:
-      - name
-    BundleSetParentRequest:
-      type: object
-      properties:
-        bundleIds:
+        bundles:
           type: array
           items:
-            anyOf:
-            - type: string
-              description: a UUID
-              format: uuid
-              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-            - const: 00000000-0000-0000-0000-000000000000
-              description: a UUID
-              format: uuid
-            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-              description: a UUID
-              format: uuid
-            description: a UUID
-            format: uuid
-        parentId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          - type: 'null'
+            $ref: '#/components/schemas/BundleResponse'
       required:
-      - bundleIds
-      - parentId
-    BundleCountResponse:
-      type: object
-      properties:
-        total:
-          type: number
-      required:
-      - total
-    BundleUpdateResponse:
-      type: object
-      properties:
-        updated:
-          $ref: '#/components/schemas/BundleResponse'
-      required:
-      - updated
+      - bundles
     BundleCreateResponse:
       type: object
       properties:
@@ -1207,6 +1138,15 @@ components:
           $ref: '#/components/schemas/BundleResponse'
       required:
       - created
+    BundleSetParentResponse:
+      type: object
+      properties:
+        updated:
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleResponse'
+      required:
+      - updated
     BundleUpdateRequest:
       type: object
       properties:
@@ -1217,30 +1157,6 @@ components:
         name:
           type: string
           minLength: 1
-    BundleListResponse:
-      type: object
-      properties:
-        bundles:
-          type: array
-          items:
-            $ref: '#/components/schemas/BundleResponse'
-        next:
-          type: string
-          description: Next cursor if available
-        prev:
-          type: string
-          description: Previous cursor if available
-      required:
-      - bundles
-    BundleChildrenResponse:
-      type: object
-      properties:
-        bundles:
-          type: array
-          items:
-            $ref: '#/components/schemas/BundleResponse'
-      required:
-      - bundles
     BundleResponse:
       type: object
       properties:
@@ -1313,15 +1229,99 @@ components:
       - name
       - ownerId
       - updatedAt
-    BundleSetParentResponse:
+    BundleListResponse:
       type: object
       properties:
-        updated:
+        bundles:
           type: array
           items:
             $ref: '#/components/schemas/BundleResponse'
+        next:
+          type: string
+          description: Next cursor if available
+        prev:
+          type: string
+          description: Previous cursor if available
+      required:
+      - bundles
+    BundleSetParentRequest:
+      type: object
+      properties:
+        bundleIds:
+          type: array
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+        parentId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+      required:
+      - bundleIds
+      - parentId
+    BundleUpdateResponse:
+      type: object
+      properties:
+        updated:
+          $ref: '#/components/schemas/BundleResponse'
       required:
       - updated
+    BundleCountResponse:
+      type: object
+      properties:
+        total:
+          type: number
+      required:
+      - total
+    BundleCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        childOfId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        kind:
+          enum:
+          - category
+          - folder
+      required:
+      - name
   securitySchemes:
     Bearer:
       type: http
