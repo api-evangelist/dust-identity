@@ -151,129 +151,6 @@ paths:
           - type: boolean
 components:
   schemas:
-    ThreadFieldTimeValue:
-      type: object
-      properties:
-        time:
-          type: string
-      required:
-      - time
-    ThreadFieldResource:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          enum:
-          - audio
-          - doc
-          - file
-          - image
-          - pdf
-          - video
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldResourceValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldDefinitionLongText:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: long-text
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 7ce96e4f-38d0-4c7d-8bd3-3f735aa0a2d9
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
     ThreadFieldDefinitionPhone:
       type: object
       properties:
@@ -312,45 +189,14 @@ components:
       required:
       - name
       - type
-    ThreadFieldDefinitionJson:
+    ThreadFieldUrlValue:
       type: object
       properties:
-        name:
-          type: string
-        type:
-          const: object
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: f46e1465-eb29-4520-98af-b220e982e6e2
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-            description: a JSON string
-          - type: 'null'
-        description:
+        url:
           type: string
       required:
-      - name
-      - type
-    ThreadFieldThread:
+      - url
+    ThreadFieldTime:
       type: object
       properties:
         archivedAt:
@@ -400,12 +246,12 @@ components:
           - type: string
           - type: 'null'
         type:
-          const: thread
+          const: time
         updatedAt:
           type: string
         value:
           anyOf:
-          - $ref: '#/components/schemas/ThreadFieldThreadValue'
+          - $ref: '#/components/schemas/ThreadFieldTimeValue'
           - type: 'null'
       required:
       - archivedAt
@@ -423,45 +269,13 @@ components:
       - type
       - updatedAt
       - value
-    ThreadFieldDefinitionEmail:
+    ThreadFieldDurationValue:
       type: object
       properties:
-        name:
-          type: string
-        type:
-          const: email
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: d3974814-0222-45da-bc9e-dc241e802784
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-            pattern: ^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$
-            format: email
-          - type: 'null'
-        description:
+        duration:
           type: string
       required:
-      - name
-      - type
+      - duration
     ThreadFieldText:
       type: object
       properties:
@@ -535,61 +349,97 @@ components:
       - type
       - updatedAt
       - value
-    FabricStateChangeReason:
+    ThreadFieldDefinitionDateRange:
       type: object
       properties:
-        createdAt:
+        name:
           type: string
-        fromState:
-          enum:
-          - abandoned
-          - canceled
-          - change_request
-          - completed
-          - draft
-          - failed_retryable
-          - processing
-          - rejected
-          - sent
+        type:
+          const: date-range
         id:
-          type: string
-        message:
-          type: string
-        toState:
-          enum:
-          - abandoned
-          - canceled
-          - change_request
-          - completed
-          - draft
-          - failed_retryable
-          - processing
-          - rejected
-          - sent
-        userEmail:
-          type: string
-        userId:
-          type: string
-        teamId:
           anyOf:
           - type: string
-          - type: 'null'
-        userAvatar:
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 778b2689-0293-403b-8036-366f1f6ef9b3
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
           anyOf:
-          - type: string
+          - type: object
+            properties:
+              from:
+                type: string
+              to:
+                type: string
+            required:
+            - from
+            - to
           - type: 'null'
-        userName:
-          anyOf:
-          - type: string
-          - type: 'null'
+        description:
+          type: string
       required:
-      - createdAt
-      - fromState
-      - id
-      - message
-      - toState
-      - userEmail
-      - userId
+      - name
+      - type
+    ThreadFieldDefinitionBoolean:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: boolean
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: b12119c2-cc44-4694-bce7-b533d24fa2a3
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldThreadValue:
+      type: object
+      properties:
+        threadId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+      required:
+      - threadId
     Resource:
       type: object
       properties:
@@ -1101,66 +951,7 @@ components:
       - transferredAt
       - type
       - updatedAt
-    ThreadTemplateSpec:
-      type: array
-      items:
-        anyOf:
-        - $ref: '#/components/schemas/ThreadFieldDefinitionResource'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionBoolean'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionDate'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionDateRange'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionDatetime'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionDuration'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionEmail'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionLongText'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionNumber'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionJson'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionPhone'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionSelect'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionSelectMany'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionTags'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionText'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionTime'
-        - $ref: '#/components/schemas/ThreadFieldDefinitionUrl'
-    ThreadFieldDefinitionDuration:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: duration
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 43b8da40-adf9-499f-989d-79c6bfed671e
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-            pattern: ^P(\d+Y)?(\d+M)?(\d+D)?T(\d+H)?(\d+M)?(\d+S)?$
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldDateRange:
+    ThreadFieldThread:
       type: object
       properties:
         archivedAt:
@@ -1210,12 +1001,12 @@ components:
           - type: string
           - type: 'null'
         type:
-          const: date-range
+          const: thread
         updatedAt:
           type: string
         value:
           anyOf:
-          - $ref: '#/components/schemas/ThreadFieldDateRangeValue'
+          - $ref: '#/components/schemas/ThreadFieldThreadValue'
           - type: 'null'
       required:
       - archivedAt
@@ -1233,13 +1024,13 @@ components:
       - type
       - updatedAt
       - value
-    ThreadFieldDefinitionSelectMany:
+    ThreadFieldDefinitionUrl:
       type: object
       properties:
         name:
           type: string
         type:
-          const: select-many
+          const: url
         id:
           anyOf:
           - type: string
@@ -1254,7 +1045,7 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-          default: 48c7ffbe-23b4-4f01-a457-140a4531b7e3
+          default: 03cae506-0c80-40be-8225-6e4dd35139a7
         isPrivate:
           type: boolean
           default: false
@@ -1263,21 +1054,415 @@ components:
           default: false
         default:
           anyOf:
-          - type: object
-            properties:
-              options:
-                type: array
-                items:
-                  type: string
-              selections:
-                anyOf:
-                - type: array
-                  items:
-                    type: string
-                - type: 'null'
-            required:
-            - options
-            - selections
+          - type: string
+            format: uri
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldDate:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: date
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldDateValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldLongText:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: long-text
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldTextValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldDefinitionEmail:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: email
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: d3974814-0222-45da-bc9e-dc241e802784
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+            pattern: ^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$
+            format: email
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldTimeValue:
+      type: object
+      properties:
+        time:
+          type: string
+      required:
+      - time
+    ThreadFieldTagsValue:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+      required:
+      - tags
+    Principal:
+      type: object
+      properties:
+        avatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+        emailVerified:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        familyName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        kind:
+          enum:
+          - human
+          - service
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+        profileId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        updatedAt:
+          type: string
+        userId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - avatar
+      - createdAt
+      - email
+      - emailVerified
+      - familyName
+      - kind
+      - name
+      - phone
+      - profileId
+      - updatedAt
+      - userId
+    ThreadFieldSelectMany:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: select-many
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldSelectManyValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldDatetimeValue:
+      type: object
+      properties:
+        datetime:
+          type: string
+      required:
+      - datetime
+    ThreadFieldTextValue:
+      type: object
+      properties:
+        text:
+          type: string
+      required:
+      - text
+    ThreadFieldEmailValue:
+      type: object
+      properties:
+        email:
+          type: string
+      required:
+      - email
+    ThreadFieldDefinitionDatetime:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: date-time
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: e8358975-3c3d-4b07-84ab-5a9e4810f34c
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
           - type: 'null'
         description:
           type: string
@@ -1357,6 +1542,44 @@ components:
       - type
       - updatedAt
       - value
+    ThreadFieldDefinitionJson:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: object
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: f46e1465-eb29-4520-98af-b220e982e6e2
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+            description: a JSON string
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
     ThreadFieldDefinitionSelect:
       type: object
       properties:
@@ -1404,369 +1627,6 @@ components:
       required:
       - name
       - type
-    ThreadFieldDefinitionText:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: text
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: f61578f3-7867-4b10-b964-71be2cca90ec
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldDatetimeValue:
-      type: object
-      properties:
-        datetime:
-          type: string
-      required:
-      - datetime
-    ThreadFieldBoolean:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: boolean
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldBooleanValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldTextValue:
-      type: object
-      properties:
-        text:
-          type: string
-      required:
-      - text
-    ThreadFieldSelect:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: select
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldSelectValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldSelectValue:
-      type: object
-      properties:
-        options:
-          type: array
-          items:
-            type: string
-        selected:
-          anyOf:
-          - type: string
-          - type: 'null'
-      required:
-      - options
-      - selected
-    ThreadFieldNumberValue:
-      type: object
-      properties:
-        number:
-          type: number
-          maximum: 140737488355327
-          minimum: -140737488355328
-      required:
-      - number
-    ThreadFieldDefinitionDateRange:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: date-range
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 778b2689-0293-403b-8036-366f1f6ef9b3
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: object
-            properties:
-              from:
-                type: string
-              to:
-                type: string
-            required:
-            - from
-            - to
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldTagsValue:
-      type: object
-      properties:
-        tags:
-          type: array
-          items:
-            type: string
-      required:
-      - tags
-    ThreadFieldUrl:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: url
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldUrlValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldResourceValue:
-      type: object
-      properties:
-        resId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-      required:
-      - resId
-    ThreadFieldDateValue:
-      type: object
-      properties:
-        date:
-          type: string
-      required:
-      - date
     EventListResponse:
       type: object
       properties:
@@ -2543,400 +2403,6 @@ components:
           type: string
       required:
       - events
-    ThreadFieldThreadValue:
-      type: object
-      properties:
-        threadId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-      required:
-      - threadId
-    ThreadFieldDateRangeValue:
-      type: object
-      properties:
-        from:
-          type: string
-        to:
-          type: string
-      required:
-      - from
-      - to
-    ThreadFieldSelectMany:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: select-many
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldSelectManyValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    Principal:
-      type: object
-      properties:
-        avatar:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        email:
-          anyOf:
-          - type: string
-          - type: 'null'
-        emailVerified:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-        familyName:
-          anyOf:
-          - type: string
-          - type: 'null'
-        kind:
-          enum:
-          - human
-          - service
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        phone:
-          anyOf:
-          - type: string
-          - type: 'null'
-        profileId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        updatedAt:
-          type: string
-        userId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-      required:
-      - avatar
-      - createdAt
-      - email
-      - emailVerified
-      - familyName
-      - kind
-      - name
-      - phone
-      - profileId
-      - updatedAt
-      - userId
-    ThreadFieldDefinitionDatetime:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: date-time
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: e8358975-3c3d-4b07-84ab-5a9e4810f34c
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldPhone:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: phone
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldPhoneValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldDefinitionDate:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: date
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 386ff857-2e20-41e6-b97f-6a626481fa89
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldDate:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: date
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldDateValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldDurationValue:
-      type: object
-      properties:
-        duration:
-          type: string
-      required:
-      - duration
     ThreadFieldJsonValue:
       type: object
       properties:
@@ -2949,323 +2415,6 @@ components:
           - type: 'null'
       required:
       - json
-    ThreadFieldEmailValue:
-      type: object
-      properties:
-        email:
-          type: string
-      required:
-      - email
-    ThreadFieldLongText:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: long-text
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldTextValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldDefinitionNumber:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: number
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 88007de5-4857-4391-890f-0e22663116b9
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: number
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldDefinitionTags:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: tags
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: fa827b77-6f8f-4dcf-b7f9-77e702d9e133
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: array
-            items:
-              type: string
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldDefinitionTime:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: time
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 88398b08-4bbe-4d51-98da-82bc2a63e7a1
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldPhoneValue:
-      type: object
-      properties:
-        phone:
-          type: string
-      required:
-      - phone
-    ThreadFieldDefinitionBoolean:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          const: boolean
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: b12119c2-cc44-4694-bce7-b533d24fa2a3
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldBooleanValue:
-      type: object
-      properties:
-        bool:
-          type: boolean
-      required:
-      - bool
-    ThreadFieldEmail:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: email
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldEmailValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
     ThreadFieldNumber:
       type: object
       properties:
@@ -3339,6 +2488,783 @@ components:
       - type
       - updatedAt
       - value
+    ThreadFieldEmail:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: email
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldEmailValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldSelect:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: select
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldSelectValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldBooleanValue:
+      type: object
+      properties:
+        bool:
+          type: boolean
+      required:
+      - bool
+    ThreadFieldDefinitionText:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: text
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: f61578f3-7867-4b10-b964-71be2cca90ec
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldDefinitionLongText:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: long-text
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 7ce96e4f-38d0-4c7d-8bd3-3f735aa0a2d9
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldResource:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          enum:
+          - audio
+          - doc
+          - file
+          - image
+          - pdf
+          - video
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldResourceValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldSelectManyValue:
+      type: object
+      properties:
+        options:
+          type: array
+          items:
+            type: string
+        selections:
+          type: array
+          items:
+            type: string
+      required:
+      - options
+      - selections
+    ThreadFieldDefinitionNumber:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: number
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 88007de5-4857-4391-890f-0e22663116b9
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: number
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldDatetime:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: date-time
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldDatetimeValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    FabricStateChangeReason:
+      type: object
+      properties:
+        createdAt:
+          type: string
+        fromState:
+          enum:
+          - abandoned
+          - canceled
+          - change_request
+          - completed
+          - draft
+          - failed_retryable
+          - processing
+          - rejected
+          - sent
+        id:
+          type: string
+        message:
+          type: string
+        toState:
+          enum:
+          - abandoned
+          - canceled
+          - change_request
+          - completed
+          - draft
+          - failed_retryable
+          - processing
+          - rejected
+          - sent
+        userEmail:
+          type: string
+        userId:
+          type: string
+        teamId:
+          anyOf:
+          - type: string
+          - type: 'null'
+        userAvatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+        userName:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - createdAt
+      - fromState
+      - id
+      - message
+      - toState
+      - userEmail
+      - userId
+    ThreadFieldTags:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: tags
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldTagsValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldDefinitionResource:
+      type: object
+      properties:
+        default:
+          type: 'null'
+        name:
+          type: string
+        type:
+          enum:
+          - audio
+          - doc
+          - file
+          - image
+          - pdf
+          - video
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 709f77e0-7134-4158-87b4-71f276af235a
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        description:
+          type: string
+      required:
+      - default
+      - name
+      - type
+    ThreadFieldDefinitionSelectMany:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: select-many
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 48c7ffbe-23b4-4f01-a457-140a4531b7e3
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: object
+            properties:
+              options:
+                type: array
+                items:
+                  type: string
+              selections:
+                anyOf:
+                - type: array
+                  items:
+                    type: string
+                - type: 'null'
+            required:
+            - options
+            - selections
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldDuration:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: duration
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldDurationValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldDefinitionTime:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: time
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 88398b08-4bbe-4d51-98da-82bc2a63e7a1
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldPhoneValue:
+      type: object
+      properties:
+        phone:
+          type: string
+      required:
+      - phone
+    ThreadFieldResourceValue:
+      type: object
+      properties:
+        resId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+      required:
+      - resId
     ThreadTemplate:
       type: object
       properties:
@@ -3435,240 +3361,45 @@ components:
       - spec
       - templateId
       - updatedAt
-    ThreadFieldDefinitionUrl:
+    ThreadFieldDefinitionDuration:
       type: object
       properties:
         name:
           type: string
-        type:
-          const: url
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 03cae506-0c80-40be-8225-6e4dd35139a7
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        default:
-          anyOf:
-          - type: string
-            format: uri
-          - type: 'null'
-        description:
-          type: string
-      required:
-      - name
-      - type
-    ThreadFieldDefinitionResource:
-      type: object
-      properties:
-        default:
-          type: 'null'
-        name:
-          type: string
-        type:
-          enum:
-          - audio
-          - doc
-          - file
-          - image
-          - pdf
-          - video
-        id:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-          default: 709f77e0-7134-4158-87b4-71f276af235a
-        isPrivate:
-          type: boolean
-          default: false
-        isRequired:
-          type: boolean
-          default: false
-        description:
-          type: string
-      required:
-      - default
-      - name
-      - type
-    ThreadFieldTime:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        type:
-          const: time
-        updatedAt:
-          type: string
-        value:
-          anyOf:
-          - $ref: '#/components/schemas/ThreadFieldTimeValue'
-          - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldDuration:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          type: string
-        defId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fieldId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        isPrivate:
-          type: boolean
-        isRequired:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-        ownerId:
-          type: string
-          description: a RFC-4122-compliant UUID
-          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-        sortPriority:
-          type: integer
-          maximum: 2147483647
-          minimum: -2147483648
-        transferId:
-          anyOf:
-          - type: string
-            description: a RFC-4122-compliant UUID
-            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-          - type: 'null'
-        transferredAt:
-          anyOf:
-          - type: string
-          - type: 'null'
         type:
           const: duration
-        updatedAt:
-          type: string
-        value:
+        id:
           anyOf:
-          - $ref: '#/components/schemas/ThreadFieldDurationValue'
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 43b8da40-adf9-499f-989d-79c6bfed671e
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+            pattern: ^P(\d+Y)?(\d+M)?(\d+D)?T(\d+H)?(\d+M)?(\d+S)?$
           - type: 'null'
-      required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
-      - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
-      - type
-      - updatedAt
-      - value
-    ThreadFieldUrlValue:
-      type: object
-      properties:
-        url:
+        description:
           type: string
       required:
-      - url
-    ThreadFieldDatetime:
+      - name
+      - type
+    ThreadFieldBoolean:
       type: object
       properties:
         archivedAt:
@@ -3718,12 +3449,12 @@ components:
           - type: string
           - type: 'null'
         type:
-          const: date-time
+          const: boolean
         updatedAt:
           type: string
         value:
           anyOf:
-          - $ref: '#/components/schemas/ThreadFieldDatetimeValue'
+          - $ref: '#/components/schemas/ThreadFieldBooleanValue'
           - type: 'null'
       required:
       - archivedAt
@@ -3741,7 +3472,7 @@ components:
       - type
       - updatedAt
       - value
-    ThreadFieldTags:
+    ThreadFieldUrl:
       type: object
       properties:
         archivedAt:
@@ -3790,44 +3521,313 @@ components:
           anyOf:
           - type: string
           - type: 'null'
+        type:
+          const: url
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldUrlValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadFieldDefinitionTags:
+      type: object
+      properties:
+        name:
+          type: string
         type:
           const: tags
-        updatedAt:
-          type: string
-        value:
+        id:
           anyOf:
-          - $ref: '#/components/schemas/ThreadFieldTagsValue'
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: fa827b77-6f8f-4dcf-b7f9-77e702d9e133
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: array
+            items:
+              type: string
           - type: 'null'
+        description:
+          type: string
       required:
-      - archivedAt
-      - createdAt
-      - defId
-      - description
-      - fieldId
-      - isPrivate
-      - isRequired
       - name
-      - ownerId
-      - sortPriority
-      - transferId
-      - transferredAt
       - type
-      - updatedAt
-      - value
-    ThreadFieldSelectManyValue:
+    ThreadFieldDateValue:
+      type: object
+      properties:
+        date:
+          type: string
+      required:
+      - date
+    ThreadFieldSelectValue:
       type: object
       properties:
         options:
           type: array
           items:
             type: string
-        selections:
-          type: array
-          items:
-            type: string
+        selected:
+          anyOf:
+          - type: string
+          - type: 'null'
       required:
       - options
-      - selections
+      - selected
+    ThreadFieldPhone:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: phone
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldPhoneValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
+    ThreadTemplateSpec:
+      type: array
+      items:
+        anyOf:
+        - $ref: '#/components/schemas/ThreadFieldDefinitionResource'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionBoolean'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionDate'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionDateRange'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionDatetime'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionDuration'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionEmail'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionLongText'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionNumber'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionJson'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionPhone'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionSelect'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionSelectMany'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionTags'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionText'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionTime'
+        - $ref: '#/components/schemas/ThreadFieldDefinitionUrl'
+    ThreadFieldDateRangeValue:
+      type: object
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+      required:
+      - from
+      - to
+    ThreadFieldDefinitionDate:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          const: date
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+          default: 386ff857-2e20-41e6-b97f-6a626481fa89
+        isPrivate:
+          type: boolean
+          default: false
+        isRequired:
+          type: boolean
+          default: false
+        default:
+          anyOf:
+          - type: string
+          - type: 'null'
+        description:
+          type: string
+      required:
+      - name
+      - type
+    ThreadFieldNumberValue:
+      type: object
+      properties:
+        number:
+          type: number
+          maximum: 140737488355327
+          minimum: -140737488355328
+      required:
+      - number
+    ThreadFieldDateRange:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        defId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fieldId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        isPrivate:
+          type: boolean
+        isRequired:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        sortPriority:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        transferId:
+          anyOf:
+          - type: string
+            description: a RFC-4122-compliant UUID
+            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+          - type: 'null'
+        transferredAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        type:
+          const: date-range
+        updatedAt:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/ThreadFieldDateRangeValue'
+          - type: 'null'
+      required:
+      - archivedAt
+      - createdAt
+      - defId
+      - description
+      - fieldId
+      - isPrivate
+      - isRequired
+      - name
+      - ownerId
+      - sortPriority
+      - transferId
+      - transferredAt
+      - type
+      - updatedAt
+      - value
   securitySchemes:
     Bearer:
       type: http

@@ -1122,22 +1122,13 @@ paths:
                 - status
 components:
   schemas:
-    BundleChildrenResponse:
+    BundleCountResponse:
       type: object
       properties:
-        bundles:
-          type: array
-          items:
-            $ref: '#/components/schemas/BundleResponse'
+        total:
+          type: number
       required:
-      - bundles
-    BundleCreateResponse:
-      type: object
-      properties:
-        created:
-          $ref: '#/components/schemas/BundleResponse'
-      required:
-      - created
+      - total
     BundleSetParentResponse:
       type: object
       properties:
@@ -1147,16 +1138,13 @@ components:
             $ref: '#/components/schemas/BundleResponse'
       required:
       - updated
-    BundleUpdateRequest:
+    BundleCreateResponse:
       type: object
       properties:
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        name:
-          type: string
-          minLength: 1
+        created:
+          $ref: '#/components/schemas/BundleResponse'
+      required:
+      - created
     BundleResponse:
       type: object
       properties:
@@ -1244,6 +1232,61 @@ components:
           description: Previous cursor if available
       required:
       - bundles
+    BundleChildrenResponse:
+      type: object
+      properties:
+        bundles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleResponse'
+      required:
+      - bundles
+    BundleUpdateResponse:
+      type: object
+      properties:
+        updated:
+          $ref: '#/components/schemas/BundleResponse'
+      required:
+      - updated
+    BundleCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        childOfId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        kind:
+          enum:
+          - category
+          - folder
+      required:
+      - name
+    BundleUpdateRequest:
+      type: object
+      properties:
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        name:
+          type: string
+          minLength: 1
     BundleSetParentRequest:
       type: object
       properties:
@@ -1279,49 +1322,6 @@ components:
       required:
       - bundleIds
       - parentId
-    BundleUpdateResponse:
-      type: object
-      properties:
-        updated:
-          $ref: '#/components/schemas/BundleResponse'
-      required:
-      - updated
-    BundleCountResponse:
-      type: object
-      properties:
-        total:
-          type: number
-      required:
-      - total
-    BundleCreateRequest:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-        childOfId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        kind:
-          enum:
-          - category
-          - folder
-      required:
-      - name
   securitySchemes:
     Bearer:
       type: http
