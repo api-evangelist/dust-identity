@@ -739,6 +739,19 @@ paths:
                 - status
 components:
   schemas:
+    UpdateProfileRequest:
+      type: object
+      properties:
+        familyName:
+          type: string
+        image:
+          anyOf:
+          - description: A file object representing the user's profile image. Can be null to remove the existing image.
+          - type: 'null'
+            description: A file object representing the user's profile image. Can be null to remove the existing image.
+          description: A file object representing the user's profile image. Can be null to remove the existing image.
+        name:
+          type: string
     User:
       type: object
       properties:
@@ -845,19 +858,6 @@ components:
       - twoFactorEnabled
       - updatedAt
       - userId
-    UpdateProfileRequest:
-      type: object
-      properties:
-        familyName:
-          type: string
-        image:
-          anyOf:
-          - description: A file object representing the user's profile image. Can be null to remove the existing image.
-          - type: 'null'
-            description: A file object representing the user's profile image. Can be null to remove the existing image.
-          description: A file object representing the user's profile image. Can be null to remove the existing image.
-        name:
-          type: string
     Principal:
       type: object
       properties:

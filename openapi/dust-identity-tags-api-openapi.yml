@@ -1397,581 +1397,6 @@ paths:
               - threadId
 components:
   schemas:
-    DustTagOptions:
-      type: object
-      description: In multipart submissions, provide a JSON string of [DustTagOptions](#model/DustTagOptions); otherwise, a direct object is also accepted.
-      properties:
-        indexing:
-          enum:
-          - default
-          - none
-        metadata:
-          type: object
-          properties:
-            format:
-              enum:
-              - auspost
-              - azteccode
-              - azteccodecompact
-              - aztecrune
-              - bc412
-              - channelcode
-              - codablockf
-              - code11
-              - code128
-              - code16k
-              - code2of5
-              - code32
-              - code39
-              - code39ext
-              - code49
-              - code93
-              - code93ext
-              - codeone
-              - coop2of5
-              - daft
-              - databarexpanded
-              - databarexpandedcomposite
-              - databarexpandedstacked
-              - databarexpandedstackedcomposite
-              - databarlimited
-              - databarlimitedcomposite
-              - databaromni
-              - databaromnicomposite
-              - databarstacked
-              - databarstackedcomposite
-              - databarstackedomni
-              - databarstackedomnicomposite
-              - databartruncated
-              - databartruncatedcomposite
-              - datalogic2of5
-              - datamatrix
-              - datamatrixrectangular
-              - datamatrixrectangularextension
-              - dotcode
-              - ean13
-              - ean13composite
-              - ean14
-              - ean2
-              - ean5
-              - ean8
-              - ean8composite
-              - flattermarken
-              - gs1-128
-              - gs1-128composite
-              - gs1-cc
-              - gs1datamatrix
-              - gs1datamatrixrectangular
-              - gs1dldatamatrix
-              - gs1dlqrcode
-              - gs1dotcode
-              - gs1northamericancoupon
-              - gs1qrcode
-              - hanxin
-              - hibcazteccode
-              - hibccodablockf
-              - hibccode128
-              - hibccode39
-              - hibcdatamatrix
-              - hibcdatamatrixrectangular
-              - hibcmicropdf417
-              - hibcpdf417
-              - hibcqrcode
-              - iata2of5
-              - identcode
-              - industrial2of5
-              - interleaved2of5
-              - isbn
-              - ismn
-              - issn
-              - itf14
-              - japanpost
-              - kix
-              - leitcode
-              - mailmark
-              - mands
-              - matrix2of5
-              - maxicode
-              - micropdf417
-              - microqrcode
-              - msi
-              - onecode
-              - pdf417
-              - pdf417compact
-              - pharmacode
-              - pharmacode2
-              - planet
-              - plessey
-              - posicode
-              - postnet
-              - pzn
-              - qrcode
-              - rationalizedCodabar
-              - raw
-              - rectangularmicroqrcode
-              - royalmail
-              - sscc18
-              - swissqrcode
-              - symbol
-              - telepen
-              - telepennumeric
-              - ultracode
-              - upca
-              - upcacomposite
-              - upce
-              - upcecomposite
-        settings:
-          type: object
-          properties:
-            accuracy:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            androidCameraId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            appId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            appName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            appVersion:
-              anyOf:
-              - type: string
-              - type: 'null'
-            autoFocusRangeRestriction:
-              anyOf:
-              - const: far
-              - const: near
-              - const: none
-              - type: 'null'
-            brand:
-              anyOf:
-              - type: string
-              - type: 'null'
-            build:
-              anyOf:
-              - type: string
-              - type: 'null'
-            calibrationConfidence:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            calibrationId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            calibrationVersion:
-              anyOf:
-              - type: string
-              - type: 'null'
-            calibrationZoom:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            cameraId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            captureSource:
-              anyOf:
-              - type: string
-              - type: 'null'
-            deviceId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            deviceName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            deviceType:
-              anyOf:
-              - const: DESKTOP
-              - const: PHONE
-              - const: TABLET
-              - const: TV
-              - const: UNKNOWN
-              - type: 'null'
-            dragonBackend:
-              anyOf:
-              - type: string
-              - type: 'null'
-            dragonErrorCode:
-              anyOf:
-              - type: string
-              - type: 'null'
-            exposureDuration:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            exposureValue:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            flashMode:
-              anyOf:
-              - const: auto
-              - const: 'off'
-              - const: 'on'
-              - const: torch
-              - type: 'null'
-            focusDepth:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            focusMode:
-              anyOf:
-              - type: string
-              - type: 'null'
-            focusSetPoint:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            focusX:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            focusY:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            iso:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            latitude:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            lensPosition:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            longitude:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            modelId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            modelName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            osBuildId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            osName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            osVersion:
-              anyOf:
-              - type: string
-              - type: 'null'
-            selectedLens:
-              anyOf:
-              - type: string
-              - type: 'null'
-            tapToFocusCount:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            usbDeviceName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            usbProductId:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            usbVendorId:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            zoom:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-    BindDustFingerprintOptions:
-      type: object
-      description: In multipart submissions, provide a JSON string of [BindDustFingerprintOptions](#model/BindDustFingerprintOptions); otherwise, a direct object is also accepted.
-      properties:
-        enrollmentSessionId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        indexing:
-          enum:
-          - default
-          - none
-        metadata:
-          type: object
-          properties:
-            format:
-              enum:
-              - auspost
-              - azteccode
-              - azteccodecompact
-              - aztecrune
-              - bc412
-              - channelcode
-              - codablockf
-              - code11
-              - code128
-              - code16k
-              - code2of5
-              - code32
-              - code39
-              - code39ext
-              - code49
-              - code93
-              - code93ext
-              - codeone
-              - coop2of5
-              - daft
-              - databarexpanded
-              - databarexpandedcomposite
-              - databarexpandedstacked
-              - databarexpandedstackedcomposite
-              - databarlimited
-              - databarlimitedcomposite
-              - databaromni
-              - databaromnicomposite
-              - databarstacked
-              - databarstackedcomposite
-              - databarstackedomni
-              - databarstackedomnicomposite
-              - databartruncated
-              - databartruncatedcomposite
-              - datalogic2of5
-              - datamatrix
-              - datamatrixrectangular
-              - datamatrixrectangularextension
-              - dotcode
-              - ean13
-              - ean13composite
-              - ean14
-              - ean2
-              - ean5
-              - ean8
-              - ean8composite
-              - flattermarken
-              - gs1-128
-              - gs1-128composite
-              - gs1-cc
-              - gs1datamatrix
-              - gs1datamatrixrectangular
-              - gs1dldatamatrix
-              - gs1dlqrcode
-              - gs1dotcode
-              - gs1northamericancoupon
-              - gs1qrcode
-              - hanxin
-              - hibcazteccode
-              - hibccodablockf
-              - hibccode128
-              - hibccode39
-              - hibcdatamatrix
-              - hibcdatamatrixrectangular
-              - hibcmicropdf417
-              - hibcpdf417
-              - hibcqrcode
-              - iata2of5
-              - identcode
-              - industrial2of5
-              - interleaved2of5
-              - isbn
-              - ismn
-              - issn
-              - itf14
-              - japanpost
-              - kix
-              - leitcode
-              - mailmark
-              - mands
-              - matrix2of5
-              - maxicode
-              - micropdf417
-              - microqrcode
-              - msi
-              - onecode
-              - pdf417
-              - pdf417compact
-              - pharmacode
-              - pharmacode2
-              - planet
-              - plessey
-              - posicode
-              - postnet
-              - pzn
-              - qrcode
-              - rationalizedCodabar
-              - raw
-              - rectangularmicroqrcode
-              - royalmail
-              - sscc18
-              - swissqrcode
-              - symbol
-              - telepen
-              - telepennumeric
-              - ultracode
-              - upca
-              - upcacomposite
-              - upce
-              - upcecomposite
-        returnAnnotatedImage:
-          type: boolean
-          description: Optionally, return the annotated image as a data URL in the response
-    BindTextTag:
-      type: object
-      properties:
-        data:
-          type: string
-        tagType:
-          enum:
-          - BAR_CODE
-          - DATA_MATRIX
-          - NFC
-          - QR
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        options:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/TagOptions'
-        tagDescription:
-          type: string
-      required:
-      - data
-      - tagType
-      - threadId
-      additionalProperties: false
-    TagUpdateResponse:
-      type: object
-      properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        isPrivate:
-          type: boolean
-        tagId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-      required:
-      - archivedAt
-      - isPrivate
-      - tagId
     TagOptions:
       type: object
       description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
@@ -2091,352 +1516,6 @@ components:
               - upcacomposite
               - upce
               - upcecomposite
-    TagUpdateRequest:
-      type: object
-      description: Update an identifier's name, description, privacy, and archive state. The value/type are immutable.
-      properties:
-        tagId:
-          anyOf:
-          - type: string
-            description: ID of the tag to update
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: ID of the tag to update
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: ID of the tag to update
-            format: uuid
-          description: ID of the tag to update
-          format: uuid
-        threadId:
-          anyOf:
-          - type: string
-            description: ID of the thread the tag is bound to
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: ID of the thread the tag is bound to
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: ID of the thread the tag is bound to
-            format: uuid
-          description: ID of the thread the tag is bound to
-          format: uuid
-        archivedAt:
-          anyOf:
-          - type: string
-            description: ISO 8601 timestamp to archive the identifier, or null to restore
-          - type: 'null'
-            description: ISO 8601 timestamp to archive the identifier, or null to restore
-          description: ISO 8601 timestamp to archive the identifier, or null to restore
-        description:
-          anyOf:
-          - type: string
-            description: New description to set for the tag
-          - type: 'null'
-            description: New description to set for the tag
-          description: New description to set for the tag
-        isPrivate:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-            description: New name to set for the tag
-          - type: 'null'
-            description: New name to set for the tag
-          description: New name to set for the tag
-      required:
-      - tagId
-      - threadId
-    IdentifyDustPayload:
-      type: object
-      properties:
-        data:
-          anyOf:
-          - type: string
-            description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
-            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
-          - description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
-          description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
-        tagType:
-          const: DUST
-        options:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string of [DustTagOptions](#model/DustTagOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/DustTagOptions'
-        searchTeamIds:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-          - $ref: '#/components/schemas/UuidList'
-          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-      required:
-      - data
-      - tagType
-    TagExtractRequestMetadata:
-      type: object
-      description: In multipart submissions, provide a JSON string of [TagExtractRequestMetadata](#model/TagExtractRequestMetadata); otherwise, a direct object is also accepted.
-      properties:
-        enrollmentSessionId:
-          anyOf:
-          - type: string
-            description: ID to create and associate this extraction with an enrollment session
-          - type: 'null'
-        orgId:
-          anyOf:
-          - type: string
-            description: ID of the organization to associate this extraction with. If not provided, will be associated with the user's current context organization
-          - type: 'null'
-        settings:
-          type: object
-          properties:
-            accuracy:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            androidCameraId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            appId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            appName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            appVersion:
-              anyOf:
-              - type: string
-              - type: 'null'
-            autoFocusRangeRestriction:
-              anyOf:
-              - const: far
-              - const: near
-              - const: none
-              - type: 'null'
-            brand:
-              anyOf:
-              - type: string
-              - type: 'null'
-            build:
-              anyOf:
-              - type: string
-              - type: 'null'
-            calibrationConfidence:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            calibrationId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            calibrationVersion:
-              anyOf:
-              - type: string
-              - type: 'null'
-            calibrationZoom:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            cameraId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            captureSource:
-              anyOf:
-              - type: string
-              - type: 'null'
-            deviceId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            deviceName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            deviceType:
-              anyOf:
-              - const: DESKTOP
-              - const: PHONE
-              - const: TABLET
-              - const: TV
-              - const: UNKNOWN
-              - type: 'null'
-            dragonBackend:
-              anyOf:
-              - type: string
-              - type: 'null'
-            dragonErrorCode:
-              anyOf:
-              - type: string
-              - type: 'null'
-            exposureDuration:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            exposureValue:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            flashMode:
-              anyOf:
-              - const: auto
-              - const: 'off'
-              - const: 'on'
-              - const: torch
-              - type: 'null'
-            focusDepth:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            focusMode:
-              anyOf:
-              - type: string
-              - type: 'null'
-            focusSetPoint:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            focusX:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            focusY:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            iso:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            latitude:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            lensPosition:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            longitude:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            modelId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            modelName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            osBuildId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            osName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            osVersion:
-              anyOf:
-              - type: string
-              - type: 'null'
-            selectedLens:
-              anyOf:
-              - type: string
-              - type: 'null'
-            tapToFocusCount:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            usbDeviceName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            usbProductId:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            usbVendorId:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            zoom:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
     BindDustImageOptions:
       type: object
       description: In multipart submissions, provide a JSON string of [BindDustImageOptions](#model/BindDustImageOptions); otherwise, a direct object is also accepted.
@@ -2825,97 +1904,23 @@ components:
                 description: A number or a string that can be parsed into a number
                 pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
               - type: 'null'
-    BulkVerifyTagList:
-      type: array
-      description: In multipart submissions, provide a JSON string array of tags to verify against; otherwise, a direct array is also accepted. If more than one tag is provided, verification will succeed if any single tag matches the thread.
-      items:
-        type: object
-        properties:
-          tagId:
-            anyOf:
-            - type: string
-              description: a UUID
-              format: uuid
-              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-            - const: 00000000-0000-0000-0000-000000000000
-              description: a UUID
-              format: uuid
-            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-              description: a UUID
-              format: uuid
-            description: a UUID
-            format: uuid
-          tagType:
-            enum:
-            - BAR_CODE
-            - DATA_MATRIX
-            - DUST
-            - NFC
-            - QR
-        required:
-        - tagId
-        - tagType
-    BindDustFingerprint:
-      type: object
-      properties:
-        fingerprintId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        tagType:
-          const: DUST
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        options:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string of [BindDustFingerprintOptions](#model/BindDustFingerprintOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/BindDustFingerprintOptions'
-        tagDescription:
-          type: string
-      required:
-      - fingerprintId
-      - tagType
-      - threadId
-      additionalProperties: false
-    IdentifyTextTagPayload:
+    IdentifyDustPayload:
       type: object
       properties:
         data:
-          type: string
+          anyOf:
+          - type: string
+            description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
+            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
+          - description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
+          description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
         tagType:
-          enum:
-          - BAR_CODE
-          - DATA_MATRIX
-          - NFC
-          - QR
+          const: DUST
         options:
           anyOf:
           - type: string
-            description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/TagOptions'
+            description: In multipart submissions, provide a JSON string of [DustTagOptions](#model/DustTagOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/DustTagOptions'
         searchTeamIds:
           anyOf:
           - type: string
@@ -2970,6 +1975,1001 @@ components:
           format: uuid
         description: a UUID
         format: uuid
+    IdentifyTextTagPayload:
+      type: object
+      properties:
+        data:
+          type: string
+        tagType:
+          enum:
+          - BAR_CODE
+          - DATA_MATRIX
+          - NFC
+          - QR
+        options:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/TagOptions'
+        searchTeamIds:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+          - $ref: '#/components/schemas/UuidList'
+          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+      required:
+      - data
+      - tagType
+    TagUpdateResponse:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        isPrivate:
+          type: boolean
+        tagId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - archivedAt
+      - isPrivate
+      - tagId
+    BindTextTag:
+      type: object
+      properties:
+        data:
+          type: string
+        tagType:
+          enum:
+          - BAR_CODE
+          - DATA_MATRIX
+          - NFC
+          - QR
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        options:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/TagOptions'
+        tagDescription:
+          type: string
+      required:
+      - data
+      - tagType
+      - threadId
+      additionalProperties: false
+    TagExtractRequestMetadata:
+      type: object
+      description: In multipart submissions, provide a JSON string of [TagExtractRequestMetadata](#model/TagExtractRequestMetadata); otherwise, a direct object is also accepted.
+      properties:
+        enrollmentSessionId:
+          anyOf:
+          - type: string
+            description: ID to create and associate this extraction with an enrollment session
+          - type: 'null'
+        orgId:
+          anyOf:
+          - type: string
+            description: ID of the organization to associate this extraction with. If not provided, will be associated with the user's current context organization
+          - type: 'null'
+        settings:
+          type: object
+          properties:
+            accuracy:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            androidCameraId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            appId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            appName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            appVersion:
+              anyOf:
+              - type: string
+              - type: 'null'
+            autoFocusRangeRestriction:
+              anyOf:
+              - const: far
+              - const: near
+              - const: none
+              - type: 'null'
+            brand:
+              anyOf:
+              - type: string
+              - type: 'null'
+            build:
+              anyOf:
+              - type: string
+              - type: 'null'
+            calibrationConfidence:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            calibrationId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            calibrationVersion:
+              anyOf:
+              - type: string
+              - type: 'null'
+            calibrationZoom:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            cameraId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            captureSource:
+              anyOf:
+              - type: string
+              - type: 'null'
+            deviceId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            deviceName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            deviceType:
+              anyOf:
+              - const: DESKTOP
+              - const: PHONE
+              - const: TABLET
+              - const: TV
+              - const: UNKNOWN
+              - type: 'null'
+            dragonBackend:
+              anyOf:
+              - type: string
+              - type: 'null'
+            dragonErrorCode:
+              anyOf:
+              - type: string
+              - type: 'null'
+            exposureDuration:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            exposureValue:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            flashMode:
+              anyOf:
+              - const: auto
+              - const: 'off'
+              - const: 'on'
+              - const: torch
+              - type: 'null'
+            focusDepth:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            focusMode:
+              anyOf:
+              - type: string
+              - type: 'null'
+            focusSetPoint:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            focusX:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            focusY:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            iso:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            latitude:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            lensPosition:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            longitude:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            modelId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            modelName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            osBuildId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            osName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            osVersion:
+              anyOf:
+              - type: string
+              - type: 'null'
+            selectedLens:
+              anyOf:
+              - type: string
+              - type: 'null'
+            tapToFocusCount:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            usbDeviceName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            usbProductId:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            usbVendorId:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            zoom:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+    BindDustFingerprint:
+      type: object
+      properties:
+        fingerprintId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        tagType:
+          const: DUST
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        options:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string of [BindDustFingerprintOptions](#model/BindDustFingerprintOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/BindDustFingerprintOptions'
+        tagDescription:
+          type: string
+      required:
+      - fingerprintId
+      - tagType
+      - threadId
+      additionalProperties: false
+    BindDustFingerprintOptions:
+      type: object
+      description: In multipart submissions, provide a JSON string of [BindDustFingerprintOptions](#model/BindDustFingerprintOptions); otherwise, a direct object is also accepted.
+      properties:
+        enrollmentSessionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        indexing:
+          enum:
+          - default
+          - none
+        metadata:
+          type: object
+          properties:
+            format:
+              enum:
+              - auspost
+              - azteccode
+              - azteccodecompact
+              - aztecrune
+              - bc412
+              - channelcode
+              - codablockf
+              - code11
+              - code128
+              - code16k
+              - code2of5
+              - code32
+              - code39
+              - code39ext
+              - code49
+              - code93
+              - code93ext
+              - codeone
+              - coop2of5
+              - daft
+              - databarexpanded
+              - databarexpandedcomposite
+              - databarexpandedstacked
+              - databarexpandedstackedcomposite
+              - databarlimited
+              - databarlimitedcomposite
+              - databaromni
+              - databaromnicomposite
+              - databarstacked
+              - databarstackedcomposite
+              - databarstackedomni
+              - databarstackedomnicomposite
+              - databartruncated
+              - databartruncatedcomposite
+              - datalogic2of5
+              - datamatrix
+              - datamatrixrectangular
+              - datamatrixrectangularextension
+              - dotcode
+              - ean13
+              - ean13composite
+              - ean14
+              - ean2
+              - ean5
+              - ean8
+              - ean8composite
+              - flattermarken
+              - gs1-128
+              - gs1-128composite
+              - gs1-cc
+              - gs1datamatrix
+              - gs1datamatrixrectangular
+              - gs1dldatamatrix
+              - gs1dlqrcode
+              - gs1dotcode
+              - gs1northamericancoupon
+              - gs1qrcode
+              - hanxin
+              - hibcazteccode
+              - hibccodablockf
+              - hibccode128
+              - hibccode39
+              - hibcdatamatrix
+              - hibcdatamatrixrectangular
+              - hibcmicropdf417
+              - hibcpdf417
+              - hibcqrcode
+              - iata2of5
+              - identcode
+              - industrial2of5
+              - interleaved2of5
+              - isbn
+              - ismn
+              - issn
+              - itf14
+              - japanpost
+              - kix
+              - leitcode
+              - mailmark
+              - mands
+              - matrix2of5
+              - maxicode
+              - micropdf417
+              - microqrcode
+              - msi
+              - onecode
+              - pdf417
+              - pdf417compact
+              - pharmacode
+              - pharmacode2
+              - planet
+              - plessey
+              - posicode
+              - postnet
+              - pzn
+              - qrcode
+              - rationalizedCodabar
+              - raw
+              - rectangularmicroqrcode
+              - royalmail
+              - sscc18
+              - swissqrcode
+              - symbol
+              - telepen
+              - telepennumeric
+              - ultracode
+              - upca
+              - upcacomposite
+              - upce
+              - upcecomposite
+        returnAnnotatedImage:
+          type: boolean
+          description: Optionally, return the annotated image as a data URL in the response
+    DustTagOptions:
+      type: object
+      description: In multipart submissions, provide a JSON string of [DustTagOptions](#model/DustTagOptions); otherwise, a direct object is also accepted.
+      properties:
+        indexing:
+          enum:
+          - default
+          - none
+        metadata:
+          type: object
+          properties:
+            format:
+              enum:
+              - auspost
+              - azteccode
+              - azteccodecompact
+              - aztecrune
+              - bc412
+              - channelcode
+              - codablockf
+              - code11
+              - code128
+              - code16k
+              - code2of5
+              - code32
+              - code39
+              - code39ext
+              - code49
+              - code93
+              - code93ext
+              - codeone
+              - coop2of5
+              - daft
+              - databarexpanded
+              - databarexpandedcomposite
+              - databarexpandedstacked
+              - databarexpandedstackedcomposite
+              - databarlimited
+              - databarlimitedcomposite
+              - databaromni
+              - databaromnicomposite
+              - databarstacked
+              - databarstackedcomposite
+              - databarstackedomni
+              - databarstackedomnicomposite
+              - databartruncated
+              - databartruncatedcomposite
+              - datalogic2of5
+              - datamatrix
+              - datamatrixrectangular
+              - datamatrixrectangularextension
+              - dotcode
+              - ean13
+              - ean13composite
+              - ean14
+              - ean2
+              - ean5
+              - ean8
+              - ean8composite
+              - flattermarken
+              - gs1-128
+              - gs1-128composite
+              - gs1-cc
+              - gs1datamatrix
+              - gs1datamatrixrectangular
+              - gs1dldatamatrix
+              - gs1dlqrcode
+              - gs1dotcode
+              - gs1northamericancoupon
+              - gs1qrcode
+              - hanxin
+              - hibcazteccode
+              - hibccodablockf
+              - hibccode128
+              - hibccode39
+              - hibcdatamatrix
+              - hibcdatamatrixrectangular
+              - hibcmicropdf417
+              - hibcpdf417
+              - hibcqrcode
+              - iata2of5
+              - identcode
+              - industrial2of5
+              - interleaved2of5
+              - isbn
+              - ismn
+              - issn
+              - itf14
+              - japanpost
+              - kix
+              - leitcode
+              - mailmark
+              - mands
+              - matrix2of5
+              - maxicode
+              - micropdf417
+              - microqrcode
+              - msi
+              - onecode
+              - pdf417
+              - pdf417compact
+              - pharmacode
+              - pharmacode2
+              - planet
+              - plessey
+              - posicode
+              - postnet
+              - pzn
+              - qrcode
+              - rationalizedCodabar
+              - raw
+              - rectangularmicroqrcode
+              - royalmail
+              - sscc18
+              - swissqrcode
+              - symbol
+              - telepen
+              - telepennumeric
+              - ultracode
+              - upca
+              - upcacomposite
+              - upce
+              - upcecomposite
+        settings:
+          type: object
+          properties:
+            accuracy:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            androidCameraId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            appId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            appName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            appVersion:
+              anyOf:
+              - type: string
+              - type: 'null'
+            autoFocusRangeRestriction:
+              anyOf:
+              - const: far
+              - const: near
+              - const: none
+              - type: 'null'
+            brand:
+              anyOf:
+              - type: string
+              - type: 'null'
+            build:
+              anyOf:
+              - type: string
+              - type: 'null'
+            calibrationConfidence:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            calibrationId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            calibrationVersion:
+              anyOf:
+              - type: string
+              - type: 'null'
+            calibrationZoom:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            cameraId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            captureSource:
+              anyOf:
+              - type: string
+              - type: 'null'
+            deviceId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            deviceName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            deviceType:
+              anyOf:
+              - const: DESKTOP
+              - const: PHONE
+              - const: TABLET
+              - const: TV
+              - const: UNKNOWN
+              - type: 'null'
+            dragonBackend:
+              anyOf:
+              - type: string
+              - type: 'null'
+            dragonErrorCode:
+              anyOf:
+              - type: string
+              - type: 'null'
+            exposureDuration:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            exposureValue:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            flashMode:
+              anyOf:
+              - const: auto
+              - const: 'off'
+              - const: 'on'
+              - const: torch
+              - type: 'null'
+            focusDepth:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            focusMode:
+              anyOf:
+              - type: string
+              - type: 'null'
+            focusSetPoint:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            focusX:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            focusY:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            iso:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            latitude:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            lensPosition:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            longitude:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            modelId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            modelName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            osBuildId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            osName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            osVersion:
+              anyOf:
+              - type: string
+              - type: 'null'
+            selectedLens:
+              anyOf:
+              - type: string
+              - type: 'null'
+            tapToFocusCount:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            usbDeviceName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            usbProductId:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            usbVendorId:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            zoom:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+    TagUpdateRequest:
+      type: object
+      description: Update an identifier's name, description, privacy, and archive state. The value/type are immutable.
+      properties:
+        tagId:
+          anyOf:
+          - type: string
+            description: ID of the tag to update
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: ID of the tag to update
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: ID of the tag to update
+            format: uuid
+          description: ID of the tag to update
+          format: uuid
+        threadId:
+          anyOf:
+          - type: string
+            description: ID of the thread the tag is bound to
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: ID of the thread the tag is bound to
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: ID of the thread the tag is bound to
+            format: uuid
+          description: ID of the thread the tag is bound to
+          format: uuid
+        archivedAt:
+          anyOf:
+          - type: string
+            description: ISO 8601 timestamp to archive the identifier, or null to restore
+          - type: 'null'
+            description: ISO 8601 timestamp to archive the identifier, or null to restore
+          description: ISO 8601 timestamp to archive the identifier, or null to restore
+        description:
+          anyOf:
+          - type: string
+            description: New description to set for the tag
+          - type: 'null'
+            description: New description to set for the tag
+          description: New description to set for the tag
+        isPrivate:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+            description: New name to set for the tag
+          - type: 'null'
+            description: New name to set for the tag
+          description: New name to set for the tag
+      required:
+      - tagId
+      - threadId
+    BulkVerifyTagList:
+      type: array
+      description: In multipart submissions, provide a JSON string array of tags to verify against; otherwise, a direct array is also accepted. If more than one tag is provided, verification will succeed if any single tag matches the thread.
+      items:
+        type: object
+        properties:
+          tagId:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+          tagType:
+            enum:
+            - BAR_CODE
+            - DATA_MATRIX
+            - DUST
+            - NFC
+            - QR
+        required:
+        - tagId
+        - tagType
     BindDustImage:
       type: object
       properties:

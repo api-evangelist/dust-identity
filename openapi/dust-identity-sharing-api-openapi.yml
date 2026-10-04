@@ -562,6 +562,91 @@ paths:
                 - status
 components:
   schemas:
+    PartnerInventoryResponse:
+      type: object
+      properties:
+        counts:
+          type: object
+          properties:
+            grants:
+              type: number
+            inFlightTransfers:
+              type: number
+            suspended:
+              type: number
+          required:
+          - grants
+          - inFlightTransfers
+          - suspended
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              direction:
+                enum:
+                - in
+                - out
+              name:
+                anyOf:
+                - type: string
+                - type: 'null'
+              objectId:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+              objectType:
+                enum:
+                - bundle
+                - thread
+              relation:
+                enum:
+                - editor
+                - viewer
+              suspendedAt:
+                anyOf:
+                - type: string
+                - type: 'null'
+              tupleId:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+              dormantCause:
+                anyOf:
+                - const: connection_paused
+                - const: direction_disallowed
+                - type: 'null'
+            required:
+            - direction
+            - name
+            - objectId
+            - objectType
+            - relation
+            - suspendedAt
+            - tupleId
+      required:
+      - counts
+      - items
     ShareRequest:
       type: object
       properties:
@@ -613,6 +698,28 @@ components:
             - teamId
       required:
       - items
+    ShareUpdateRequest:
+      type: object
+      properties:
+        relation:
+          enum:
+          - admin
+          - attached
+          - container
+          - creator
+          - editor
+          - member
+          - owner
+          - parent
+          - private
+          - protected
+          - publish
+          - sender
+          - share
+          - transfer
+          - viewer
+      required:
+      - relation
     AccessSummaryResponse:
       type: object
       properties:
@@ -1986,113 +2093,6 @@ components:
             format: uuid
       required:
       - ids
-    PartnerInventoryResponse:
-      type: object
-      properties:
-        counts:
-          type: object
-          properties:
-            grants:
-              type: number
-            inFlightTransfers:
-              type: number
-            suspended:
-              type: number
-          required:
-          - grants
-          - inFlightTransfers
-          - suspended
-        items:
-          type: array
-          items:
-            type: object
-            properties:
-              direction:
-                enum:
-                - in
-                - out
-              name:
-                anyOf:
-                - type: string
-                - type: 'null'
-              objectId:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                description: a UUID
-                format: uuid
-              objectType:
-                enum:
-                - bundle
-                - thread
-              relation:
-                enum:
-                - editor
-                - viewer
-              suspendedAt:
-                anyOf:
-                - type: string
-                - type: 'null'
-              tupleId:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                description: a UUID
-                format: uuid
-              dormantCause:
-                anyOf:
-                - const: connection_paused
-                - const: direction_disallowed
-                - type: 'null'
-            required:
-            - direction
-            - name
-            - objectId
-            - objectType
-            - relation
-            - suspendedAt
-            - tupleId
-      required:
-      - counts
-      - items
-    ShareUpdateRequest:
-      type: object
-      properties:
-        relation:
-          enum:
-          - admin
-          - attached
-          - container
-          - creator
-          - editor
-          - member
-          - owner
-          - parent
-          - private
-          - protected
-          - publish
-          - sender
-          - share
-          - transfer
-          - viewer
-      required:
-      - relation
   securitySchemes:
     Bearer:
       type: http

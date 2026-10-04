@@ -1539,25 +1539,6 @@ paths:
       x-required-role: org-admin
 components:
   schemas:
-    TeamCreate:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        detail:
-          anyOf:
-          - type: string
-          - type: 'null'
-        logo:
-          anyOf:
-          - type: string
-          - type: 'null'
-      required:
-      - name
     User:
       type: object
       properties:
@@ -1664,6 +1645,25 @@ components:
       - twoFactorEnabled
       - updatedAt
       - userId
+    TeamCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        detail:
+          anyOf:
+          - type: string
+          - type: 'null'
+        logo:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - name
     Principal:
       type: object
       properties:
