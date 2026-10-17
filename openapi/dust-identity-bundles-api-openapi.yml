@@ -1122,13 +1122,15 @@ paths:
                 - status
 components:
   schemas:
-    BundleUpdateResponse:
+    BundleChildrenResponse:
       type: object
       properties:
-        updated:
-          $ref: '#/components/schemas/BundleResponse'
+        bundles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleResponse'
       required:
-      - updated
+      - bundles
     BundleSetParentRequest:
       type: object
       properties:
@@ -1164,15 +1166,15 @@ components:
       required:
       - bundleIds
       - parentId
-    BundleChildrenResponse:
+    BundleSetParentResponse:
       type: object
       properties:
-        bundles:
+        updated:
           type: array
           items:
             $ref: '#/components/schemas/BundleResponse'
       required:
-      - bundles
+      - updated
     BundleCountResponse:
       type: object
       properties:
@@ -1180,31 +1182,6 @@ components:
           type: number
       required:
       - total
-    BundleListResponse:
-      type: object
-      properties:
-        bundles:
-          type: array
-          items:
-            $ref: '#/components/schemas/BundleResponse'
-        next:
-          type: string
-          description: Next cursor if available
-        prev:
-          type: string
-          description: Previous cursor if available
-      required:
-      - bundles
-    BundleUpdateRequest:
-      type: object
-      properties:
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        name:
-          type: string
-          minLength: 1
     BundleResponse:
       type: object
       properties:
@@ -1277,6 +1254,23 @@ components:
       - name
       - ownerId
       - updatedAt
+    BundleUpdateResponse:
+      type: object
+      properties:
+        updated:
+          $ref: '#/components/schemas/BundleResponse'
+      required:
+      - updated
+    BundleUpdateRequest:
+      type: object
+      properties:
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        name:
+          type: string
+          minLength: 1
     BundleCreateResponse:
       type: object
       properties:
@@ -1284,15 +1278,6 @@ components:
           $ref: '#/components/schemas/BundleResponse'
       required:
       - created
-    BundleSetParentResponse:
-      type: object
-      properties:
-        updated:
-          type: array
-          items:
-            $ref: '#/components/schemas/BundleResponse'
-      required:
-      - updated
     BundleCreateRequest:
       type: object
       properties:
@@ -1322,6 +1307,21 @@ components:
           - folder
       required:
       - name
+    BundleListResponse:
+      type: object
+      properties:
+        bundles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleResponse'
+        next:
+          type: string
+          description: Next cursor if available
+        prev:
+          type: string
+          description: Previous cursor if available
+      required:
+      - bundles
   securitySchemes:
     Bearer:
       type: http

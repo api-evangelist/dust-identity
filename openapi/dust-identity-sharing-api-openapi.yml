@@ -562,6 +562,28 @@ paths:
                 - status
 components:
   schemas:
+    ShareUpdateRequest:
+      type: object
+      properties:
+        relation:
+          enum:
+          - admin
+          - attached
+          - container
+          - creator
+          - editor
+          - member
+          - owner
+          - parent
+          - private
+          - protected
+          - publish
+          - sender
+          - share
+          - transfer
+          - viewer
+      required:
+      - relation
     PartnerInventoryResponse:
       type: object
       properties:
@@ -698,28 +720,28 @@ components:
             - teamId
       required:
       - items
-    ShareUpdateRequest:
+    ShareRemoveRequest:
       type: object
       properties:
-        relation:
-          enum:
-          - admin
-          - attached
-          - container
-          - creator
-          - editor
-          - member
-          - owner
-          - parent
-          - private
-          - protected
-          - publish
-          - sender
-          - share
-          - transfer
-          - viewer
+        ids:
+          type: array
+          description: Sharing instance ids
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
       required:
-      - relation
+      - ids
     AccessSummaryResponse:
       type: object
       properties:
@@ -2071,28 +2093,6 @@ components:
       required:
       - total
       - tuples
-    ShareRemoveRequest:
-      type: object
-      properties:
-        ids:
-          type: array
-          description: Sharing instance ids
-          items:
-            anyOf:
-            - type: string
-              description: a UUID
-              format: uuid
-              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-            - const: 00000000-0000-0000-0000-000000000000
-              description: a UUID
-              format: uuid
-            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-              description: a UUID
-              format: uuid
-            description: a UUID
-            format: uuid
-      required:
-      - ids
   securitySchemes:
     Bearer:
       type: http
