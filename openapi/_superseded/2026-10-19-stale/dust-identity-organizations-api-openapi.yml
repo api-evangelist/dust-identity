@@ -1,0 +1,343 @@
+openapi: 3.2.0
+info:
+  title: DUST Organizations API
+  description: DUST Platform API
+  version: 2026.7.4
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Organizations
+  description: Manage organizations and their members.
+paths:
+  /api/v1/orgs/invites:
+    get:
+      operationId: orgs.list_invites
+      parameters:
+      - in: query
+        name: status
+        schema:
+          anyOf:
+          - const: accepted
+            description: Filter by status of the notification
+          - const: canceled
+            description: Filter by status of the notification
+          - const: pending
+            description: Filter by status of the notification
+          - const: rejected
+            description: Filter by status of the notification
+        description: Filter by status of the notification
+      summary: List organization invites
+      tags:
+      - Organizations
+      responses:
+        '200':
+          description: List of organization invites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invites:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        email:
+                          type: string
+                          pattern: ^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$
+                          format: email
+                        expiresAt:
+                          type: string
+                        id:
+                          type: string
+                        inviterId:
+                          type: string
+                        organizationId:
+                          type: string
+                        role:
+                          type: string
+                        status:
+                          enum:
+                          - accepted
+                          - canceled
+                          - pending
+                          - rejected
+                        inviter:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                              pattern: ^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$
+                              format: email
+                            id:
+                              type: string
+                            image:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            name:
+                              type: string
+                          required:
+                          - email
+                          - id
+                          - image
+                          - name
+                        organization:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            logo:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            name:
+                              type: string
+                            slug:
+                              type: string
+                          required:
+                          - id
+                          - logo
+                          - name
+                          - slug
+                      required:
+                      - email
+                      - expiresAt
+                      - id
+                      - inviterId
+                      - organizationId
+                      - role
+                      - status
+                  total:
+                    type: number
+                required:
+                - invites
+                - total
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/orgs/invites/accept:
+    post:
+      operationId: orgs.accept_invite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                invitationId:
+                  type: string
+                  description: the invitation ID to accept (must be addressed to the caller's email)
+                  minLength: 1
+              required:
+              - invitationId
+      summary: Accept an organization invitation
+      description: Accept a pending organization invitation addressed to the authenticated user's email. Callable before any organization/team context is selected.
+      tags:
+      - Organizations
+      responses:
+        '200':
+          description: Invitation accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    const: accepted
+                required:
+                - status
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Templates
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

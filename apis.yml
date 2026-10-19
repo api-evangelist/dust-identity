@@ -597,6 +597,69 @@ apis:
     url: examples/dust-identity-examples.yml
   - type: Events
     url: asyncapi/dust-identity-events.yml
+- aid: dust-identity:dust-identity-composite-tags-api
+  name: Dust Identity Composite Tags API
+  description: Enroll physical Labels and organize them into Reels
+  humanURL: https://docs.dustid.io/api/authentication/
+  baseURL: https://authd.dustid.io
+  tags:
+  - Composite Tags
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-composite-tags-api-openapi.yml
+- aid: dust-identity:dust-identity-fields-api
+  name: Dust Identity Fields API
+  description: Query thread data fields (Field Search support surfaces)
+  humanURL: https://docs.dustid.io/api/authentication/
+  baseURL: https://authd.dustid.io
+  tags:
+  - Fields
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-fields-api-openapi.yml
+- aid: dust-identity:dust-identity-public-page-designs-api
+  name: Dust Identity Public Page Designs API
+  description: Author reusable public page layouts and freeze them as immutable Design Versions
+  humanURL: https://docs.dustid.io/api/authentication/
+  baseURL: https://authd.dustid.io
+  tags:
+  - Public Page Designs
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-public-page-designs-api-openapi.yml
+- aid: dust-identity:dust-identity-public-pages-api
+  name: Dust Identity Public Pages API
+  description: Reserve, bind, and resolve public product pages
+  humanURL: https://docs.dustid.io/api/authentication/
+  baseURL: https://authd.dustid.io
+  tags:
+  - Public Pages
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-public-pages-api-openapi.yml
+- aid: dust-identity:dust-identity-tamper-api
+  name: Dust Identity Tamper API
+  description: >-
+    Compare an identifier's current scan against the reference captured when it was bound, and record
+    what a person concluded. The platform reports measurements only — it never states, scores, or implies
+    whether tampering occurred.
+  humanURL: https://docs.dustid.io/api/authentication/
+  baseURL: https://authd.dustid.io
+  tags:
+  - Tamper
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-tamper-api-openapi.yml
+- aid: dust-identity:dust-identity-vlinks-api
+  name: Dust Identity Vlinks API
+  description: Reserve and manage stable redirect links
+  humanURL: https://docs.dustid.io/api/authentication/
+  baseURL: https://authd.dustid.io
+  tags:
+  - Vlinks
+  properties:
+  - type: OpenAPI
+    url: openapi/dust-identity-vlinks-api-openapi.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

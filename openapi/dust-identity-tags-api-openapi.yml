@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: DUST Tags API
   description: DUST Platform API
-  version: 2026.7.4
+  version: 2026.10.0
 servers:
 - url: https://apid.dustid.io
   description: DUST API for trusted provenance.
@@ -27,7 +27,9 @@ paths:
                   - type: string
                     description: Image file or base64-encoded image data URL of the DUST tag.
                     pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
-                  - description: Image file or base64-encoded image data URL of the DUST tag.
+                  - type: string
+                    format: binary
+                    description: Image file or base64-encoded image data URL of the DUST tag.
                   description: Image file or base64-encoded image data URL of the DUST tag.
                 options:
                   anyOf:
@@ -60,6 +62,8 @@ paths:
                     - type: object
                       additionalProperties: {}
                     - type: 'null'
+                  scan:
+                    $ref: '#/components/schemas/ScanReceipt'
                 required:
                 - id
                 - qualityScore
@@ -203,6 +207,10 @@ paths:
                         type: string
                       value:
                         type: string
+                      voidedAt:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
                       indexing:
                         anyOf:
                         - const: default
@@ -211,6 +219,10 @@ paths:
                       isBound:
                         anyOf:
                         - type: boolean
+                        - type: 'null'
+                      label:
+                        anyOf:
+                        - $ref: '#/components/schemas/LabelRef'
                         - type: 'null'
                     required:
                     - archivedAt
@@ -227,8 +239,104 @@ paths:
                     - transferredAt
                     - updatedAt
                     - value
+                    - voidedAt
                   annotatedImageUrl:
                     type: string
+                  boundTags:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        archivedAt:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        createdAt:
+                          type: string
+                        description:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        isPrivate:
+                          type: boolean
+                        metadata:
+                          anyOf:
+                          - type: number
+                          - type: object
+                          - type: string
+                          - type: boolean
+                          - type: 'null'
+                        name:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        ownerId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        tagId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        tagType:
+                          type: string
+                        threadId:
+                          anyOf:
+                          - type: string
+                            description: a RFC-4122-compliant UUID
+                            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                          - type: 'null'
+                        transferId:
+                          anyOf:
+                          - type: string
+                            description: a RFC-4122-compliant UUID
+                            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                          - type: 'null'
+                        transferredAt:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        updatedAt:
+                          type: string
+                        value:
+                          type: string
+                        voidedAt:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        indexing:
+                          anyOf:
+                          - const: default
+                          - const: none
+                          - type: 'null'
+                        isBound:
+                          anyOf:
+                          - type: boolean
+                          - type: 'null'
+                        label:
+                          anyOf:
+                          - $ref: '#/components/schemas/LabelRef'
+                          - type: 'null'
+                      required:
+                      - archivedAt
+                      - createdAt
+                      - description
+                      - isPrivate
+                      - metadata
+                      - name
+                      - ownerId
+                      - tagId
+                      - tagType
+                      - threadId
+                      - transferId
+                      - transferredAt
+                      - updatedAt
+                      - value
+                      - voidedAt
+                  label:
+                    $ref: '#/components/schemas/LabelRef'
+                  scan:
+                    $ref: '#/components/schemas/ScanReceipt'
                 required:
                 - tag
         '400':
@@ -264,6 +372,26 @@ paths:
                     type: string
                   status:
                     const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '409':
+          description: A Label or Reel conflicts with an existing position or Identifier.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: COMPOSITE_TAG_CONFLICT
+                  message:
+                    type: string
+                  status:
+                    const: 409
                   detail:
                     type: object
                     description: Extra context information specific to this error
@@ -311,6 +439,7 @@ paths:
                     - DATA_MATRIX
                     - NFC
                     - QR
+                    - TEXT
                   tags:
                     anyOf:
                     - type: string
@@ -322,7 +451,7 @@ paths:
                     - type: string
                       description: a UUID
                       format: uuid
-                      pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                      pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                     - const: 00000000-0000-0000-0000-000000000000
                       description: a UUID
                       format: uuid
@@ -349,7 +478,9 @@ paths:
                     - type: string
                       description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
                       pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
-                    - description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
+                    - type: string
+                      format: binary
+                      description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
                     description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
                   tagType:
                     const: DUST
@@ -364,7 +495,7 @@ paths:
                     - type: string
                       description: a UUID
                       format: uuid
-                      pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                      pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                     - const: 00000000-0000-0000-0000-000000000000
                       description: a UUID
                       format: uuid
@@ -404,6 +535,8 @@ paths:
                       type: boolean
                     error:
                       type: string
+                    scan:
+                      $ref: '#/components/schemas/ScanReceipt'
                     verifiedTag:
                       type: object
                       properties:
@@ -460,6 +593,10 @@ paths:
                           type: string
                         value:
                           type: string
+                        voidedAt:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
                         indexing:
                           anyOf:
                           - const: default
@@ -468,6 +605,10 @@ paths:
                         isBound:
                           anyOf:
                           - type: boolean
+                          - type: 'null'
+                        label:
+                          anyOf:
+                          - $ref: '#/components/schemas/LabelRef'
                           - type: 'null'
                       required:
                       - archivedAt
@@ -484,6 +625,7 @@ paths:
                       - transferredAt
                       - updatedAt
                       - value
+                      - voidedAt
                   required:
                   - attemptedCount
                   - failedCount
@@ -546,6 +688,10 @@ paths:
                           type: string
                         value:
                           type: string
+                        voidedAt:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
                         indexing:
                           anyOf:
                           - const: default
@@ -554,6 +700,10 @@ paths:
                         isBound:
                           anyOf:
                           - type: boolean
+                          - type: 'null'
+                        label:
+                          anyOf:
+                          - $ref: '#/components/schemas/LabelRef'
                           - type: 'null'
                       required:
                       - archivedAt
@@ -570,6 +720,9 @@ paths:
                       - transferredAt
                       - updatedAt
                       - value
+                      - voidedAt
+                    scan:
+                      $ref: '#/components/schemas/ScanReceipt'
                   required:
                   - tag
         '400':
@@ -716,6 +869,10 @@ paths:
                               type: string
                             value:
                               type: string
+                            voidedAt:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
                             indexing:
                               anyOf:
                               - const: default
@@ -724,6 +881,10 @@ paths:
                             isBound:
                               anyOf:
                               - type: boolean
+                              - type: 'null'
+                            label:
+                              anyOf:
+                              - $ref: '#/components/schemas/LabelRef'
                               - type: 'null'
                           required:
                           - archivedAt
@@ -740,6 +901,7 @@ paths:
                           - transferredAt
                           - updatedAt
                           - value
+                          - voidedAt
                         thread:
                           type: object
                           properties:
@@ -839,8 +1001,21 @@ paths:
                       - thread
                     type:
                       const: identified
+                    scan:
+                      $ref: '#/components/schemas/ScanReceipt'
                   required:
                   - identified
+                  - type
+                - type: object
+                  properties:
+                    label:
+                      $ref: '#/components/schemas/IdentifiedLabel'
+                    type:
+                      const: label
+                    scan:
+                      $ref: '#/components/schemas/ScanReceipt'
+                  required:
+                  - label
                   - type
                 - type: object
                   properties:
@@ -899,10 +1074,18 @@ paths:
                                 type: string
                               value:
                                 type: string
+                              voidedAt:
+                                anyOf:
+                                - type: string
+                                - type: 'null'
                               indexing:
                                 anyOf:
                                 - const: default
                                 - const: none
+                                - type: 'null'
+                              label:
+                                anyOf:
+                                - $ref: '#/components/schemas/LabelRef'
                                 - type: 'null'
                             required:
                             - archivedAt
@@ -918,6 +1101,7 @@ paths:
                             - transferredAt
                             - updatedAt
                             - value
+                            - voidedAt
                           thread:
                             anyOf:
                             - type: object
@@ -952,6 +1136,8 @@ paths:
                         - thread
                     type:
                       const: matches
+                    scan:
+                      $ref: '#/components/schemas/ScanReceipt'
                   required:
                   - matches
                   - type
@@ -1122,7 +1308,7 @@ paths:
                   - type: string
                     description: ID of the tag to set text for
                     format: uuid
-                    pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                    pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                   - const: 00000000-0000-0000-0000-000000000000
                     description: ID of the tag to set text for
                     format: uuid
@@ -1136,7 +1322,7 @@ paths:
                   - type: string
                     description: ID of the thread the tag is bound to
                     format: uuid
-                    pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                    pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                   - const: 00000000-0000-0000-0000-000000000000
                     description: ID of the thread the tag is bound to
                     format: uuid
@@ -1166,7 +1352,7 @@ paths:
     post:
       operationId: tags.update
       summary: Update identifier lifecycle state
-      description: Update an identifier's name, description, privacy, and archive state. Archiving hides the identifier from default listings without deleting it; passing a null archivedAt restores it. The value and type are immutable.
+      description: Update an identifier's name, description, privacy, archive state, and void state. Archiving hides the identifier from default listings without deleting it; passing a null archivedAt restores it. Voiding marks the identifier as no longer in use (the physical DUST was destroyed, re-applied, or cut away) while keeping it visible on the thread; passing a null voidedAt un-voids it. Void changes no behavior — a voided identifier can still be identified, verified, and unbound, and voiding never deactivates the underlying scan record. The value and type are immutable.
       tags:
       - Tags
       responses:
@@ -1262,6 +1448,86 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TagUpdateRequest'
+  /api/v1/tags/activate:
+    post:
+      operationId: tags.activate
+      summary: Activate Verify-only DUST identifiers
+      description: 'Make Verify-only DUST identifiers identifiable: the scan service indexes each fingerprint, running its duplicate check, and the identifier records the change only after it succeeds. Forward-only — there is no deactivate. One result per identifier; a duplicate fails that identifier and the rest continue. Requires membership of the owning team.'
+      tags:
+      - Tags
+      responses:
+        '200':
+          description: Per-identifier activation outcomes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagActivateResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagActivateRequest'
   /api/v1/tags/unbind:
     post:
       operationId: tags.unbind
@@ -1369,7 +1635,7 @@ paths:
                   - type: string
                     description: a UUID
                     format: uuid
-                    pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                    pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                   - const: 00000000-0000-0000-0000-000000000000
                     description: a UUID
                     format: uuid
@@ -1383,7 +1649,7 @@ paths:
                   - type: string
                     description: a UUID
                     format: uuid
-                    pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                    pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                   - const: 00000000-0000-0000-0000-000000000000
                     description: a UUID
                     format: uuid
@@ -1397,6 +1663,23 @@ paths:
               - threadId
 components:
   schemas:
+    ScanReceipt:
+      type: object
+      properties:
+        dustId:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fingerprintId:
+          anyOf:
+          - type: string
+          - type: 'null'
+        scanId:
+          type: string
+      required:
+      - dustId
+      - fingerprintId
+      - scanId
     BulkVerifyTagList:
       type: array
       description: In multipart submissions, provide a JSON string array of tags to verify against; otherwise, a direct array is also accepted. If more than one tag is provided, verification will succeed if any single tag matches the thread.
@@ -1408,7 +1691,7 @@ components:
             - type: string
               description: a UUID
               format: uuid
-              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+              pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
             - const: 00000000-0000-0000-0000-000000000000
               description: a UUID
               format: uuid
@@ -1424,485 +1707,10 @@ components:
             - DUST
             - NFC
             - QR
+            - TEXT
         required:
         - tagId
         - tagType
-    TagOptions:
-      type: object
-      description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
-      properties:
-        metadata:
-          type: object
-          properties:
-            format:
-              enum:
-              - auspost
-              - azteccode
-              - azteccodecompact
-              - aztecrune
-              - bc412
-              - channelcode
-              - codablockf
-              - code11
-              - code128
-              - code16k
-              - code2of5
-              - code32
-              - code39
-              - code39ext
-              - code49
-              - code93
-              - code93ext
-              - codeone
-              - coop2of5
-              - daft
-              - databarexpanded
-              - databarexpandedcomposite
-              - databarexpandedstacked
-              - databarexpandedstackedcomposite
-              - databarlimited
-              - databarlimitedcomposite
-              - databaromni
-              - databaromnicomposite
-              - databarstacked
-              - databarstackedcomposite
-              - databarstackedomni
-              - databarstackedomnicomposite
-              - databartruncated
-              - databartruncatedcomposite
-              - datalogic2of5
-              - datamatrix
-              - datamatrixrectangular
-              - datamatrixrectangularextension
-              - dotcode
-              - ean13
-              - ean13composite
-              - ean14
-              - ean2
-              - ean5
-              - ean8
-              - ean8composite
-              - flattermarken
-              - gs1-128
-              - gs1-128composite
-              - gs1-cc
-              - gs1datamatrix
-              - gs1datamatrixrectangular
-              - gs1dldatamatrix
-              - gs1dlqrcode
-              - gs1dotcode
-              - gs1northamericancoupon
-              - gs1qrcode
-              - hanxin
-              - hibcazteccode
-              - hibccodablockf
-              - hibccode128
-              - hibccode39
-              - hibcdatamatrix
-              - hibcdatamatrixrectangular
-              - hibcmicropdf417
-              - hibcpdf417
-              - hibcqrcode
-              - iata2of5
-              - identcode
-              - industrial2of5
-              - interleaved2of5
-              - isbn
-              - ismn
-              - issn
-              - itf14
-              - japanpost
-              - kix
-              - leitcode
-              - mailmark
-              - mands
-              - matrix2of5
-              - maxicode
-              - micropdf417
-              - microqrcode
-              - msi
-              - onecode
-              - pdf417
-              - pdf417compact
-              - pharmacode
-              - pharmacode2
-              - planet
-              - plessey
-              - posicode
-              - postnet
-              - pzn
-              - qrcode
-              - rationalizedCodabar
-              - raw
-              - rectangularmicroqrcode
-              - royalmail
-              - sscc18
-              - swissqrcode
-              - symbol
-              - telepen
-              - telepennumeric
-              - ultracode
-              - upca
-              - upcacomposite
-              - upce
-              - upcecomposite
-    TagExtractRequestMetadata:
-      type: object
-      description: In multipart submissions, provide a JSON string of [TagExtractRequestMetadata](#model/TagExtractRequestMetadata); otherwise, a direct object is also accepted.
-      properties:
-        enrollmentSessionId:
-          anyOf:
-          - type: string
-            description: ID to create and associate this extraction with an enrollment session
-          - type: 'null'
-        orgId:
-          anyOf:
-          - type: string
-            description: ID of the organization to associate this extraction with. If not provided, will be associated with the user's current context organization
-          - type: 'null'
-        settings:
-          type: object
-          properties:
-            accuracy:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            androidCameraId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            appId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            appName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            appVersion:
-              anyOf:
-              - type: string
-              - type: 'null'
-            autoFocusRangeRestriction:
-              anyOf:
-              - const: far
-              - const: near
-              - const: none
-              - type: 'null'
-            brand:
-              anyOf:
-              - type: string
-              - type: 'null'
-            build:
-              anyOf:
-              - type: string
-              - type: 'null'
-            calibrationConfidence:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            calibrationId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            calibrationVersion:
-              anyOf:
-              - type: string
-              - type: 'null'
-            calibrationZoom:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            cameraId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            captureSource:
-              anyOf:
-              - type: string
-              - type: 'null'
-            deviceId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            deviceName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            deviceType:
-              anyOf:
-              - const: DESKTOP
-              - const: PHONE
-              - const: TABLET
-              - const: TV
-              - const: UNKNOWN
-              - type: 'null'
-            dragonBackend:
-              anyOf:
-              - type: string
-              - type: 'null'
-            dragonErrorCode:
-              anyOf:
-              - type: string
-              - type: 'null'
-            exposureDuration:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            exposureValue:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            flashMode:
-              anyOf:
-              - const: auto
-              - const: 'off'
-              - const: 'on'
-              - const: torch
-              - type: 'null'
-            focusDepth:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            focusMode:
-              anyOf:
-              - type: string
-              - type: 'null'
-            focusSetPoint:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            focusX:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            focusY:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            iso:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            latitude:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            lensPosition:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            longitude:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            modelId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            modelName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            osBuildId:
-              anyOf:
-              - type: string
-              - type: 'null'
-            osName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            osVersion:
-              anyOf:
-              - type: string
-              - type: 'null'
-            selectedLens:
-              anyOf:
-              - type: string
-              - type: 'null'
-            tapToFocusCount:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            usbDeviceName:
-              anyOf:
-              - type: string
-              - type: 'null'
-            usbProductId:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            usbVendorId:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-            zoom:
-              anyOf:
-              - type: number
-                description: A number or a string that can be parsed into a number
-              - type: string
-                description: A number or a string that can be parsed into a number
-                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
-              - type: 'null'
-    TagUpdateRequest:
-      type: object
-      description: Update an identifier's name, description, privacy, and archive state. The value/type are immutable.
-      properties:
-        tagId:
-          anyOf:
-          - type: string
-            description: ID of the tag to update
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: ID of the tag to update
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: ID of the tag to update
-            format: uuid
-          description: ID of the tag to update
-          format: uuid
-        threadId:
-          anyOf:
-          - type: string
-            description: ID of the thread the tag is bound to
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: ID of the thread the tag is bound to
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: ID of the thread the tag is bound to
-            format: uuid
-          description: ID of the thread the tag is bound to
-          format: uuid
-        archivedAt:
-          anyOf:
-          - type: string
-            description: ISO 8601 timestamp to archive the identifier, or null to restore
-          - type: 'null'
-            description: ISO 8601 timestamp to archive the identifier, or null to restore
-          description: ISO 8601 timestamp to archive the identifier, or null to restore
-        description:
-          anyOf:
-          - type: string
-            description: New description to set for the tag
-          - type: 'null'
-            description: New description to set for the tag
-          description: New description to set for the tag
-        isPrivate:
-          type: boolean
-        name:
-          anyOf:
-          - type: string
-            description: New name to set for the tag
-          - type: 'null'
-            description: New name to set for the tag
-          description: New name to set for the tag
-      required:
-      - tagId
-      - threadId
-    BindTextTag:
-      type: object
-      properties:
-        data:
-          type: string
-        tagType:
-          enum:
-          - BAR_CODE
-          - DATA_MATRIX
-          - NFC
-          - QR
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        options:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/TagOptions'
-        tagDescription:
-          type: string
-      required:
-      - data
-      - tagType
-      - threadId
-      additionalProperties: false
     BindDustFingerprintOptions:
       type: object
       description: In multipart submissions, provide a JSON string of [BindDustFingerprintOptions](#model/BindDustFingerprintOptions); otherwise, a direct object is also accepted.
@@ -1912,7 +1720,7 @@ components:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -2043,15 +1851,28 @@ components:
         returnAnnotatedImage:
           type: boolean
           description: Optionally, return the annotated image as a data URL in the response
-    BindDustFingerprint:
+    TagActivateResult:
       type: object
       properties:
-        fingerprintId:
+        outcome:
+          anyOf:
+          - const: activated
+            description: not_found also covers archived or shipped identifiers and identifiers owned by another team
+          - const: already_active
+            description: not_found also covers archived or shipped identifiers and identifiers owned by another team
+          - const: failed
+            description: not_found also covers archived or shipped identifiers and identifiers owned by another team
+          - const: not_dust
+            description: not_found also covers archived or shipped identifiers and identifiers owned by another team
+          - const: not_found
+            description: not_found also covers archived or shipped identifiers and identifiers owned by another team
+          description: not_found also covers archived or shipped identifiers and identifiers owned by another team
+        tagId:
           anyOf:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -2060,34 +1881,20 @@ components:
             format: uuid
           description: a UUID
           format: uuid
-        tagType:
-          const: DUST
-        threadId:
+        reason:
           anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        options:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string of [BindDustFingerprintOptions](#model/BindDustFingerprintOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/BindDustFingerprintOptions'
-        tagDescription:
-          type: string
+          - const: dust_duplicate
+            description: Why a `failed` identifier stayed Verify-only
+          - const: scan_unavailable
+            description: Why a `failed` identifier stayed Verify-only
+          description: Why a `failed` identifier stayed Verify-only
+        scanEventIds:
+          type: array
+          items:
+            type: string
       required:
-      - fingerprintId
-      - tagType
-      - threadId
-      additionalProperties: false
+      - outcome
+      - tagId
     DustTagOptions:
       type: object
       description: In multipart submissions, provide a JSON string of [DustTagOptions](#model/DustTagOptions); otherwise, a direct object is also accepted.
@@ -2339,6 +2146,14 @@ components:
                 description: A number or a string that can be parsed into a number
                 pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
               - type: 'null'
+            focusLastCommand:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
             focusMode:
               anyOf:
               - type: string
@@ -2392,6 +2207,30 @@ components:
                 pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
               - type: 'null'
             longitude:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            magnification:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            magnificationTargetMax:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            magnificationTargetMin:
               anyOf:
               - type: number
                 description: A number or a string that can be parsed into a number
@@ -2459,74 +2298,14 @@ components:
                 description: A number or a string that can be parsed into a number
                 pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
               - type: 'null'
-    IdentifyTextTagPayload:
-      type: object
-      properties:
-        data:
-          type: string
-        tagType:
-          enum:
-          - BAR_CODE
-          - DATA_MATRIX
-          - NFC
-          - QR
-        options:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/TagOptions'
-        searchTeamIds:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-          - $ref: '#/components/schemas/UuidList'
-          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-      required:
-      - data
-      - tagType
-    IdentifyDustPayload:
-      type: object
-      properties:
-        data:
-          anyOf:
-          - type: string
-            description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
-            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
-          - description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
-          description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
-        tagType:
-          const: DUST
-        options:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string of [DustTagOptions](#model/DustTagOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/DustTagOptions'
-        searchTeamIds:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-          - $ref: '#/components/schemas/UuidList'
-          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-      required:
-      - data
-      - tagType
-    UuidList:
-      type: array
-      description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
-      items:
-        anyOf:
-        - type: string
-          description: a UUID
-          format: uuid
-          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-        - const: 00000000-0000-0000-0000-000000000000
-          description: a UUID
-          format: uuid
-        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-          description: a UUID
-          format: uuid
-        description: a UUID
-        format: uuid
+            zoomPosition:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
     IdentifyTagIdOnlyPayload:
       type: object
       properties:
@@ -2535,7 +2314,7 @@ components:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -2555,70 +2334,31 @@ components:
       required:
       - tagId
       - tagType
-    TagUpdateResponse:
+    TagActivateRequest:
       type: object
+      description: Make Verify-only DUST identifiers identifiable. The scan service indexes each fingerprint (running its duplicate check) before the identifier records the change. There is no deactivate.
       properties:
-        archivedAt:
-          anyOf:
-          - type: string
-          - type: 'null'
-        isPrivate:
-          type: boolean
-        tagId:
-          anyOf:
-          - type: string
+        tagIds:
+          type: array
+          description: DUST identifiers to make identifiable. Non-DUST ids are reported, never rejected.
+          maxItems: 200
+          minItems: 1
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
       required:
-      - archivedAt
-      - isPrivate
-      - tagId
-    BindDustImage:
-      type: object
-      properties:
-        data:
-          anyOf:
-          - type: string
-            description: File or base64-encoded image data of the DUST tag to be bound.
-            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
-          - description: File or base64-encoded image data of the DUST tag to be bound.
-          description: File or base64-encoded image data of the DUST tag to be bound.
-        tagType:
-          const: DUST
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        options:
-          anyOf:
-          - type: string
-            description: In multipart submissions, provide a JSON string of [BindDustImageOptions](#model/BindDustImageOptions); otherwise, a direct object is also accepted.
-          - $ref: '#/components/schemas/BindDustImageOptions'
-        tagDescription:
-          type: string
-      required:
-      - data
-      - tagType
-      - threadId
+      - tagIds
       additionalProperties: false
     BindDustImageOptions:
       type: object
@@ -2629,7 +2369,7 @@ components:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -2888,6 +2628,14 @@ components:
                 description: A number or a string that can be parsed into a number
                 pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
               - type: 'null'
+            focusLastCommand:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
             focusMode:
               anyOf:
               - type: string
@@ -2941,6 +2689,30 @@ components:
                 pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
               - type: 'null'
             longitude:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            magnification:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            magnificationTargetMax:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            magnificationTargetMin:
               anyOf:
               - type: number
                 description: A number or a string that can be parsed into a number
@@ -3008,6 +2780,989 @@ components:
                 description: A number or a string that can be parsed into a number
                 pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
               - type: 'null'
+            zoomPosition:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+    TagUpdateResponse:
+      type: object
+      properties:
+        archivedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        isPrivate:
+          type: boolean
+        tagId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        voidedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - archivedAt
+      - isPrivate
+      - tagId
+      - voidedAt
+    TagExtractRequestMetadata:
+      type: object
+      description: In multipart submissions, provide a JSON string of [TagExtractRequestMetadata](#model/TagExtractRequestMetadata); otherwise, a direct object is also accepted.
+      properties:
+        enrollmentSessionId:
+          anyOf:
+          - type: string
+            description: ID to create and associate this extraction with an enrollment session
+          - type: 'null'
+        orgId:
+          anyOf:
+          - type: string
+            description: ID of the organization to associate this extraction with. If not provided, will be associated with the user's current context organization
+          - type: 'null'
+        settings:
+          type: object
+          properties:
+            accuracy:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            androidCameraId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            appId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            appName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            appVersion:
+              anyOf:
+              - type: string
+              - type: 'null'
+            autoFocusRangeRestriction:
+              anyOf:
+              - const: far
+              - const: near
+              - const: none
+              - type: 'null'
+            brand:
+              anyOf:
+              - type: string
+              - type: 'null'
+            build:
+              anyOf:
+              - type: string
+              - type: 'null'
+            calibrationConfidence:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            calibrationId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            calibrationVersion:
+              anyOf:
+              - type: string
+              - type: 'null'
+            calibrationZoom:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            cameraId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            captureSource:
+              anyOf:
+              - type: string
+              - type: 'null'
+            deviceId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            deviceName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            deviceType:
+              anyOf:
+              - const: DESKTOP
+              - const: PHONE
+              - const: TABLET
+              - const: TV
+              - const: UNKNOWN
+              - type: 'null'
+            dragonBackend:
+              anyOf:
+              - type: string
+              - type: 'null'
+            dragonErrorCode:
+              anyOf:
+              - type: string
+              - type: 'null'
+            exposureDuration:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            exposureValue:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            flashMode:
+              anyOf:
+              - const: auto
+              - const: 'off'
+              - const: 'on'
+              - const: torch
+              - type: 'null'
+            focusDepth:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            focusLastCommand:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            focusMode:
+              anyOf:
+              - type: string
+              - type: 'null'
+            focusSetPoint:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            focusX:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            focusY:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            iso:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            latitude:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            lensPosition:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            longitude:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            magnification:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            magnificationTargetMax:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            magnificationTargetMin:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            modelId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            modelName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            osBuildId:
+              anyOf:
+              - type: string
+              - type: 'null'
+            osName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            osVersion:
+              anyOf:
+              - type: string
+              - type: 'null'
+            selectedLens:
+              anyOf:
+              - type: string
+              - type: 'null'
+            tapToFocusCount:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            usbDeviceName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            usbProductId:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            usbVendorId:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            zoom:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+            zoomPosition:
+              anyOf:
+              - type: number
+                description: A number or a string that can be parsed into a number
+              - type: string
+                description: A number or a string that can be parsed into a number
+                pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+              - type: 'null'
+    BindDustFingerprint:
+      type: object
+      properties:
+        fingerprintId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        tagType:
+          const: DUST
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        activateLabel:
+          anyOf:
+          - const: 'false'
+          - const: 'true'
+          - type: boolean
+        options:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string of [BindDustFingerprintOptions](#model/BindDustFingerprintOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/BindDustFingerprintOptions'
+        tagDescription:
+          type: string
+      required:
+      - fingerprintId
+      - tagType
+      - threadId
+      additionalProperties: false
+    LabelRef:
+      type: object
+      properties:
+        compositeTagId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        position:
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0
+          - type: 'null'
+        reel:
+          anyOf:
+          - type: object
+            properties:
+              collection:
+                anyOf:
+                - type: object
+                  properties:
+                    collectionId:
+                      anyOf:
+                      - type: string
+                        description: a UUID
+                        format: uuid
+                        pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+                      - const: 00000000-0000-0000-0000-000000000000
+                        description: a UUID
+                        format: uuid
+                      - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                        description: a UUID
+                        format: uuid
+                      description: a UUID
+                      format: uuid
+                    name:
+                      type: string
+                  required:
+                  - collectionId
+                  - name
+                - type: 'null'
+              collectionId:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+              name:
+                type: string
+            required:
+            - collection
+            - collectionId
+            - name
+          - type: 'null'
+      required:
+      - compositeTagId
+      - description
+      - name
+      - position
+      - reel
+    BindTextTag:
+      type: object
+      properties:
+        data:
+          type: string
+        tagType:
+          enum:
+          - BAR_CODE
+          - DATA_MATRIX
+          - NFC
+          - QR
+          - TEXT
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        activateLabel:
+          anyOf:
+          - const: 'false'
+          - const: 'true'
+          - type: boolean
+        options:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/TagOptions'
+        tagDescription:
+          type: string
+      required:
+      - data
+      - tagType
+      - threadId
+      additionalProperties: false
+    TagActivateResponse:
+      type: object
+      properties:
+        activatedCount:
+          type: integer
+          minimum: 0
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagActivateResult'
+      required:
+      - activatedCount
+      - results
+    TagUpdateRequest:
+      type: object
+      description: Update an identifier's name, description, privacy, archive state, and void state. The value/type are immutable.
+      properties:
+        tagId:
+          anyOf:
+          - type: string
+            description: ID of the tag to update
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: ID of the tag to update
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: ID of the tag to update
+            format: uuid
+          description: ID of the tag to update
+          format: uuid
+        threadId:
+          anyOf:
+          - type: string
+            description: ID of the thread the tag is bound to
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: ID of the thread the tag is bound to
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: ID of the thread the tag is bound to
+            format: uuid
+          description: ID of the thread the tag is bound to
+          format: uuid
+        archivedAt:
+          anyOf:
+          - type: string
+            description: ISO 8601 timestamp to archive the identifier, or null to restore
+          - type: 'null'
+            description: ISO 8601 timestamp to archive the identifier, or null to restore
+          description: ISO 8601 timestamp to archive the identifier, or null to restore
+        description:
+          anyOf:
+          - type: string
+            description: New description to set for the tag
+          - type: 'null'
+            description: New description to set for the tag
+          description: New description to set for the tag
+        isPrivate:
+          type: boolean
+        name:
+          anyOf:
+          - type: string
+            description: New name to set for the tag
+          - type: 'null'
+            description: New name to set for the tag
+          description: New name to set for the tag
+        voidedAt:
+          anyOf:
+          - type: string
+            description: 'ISO 8601 timestamp to void the identifier, or null to un-void it. Void is a label only: a voided identifier stays visible on the thread and can still be scanned, verified, bound, and unbound.'
+          - type: 'null'
+            description: 'ISO 8601 timestamp to void the identifier, or null to un-void it. Void is a label only: a voided identifier stays visible on the thread and can still be scanned, verified, bound, and unbound.'
+          description: 'ISO 8601 timestamp to void the identifier, or null to un-void it. Void is a label only: a voided identifier stays visible on the thread and can still be scanned, verified, bound, and unbound.'
+      required:
+      - tagId
+      - threadId
+    UuidList:
+      type: array
+      description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+      items:
+        anyOf:
+        - type: string
+          description: a UUID
+          format: uuid
+          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+        - const: 00000000-0000-0000-0000-000000000000
+          description: a UUID
+          format: uuid
+        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+          description: a UUID
+          format: uuid
+        description: a UUID
+        format: uuid
+    IdentifyDustPayload:
+      type: object
+      properties:
+        data:
+          anyOf:
+          - type: string
+            description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
+            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
+          - type: string
+            format: binary
+            description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
+          description: Image file or base64-encoded image data URL of the tag to be extracted and bound.
+        tagType:
+          const: DUST
+        options:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string of [DustTagOptions](#model/DustTagOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/DustTagOptions'
+        searchTeamIds:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+          - $ref: '#/components/schemas/UuidList'
+          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+      required:
+      - data
+      - tagType
+    IdentifyTextTagPayload:
+      type: object
+      properties:
+        data:
+          type: string
+        tagType:
+          enum:
+          - BAR_CODE
+          - DATA_MATRIX
+          - NFC
+          - QR
+          - TEXT
+        options:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/TagOptions'
+        searchTeamIds:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+          - $ref: '#/components/schemas/UuidList'
+          description: In multipart submissions, provide a JSON string array of team IDs to limit the search to; otherwise, a direct array is also accepted.
+      required:
+      - data
+      - tagType
+    TagOptions:
+      type: object
+      description: In multipart submissions, provide a JSON string of [TagOptions](#model/TagOptions); otherwise, a direct object is also accepted.
+      properties:
+        metadata:
+          type: object
+          properties:
+            format:
+              enum:
+              - auspost
+              - azteccode
+              - azteccodecompact
+              - aztecrune
+              - bc412
+              - channelcode
+              - codablockf
+              - code11
+              - code128
+              - code16k
+              - code2of5
+              - code32
+              - code39
+              - code39ext
+              - code49
+              - code93
+              - code93ext
+              - codeone
+              - coop2of5
+              - daft
+              - databarexpanded
+              - databarexpandedcomposite
+              - databarexpandedstacked
+              - databarexpandedstackedcomposite
+              - databarlimited
+              - databarlimitedcomposite
+              - databaromni
+              - databaromnicomposite
+              - databarstacked
+              - databarstackedcomposite
+              - databarstackedomni
+              - databarstackedomnicomposite
+              - databartruncated
+              - databartruncatedcomposite
+              - datalogic2of5
+              - datamatrix
+              - datamatrixrectangular
+              - datamatrixrectangularextension
+              - dotcode
+              - ean13
+              - ean13composite
+              - ean14
+              - ean2
+              - ean5
+              - ean8
+              - ean8composite
+              - flattermarken
+              - gs1-128
+              - gs1-128composite
+              - gs1-cc
+              - gs1datamatrix
+              - gs1datamatrixrectangular
+              - gs1dldatamatrix
+              - gs1dlqrcode
+              - gs1dotcode
+              - gs1northamericancoupon
+              - gs1qrcode
+              - hanxin
+              - hibcazteccode
+              - hibccodablockf
+              - hibccode128
+              - hibccode39
+              - hibcdatamatrix
+              - hibcdatamatrixrectangular
+              - hibcmicropdf417
+              - hibcpdf417
+              - hibcqrcode
+              - iata2of5
+              - identcode
+              - industrial2of5
+              - interleaved2of5
+              - isbn
+              - ismn
+              - issn
+              - itf14
+              - japanpost
+              - kix
+              - leitcode
+              - mailmark
+              - mands
+              - matrix2of5
+              - maxicode
+              - micropdf417
+              - microqrcode
+              - msi
+              - onecode
+              - pdf417
+              - pdf417compact
+              - pharmacode
+              - pharmacode2
+              - planet
+              - plessey
+              - posicode
+              - postnet
+              - pzn
+              - qrcode
+              - rationalizedCodabar
+              - raw
+              - rectangularmicroqrcode
+              - royalmail
+              - sscc18
+              - swissqrcode
+              - symbol
+              - telepen
+              - telepennumeric
+              - ultracode
+              - upca
+              - upcacomposite
+              - upce
+              - upcecomposite
+    BindDustImage:
+      type: object
+      properties:
+        data:
+          anyOf:
+          - type: string
+            description: File or base64-encoded image data of the DUST tag to be bound.
+            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
+          - type: string
+            format: binary
+            description: File or base64-encoded image data of the DUST tag to be bound.
+          description: File or base64-encoded image data of the DUST tag to be bound.
+        tagType:
+          const: DUST
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        activateLabel:
+          anyOf:
+          - const: 'false'
+          - const: 'true'
+          - type: boolean
+        options:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string of [BindDustImageOptions](#model/BindDustImageOptions); otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/BindDustImageOptions'
+        tagDescription:
+          type: string
+      required:
+      - data
+      - tagType
+      - threadId
+      additionalProperties: false
+    IdentifiedLabel:
+      type: object
+      properties:
+        label:
+          $ref: '#/components/schemas/LabelRef'
+        tags:
+          type: array
+          items:
+            type: object
+            properties:
+              archivedAt:
+                anyOf:
+                - type: string
+                - type: 'null'
+              createdAt:
+                type: string
+              description:
+                anyOf:
+                - type: string
+                - type: 'null'
+              isPrivate:
+                type: boolean
+              metadata:
+                anyOf:
+                - type: number
+                - type: object
+                - type: string
+                - type: boolean
+                - type: 'null'
+              name:
+                anyOf:
+                - type: string
+                - type: 'null'
+              ownerId:
+                type: string
+                description: a RFC-4122-compliant UUID
+                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+              tagId:
+                type: string
+                description: a RFC-4122-compliant UUID
+                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+              tagType:
+                type: string
+              threadId:
+                anyOf:
+                - type: string
+                  description: a RFC-4122-compliant UUID
+                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                - type: 'null'
+              transferId:
+                anyOf:
+                - type: string
+                  description: a RFC-4122-compliant UUID
+                  pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                - type: 'null'
+              transferredAt:
+                anyOf:
+                - type: string
+                - type: 'null'
+              updatedAt:
+                type: string
+              value:
+                type: string
+              voidedAt:
+                anyOf:
+                - type: string
+                - type: 'null'
+              indexing:
+                anyOf:
+                - const: default
+                - const: none
+                - type: 'null'
+              isBound:
+                anyOf:
+                - type: boolean
+                - type: 'null'
+              label:
+                anyOf:
+                - $ref: '#/components/schemas/LabelRef'
+                - type: 'null'
+            required:
+            - archivedAt
+            - createdAt
+            - description
+            - isPrivate
+            - metadata
+            - name
+            - ownerId
+            - tagId
+            - tagType
+            - threadId
+            - transferId
+            - transferredAt
+            - updatedAt
+            - value
+            - voidedAt
+        team:
+          type: object
+          description: The Team that owns the Label, with its organization. Binding it, or creating a Thread for it, must be done with this Team active.
+          properties:
+            name:
+              anyOf:
+              - type: string
+              - type: 'null'
+            orgId:
+              anyOf:
+              - type: string
+                description: a UUID
+                format: uuid
+                pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+              - const: 00000000-0000-0000-0000-000000000000
+                description: a UUID
+                format: uuid
+              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                description: a UUID
+                format: uuid
+              description: a UUID
+              format: uuid
+            orgLogo:
+              anyOf:
+              - type: string
+              - type: 'null'
+            orgName:
+              anyOf:
+              - type: string
+              - type: 'null'
+            teamId:
+              anyOf:
+              - type: string
+                description: a UUID
+                format: uuid
+                pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+              - const: 00000000-0000-0000-0000-000000000000
+                description: a UUID
+                format: uuid
+              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                description: a UUID
+                format: uuid
+              description: a UUID
+              format: uuid
+          required:
+          - name
+          - orgId
+          - orgLogo
+          - orgName
+          - teamId
+      required:
+      - label
+      - tags
+      - team
   securitySchemes:
     Bearer:
       type: http
@@ -3028,10 +3783,15 @@ x-tagTeams:
   tags:
   - Threads
   - Tags
+  - Tamper
   - Templates
+  - Fields
   - Files
   - Certificates
   - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
   - Sharing
   - Thread Links
   - Thread Relations

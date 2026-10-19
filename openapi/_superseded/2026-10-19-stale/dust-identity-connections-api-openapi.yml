@@ -1,0 +1,2323 @@
+openapi: 3.2.0
+info:
+  title: DUST Connections API
+  description: DUST Platform API
+  version: 2026.7.4
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Connections
+  description: Connections (team links) between Teams; they gate sharing and shipments
+paths:
+  /api/v1/connections:
+    post:
+      operationId: connections.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                allow:
+                  enum:
+                  - receive
+                  - send
+                  - send_receive
+                email:
+                  type: string
+                  pattern: ^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$
+                  format: email
+              required:
+              - allow
+      summary: Create a connection
+      description: Create a connection invite, which enables sharing between the two teams once accepted.
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: Created connection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  acceptingTeamId:
+                    anyOf:
+                    - type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    - type: 'null'
+                  allow:
+                    type: string
+                  amendmentAcceptedById:
+                    anyOf:
+                    - type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    - type: 'null'
+                  amendmentProposedById:
+                    anyOf:
+                    - type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    - type: 'null'
+                  amendmentProposerTeamId:
+                    anyOf:
+                    - type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    - type: 'null'
+                  amendmentStatus:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  amendmentUpdatedAt:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  code:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  createdAt:
+                    type: string
+                  createdById:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  email:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  pendingAllow:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  requestingTeamId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  respondedAt:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  responderId:
+                    anyOf:
+                    - type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    - type: 'null'
+                  status:
+                    type: string
+                  updatedAt:
+                    type: string
+                  acceptedBy:
+                    $ref: '#/components/schemas/Principal'
+                  acceptingTeam:
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                      description:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      detail:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      logo:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      name:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      orgId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      teamId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      updatedAt:
+                        type: string
+                      depth:
+                        type: number
+                      num_members:
+                        type: number
+                      org:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          orgId:
+                            type: string
+                        required:
+                        - name
+                        - orgId
+                      path:
+                        type: string
+                    required:
+                    - createdAt
+                    - description
+                    - detail
+                    - logo
+                    - name
+                    - orgId
+                    - teamId
+                    - updatedAt
+                  requestedBy:
+                    $ref: '#/components/schemas/Principal'
+                  requestingTeam:
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                      description:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      detail:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      logo:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      name:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      orgId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      teamId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      updatedAt:
+                        type: string
+                      depth:
+                        type: number
+                      num_members:
+                        type: number
+                      org:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          orgId:
+                            type: string
+                        required:
+                        - name
+                        - orgId
+                      path:
+                        type: string
+                    required:
+                    - createdAt
+                    - description
+                    - detail
+                    - logo
+                    - name
+                    - orgId
+                    - teamId
+                    - updatedAt
+                required:
+                - acceptingTeamId
+                - allow
+                - amendmentAcceptedById
+                - amendmentProposedById
+                - amendmentProposerTeamId
+                - amendmentStatus
+                - amendmentUpdatedAt
+                - code
+                - createdAt
+                - createdById
+                - email
+                - pendingAllow
+                - requestingTeamId
+                - respondedAt
+                - responderId
+                - status
+                - updatedAt
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+    get:
+      operationId: connections.list
+      parameters:
+      - in: query
+        name: authedUserOnly
+        schema:
+          type: boolean
+      - in: query
+        name: box
+        schema:
+          enum:
+          - accepted
+          - requested
+      - in: query
+        name: excludeIds
+        schema:
+          type: array
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+      - in: query
+        name: includeLinked
+        schema:
+          enum:
+          - 'false'
+          - 'true'
+      - in: query
+        name: order
+        schema:
+          enum:
+          - asc
+          - desc
+      - in: query
+        name: pageIndex
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: pageSize
+        schema:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+      - in: query
+        name: q
+        schema:
+          type: string
+      - in: query
+        name: role
+        schema:
+          enum:
+          - admin
+          - member
+      - in: query
+        name: rootId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        description: a UUID
+      - in: query
+        name: status
+        schema:
+          enum:
+          - accepted
+          - canceled
+          - connected
+          - paused
+          - pending
+          - rejected
+      summary: List connections
+      description: List connections in your organization, optionally filtered by team ID.
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: List of connections
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        acceptingTeamId:
+                          anyOf:
+                          - type: string
+                            description: a RFC-4122-compliant UUID
+                            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                          - type: 'null'
+                        allow:
+                          type: string
+                        amendmentAcceptedById:
+                          anyOf:
+                          - type: string
+                            description: a RFC-4122-compliant UUID
+                            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                          - type: 'null'
+                        amendmentProposedById:
+                          anyOf:
+                          - type: string
+                            description: a RFC-4122-compliant UUID
+                            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                          - type: 'null'
+                        amendmentProposerTeamId:
+                          anyOf:
+                          - type: string
+                            description: a RFC-4122-compliant UUID
+                            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                          - type: 'null'
+                        amendmentStatus:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        amendmentUpdatedAt:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        code:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        createdAt:
+                          type: string
+                        createdById:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        email:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        pendingAllow:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        requestingTeamId:
+                          type: string
+                          description: a RFC-4122-compliant UUID
+                          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                        respondedAt:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        responderId:
+                          anyOf:
+                          - type: string
+                            description: a RFC-4122-compliant UUID
+                            pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                          - type: 'null'
+                        status:
+                          type: string
+                        updatedAt:
+                          type: string
+                        acceptedBy:
+                          $ref: '#/components/schemas/Principal'
+                        acceptingTeam:
+                          type: object
+                          properties:
+                            createdAt:
+                              type: string
+                            description:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            detail:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            logo:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            name:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            orgId:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            teamId:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            updatedAt:
+                              type: string
+                            depth:
+                              type: number
+                            num_members:
+                              type: number
+                            org:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                orgId:
+                                  type: string
+                              required:
+                              - name
+                              - orgId
+                            path:
+                              type: string
+                          required:
+                          - createdAt
+                          - description
+                          - detail
+                          - logo
+                          - name
+                          - orgId
+                          - teamId
+                          - updatedAt
+                        requestedBy:
+                          $ref: '#/components/schemas/Principal'
+                        requestingTeam:
+                          type: object
+                          properties:
+                            createdAt:
+                              type: string
+                            description:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            detail:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            logo:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            name:
+                              anyOf:
+                              - type: string
+                              - type: 'null'
+                            orgId:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            teamId:
+                              type: string
+                              description: a RFC-4122-compliant UUID
+                              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                            updatedAt:
+                              type: string
+                            depth:
+                              type: number
+                            num_members:
+                              type: number
+                            org:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                orgId:
+                                  type: string
+                              required:
+                              - name
+                              - orgId
+                            path:
+                              type: string
+                          required:
+                          - createdAt
+                          - description
+                          - detail
+                          - logo
+                          - name
+                          - orgId
+                          - teamId
+                          - updatedAt
+                      required:
+                      - acceptingTeamId
+                      - allow
+                      - amendmentAcceptedById
+                      - amendmentProposedById
+                      - amendmentProposerTeamId
+                      - amendmentStatus
+                      - amendmentUpdatedAt
+                      - code
+                      - createdAt
+                      - createdById
+                      - email
+                      - pendingAllow
+                      - requestingTeamId
+                      - respondedAt
+                      - responderId
+                      - status
+                      - updatedAt
+                  total:
+                    type: number
+                required:
+                - links
+                - total
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/connections/{code}:
+    get:
+      operationId: connections.get
+      parameters:
+      - in: path
+        name: code
+        schema:
+          type: string
+        required: true
+      summary: Get a connection
+      description: Get a connection by invite code.
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: Connection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  acceptingTeamId:
+                    anyOf:
+                    - type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    - type: 'null'
+                  allow:
+                    type: string
+                  amendmentAcceptedById:
+                    anyOf:
+                    - type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    - type: 'null'
+                  amendmentProposedById:
+                    anyOf:
+                    - type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    - type: 'null'
+                  amendmentProposerTeamId:
+                    anyOf:
+                    - type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    - type: 'null'
+                  amendmentStatus:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  amendmentUpdatedAt:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  code:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  createdAt:
+                    type: string
+                  createdById:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  email:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  pendingAllow:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  requestingTeamId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  respondedAt:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  responderId:
+                    anyOf:
+                    - type: string
+                      description: a RFC-4122-compliant UUID
+                      pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                    - type: 'null'
+                  status:
+                    type: string
+                  updatedAt:
+                    type: string
+                  acceptedBy:
+                    $ref: '#/components/schemas/Principal'
+                  acceptingTeam:
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                      description:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      detail:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      logo:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      name:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      orgId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      teamId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      updatedAt:
+                        type: string
+                      depth:
+                        type: number
+                      num_members:
+                        type: number
+                      org:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          orgId:
+                            type: string
+                        required:
+                        - name
+                        - orgId
+                      path:
+                        type: string
+                    required:
+                    - createdAt
+                    - description
+                    - detail
+                    - logo
+                    - name
+                    - orgId
+                    - teamId
+                    - updatedAt
+                  requestedBy:
+                    $ref: '#/components/schemas/Principal'
+                  requestingTeam:
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                      description:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      detail:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      logo:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      name:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      orgId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      teamId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      updatedAt:
+                        type: string
+                      depth:
+                        type: number
+                      num_members:
+                        type: number
+                      org:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          orgId:
+                            type: string
+                        required:
+                        - name
+                        - orgId
+                      path:
+                        type: string
+                    required:
+                    - createdAt
+                    - description
+                    - detail
+                    - logo
+                    - name
+                    - orgId
+                    - teamId
+                    - updatedAt
+                required:
+                - acceptingTeamId
+                - allow
+                - amendmentAcceptedById
+                - amendmentProposedById
+                - amendmentProposerTeamId
+                - amendmentStatus
+                - amendmentUpdatedAt
+                - code
+                - createdAt
+                - createdById
+                - email
+                - pendingAllow
+                - requestingTeamId
+                - respondedAt
+                - responderId
+                - status
+                - updatedAt
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+    delete:
+      operationId: connections.delete
+      parameters:
+      - in: path
+        name: code
+        schema:
+          type: string
+        required: true
+      summary: Delete a connection
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: '`true` if successfully updated'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/connections/confirm:
+    patch:
+      operationId: connections.confirm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+              - code
+      summary: Confirm a connection
+      description: Confirm an accepted connection, completing the invite/accept/confirm handshake.
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: '`true` if successfully updated'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/connections/pause:
+    patch:
+      operationId: connections.pause
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+              - code
+      summary: Pause a connection
+      description: Suspend the sharing and shipment activity that depends on this connection without deleting it.
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: '`true` if successfully updated'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/connections/cancel:
+    patch:
+      operationId: connections.cancel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+              - code
+      summary: Cancel a connection
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: '`true` if successfully updated'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/connections/resume:
+    patch:
+      operationId: connections.resume
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+              - code
+      summary: Resume a paused connection
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: '`true` if successfully updated'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/connections/amend/propose:
+    post:
+      operationId: connections.amend_propose
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                allow:
+                  enum:
+                  - receive
+                  - send
+                  - send_receive
+                code:
+                  type: string
+              required:
+              - allow
+              - code
+      summary: Propose a connection direction amendment
+      description: Propose a new data-flow direction for a connected Connection. Either team may propose; the partner must accept and the proposer must confirm before it takes effect. The current direction stays in force until confirmation.
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: '`true` if proposed'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/connections/amend/accept:
+    patch:
+      operationId: connections.amend_accept
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+              - code
+      summary: Accept a pending connection amendment
+      description: Accept a proposed direction amendment. Only the team that did not propose may accept.
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: '`true` if accepted'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/connections/amend/confirm:
+    patch:
+      operationId: connections.amend_confirm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+              - code
+      summary: Confirm an accepted connection amendment
+      description: Confirm an accepted direction amendment, making the new direction effective. Only the proposing team may confirm. Existing shares whose flow is no longer permitted become dormant.
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: '`true` if confirmed'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/connections/amend/cancel:
+    patch:
+      operationId: connections.amend_cancel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+              - code
+      summary: Cancel a pending connection amendment
+      description: Cancel a pending direction amendment before final confirmation. Either team may cancel.
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: '`true` if canceled'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/connections/accept:
+    patch:
+      operationId: connections.accept
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                acceptingTeamId:
+                  anyOf:
+                  - type: string
+                    description: a UUID
+                    format: uuid
+                    pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                  - const: 00000000-0000-0000-0000-000000000000
+                    description: a UUID
+                    format: uuid
+                  - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                    description: a UUID
+                    format: uuid
+                  description: a UUID
+                  format: uuid
+                code:
+                  type: string
+              required:
+              - acceptingTeamId
+              - code
+      summary: Accept a connection
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: '`true` if successfully updated'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/connections/reject:
+    patch:
+      operationId: connections.reject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+              - code
+      summary: Reject a connection
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: '`true` if successfully updated'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+components:
+  schemas:
+    Principal:
+      type: object
+      properties:
+        avatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          type: string
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+        emailVerified:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+        familyName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        kind:
+          enum:
+          - human
+          - service
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+        profileId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        updatedAt:
+          type: string
+        userId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - avatar
+      - createdAt
+      - email
+      - emailVerified
+      - familyName
+      - kind
+      - name
+      - phone
+      - profileId
+      - updatedAt
+      - userId
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Templates
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

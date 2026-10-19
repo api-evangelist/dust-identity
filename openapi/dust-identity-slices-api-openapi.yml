@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: DUST Slices API
   description: DUST Platform API
-  version: 2026.7.4
+  version: 2026.10.0
 servers:
 - url: https://apid.dustid.io
   description: DUST API for trusted provenance.
@@ -64,6 +64,26 @@ paths:
                     type: string
                   status:
                     const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
                   detail:
                     type: object
                     description: Extra context information specific to this error
@@ -151,6 +171,26 @@ paths:
                 - code
                 - message
                 - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
         '404':
           description: Not Found
           content:
@@ -182,7 +222,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -222,6 +262,26 @@ paths:
                 - code
                 - message
                 - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
         '404':
           description: Not Found
           content:
@@ -244,61 +304,145 @@ paths:
                 - status
 components:
   schemas:
-    FabricStateChangeReason:
+    SliceFieldValue:
       type: object
       properties:
-        createdAt:
+        name:
           type: string
-        fromState:
-          enum:
-          - abandoned
-          - canceled
-          - change_request
-          - completed
-          - draft
-          - failed_retryable
-          - processing
-          - rejected
-          - sent
-        id:
+        type:
           type: string
-        message:
-          type: string
-        toState:
-          enum:
-          - abandoned
-          - canceled
-          - change_request
-          - completed
-          - draft
-          - failed_retryable
-          - processing
-          - rejected
-          - sent
-        userEmail:
-          type: string
-        userId:
-          type: string
-        teamId:
+        value: {}
+        fieldId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - name
+      - type
+      - value
+    CreateSliceRequest:
+      type: object
+      properties:
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        copyThumbnail:
+          type: boolean
+          default: true
+        bundleId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        description:
           anyOf:
           - type: string
           - type: 'null'
-        userAvatar:
+        fields:
           anyOf:
-          - type: string
+          - type: array
+            items:
+              anyOf:
+              - type: string
+                description: a UUID
+                format: uuid
+                pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+              - const: 00000000-0000-0000-0000-000000000000
+                description: a UUID
+                format: uuid
+              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                description: a UUID
+                format: uuid
+              description: a UUID
+              format: uuid
           - type: 'null'
-        userName:
+        linkOnly:
+          type: boolean
+        name:
+          type: string
+          maxLength: 255
+        resources:
           anyOf:
-          - type: string
+          - type: array
+            items:
+              anyOf:
+              - type: string
+                description: a UUID
+                format: uuid
+                pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+              - const: 00000000-0000-0000-0000-000000000000
+                description: a UUID
+                format: uuid
+              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                description: a UUID
+                format: uuid
+              description: a UUID
+              format: uuid
+          - type: 'null'
+        tags:
+          anyOf:
+          - type: array
+            items:
+              anyOf:
+              - type: string
+                description: a UUID
+                format: uuid
+                pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+              - const: 00000000-0000-0000-0000-000000000000
+                description: a UUID
+                format: uuid
+              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                description: a UUID
+                format: uuid
+              description: a UUID
+              format: uuid
           - type: 'null'
       required:
-      - createdAt
-      - fromState
-      - id
-      - message
-      - toState
-      - userEmail
-      - userId
+      - threadId
+    SliceTargetInput:
+      type: object
+      properties:
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/SliceFieldValue'
+        name:
+          type: string
+          maxLength: 255
     SliceGetResponse:
       type: object
       properties:
@@ -400,437 +544,61 @@ components:
       required:
       - links
       - operation
-    CreateSliceRequest:
+    FabricStateChangeReason:
       type: object
       properties:
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        copyThumbnail:
-          type: boolean
-          default: true
-        bundleId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        fields:
-          anyOf:
-          - type: array
-            items:
-              anyOf:
-              - type: string
-                description: a UUID
-                format: uuid
-                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-              - const: 00000000-0000-0000-0000-000000000000
-                description: a UUID
-                format: uuid
-              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                description: a UUID
-                format: uuid
-              description: a UUID
-              format: uuid
-          - type: 'null'
-        linkOnly:
-          type: boolean
-        name:
+        createdAt:
           type: string
-          maxLength: 255
-        resources:
-          anyOf:
-          - type: array
-            items:
-              anyOf:
-              - type: string
-                description: a UUID
-                format: uuid
-                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-              - const: 00000000-0000-0000-0000-000000000000
-                description: a UUID
-                format: uuid
-              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                description: a UUID
-                format: uuid
-              description: a UUID
-              format: uuid
-          - type: 'null'
-        tags:
-          anyOf:
-          - type: array
-            items:
-              anyOf:
-              - type: string
-                description: a UUID
-                format: uuid
-                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-              - const: 00000000-0000-0000-0000-000000000000
-                description: a UUID
-                format: uuid
-              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                description: a UUID
-                format: uuid
-              description: a UUID
-              format: uuid
-          - type: 'null'
-      required:
-      - threadId
-    CreateManySliceRequest:
-      type: object
-      properties:
-        targets:
-          type: array
-          items:
-            $ref: '#/components/schemas/SliceTargetInput'
-        threadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        copyThumbnail:
-          type: boolean
-          default: true
-        bundleId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        fields:
-          anyOf:
-          - type: array
-            items:
-              anyOf:
-              - type: string
-                description: a UUID
-                format: uuid
-                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-              - const: 00000000-0000-0000-0000-000000000000
-                description: a UUID
-                format: uuid
-              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                description: a UUID
-                format: uuid
-              description: a UUID
-              format: uuid
-          - type: 'null'
-        linkOnly:
-          type: boolean
-        resources:
-          anyOf:
-          - type: array
-            items:
-              anyOf:
-              - type: string
-                description: a UUID
-                format: uuid
-                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-              - const: 00000000-0000-0000-0000-000000000000
-                description: a UUID
-                format: uuid
-              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                description: a UUID
-                format: uuid
-              description: a UUID
-              format: uuid
-          - type: 'null'
-        sourceFields:
-          type: array
-          items:
-            $ref: '#/components/schemas/SliceFieldValue'
-        tags:
-          anyOf:
-          - type: array
-            items:
-              anyOf:
-              - type: string
-                description: a UUID
-                format: uuid
-                pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-              - const: 00000000-0000-0000-0000-000000000000
-                description: a UUID
-                format: uuid
-              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                description: a UUID
-                format: uuid
-              description: a UUID
-              format: uuid
-          - type: 'null'
-      required:
-      - targets
-      - threadId
-    SliceFieldValue:
-      type: object
-      properties:
-        name:
-          type: string
-        type:
-          type: string
-        value: {}
-        fieldId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-      required:
-      - name
-      - type
-      - value
-    SliceLink:
-      type: object
-      properties:
+        fromState:
+          enum:
+          - abandoned
+          - canceled
+          - change_request
+          - completed
+          - draft
+          - failed_retryable
+          - processing
+          - rejected
+          - sent
         id:
+          type: string
+        message:
+          type: string
+        toState:
+          enum:
+          - abandoned
+          - canceled
+          - change_request
+          - completed
+          - draft
+          - failed_retryable
+          - processing
+          - rejected
+          - sent
+        userEmail:
+          type: string
+        userId:
+          type: string
+        teamId:
           anyOf:
           - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        rootId:
+          - type: 'null'
+        userAvatar:
           anyOf:
           - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        sourceId:
+          - type: 'null'
+        userName:
           anyOf:
           - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        targetId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
+          - type: 'null'
       required:
+      - createdAt
+      - fromState
       - id
-      - rootId
-      - sourceId
-      - targetId
-    SliceCreateResponse:
-      type: object
-      properties:
-        linkId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        operation:
-          type: object
-          properties:
-            abandonedAt:
-              anyOf:
-              - type: string
-              - type: 'null'
-            completedAt:
-              anyOf:
-              - type: string
-              - type: 'null'
-            createdAt:
-              type: string
-            createdById:
-              anyOf:
-              - type: string
-                description: a RFC-4122-compliant UUID
-                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-              - type: 'null'
-            description:
-              anyOf:
-              - type: string
-              - type: 'null'
-            id:
-              type: string
-              description: a RFC-4122-compliant UUID
-              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-            kind:
-              type: string
-            metadata:
-              anyOf:
-              - type: number
-              - type: object
-              - type: string
-              - type: boolean
-              - type: 'null'
-            name:
-              type: string
-            primaryThreadId:
-              anyOf:
-              - type: string
-                description: a RFC-4122-compliant UUID
-                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-              - type: 'null'
-            respondentId:
-              anyOf:
-              - type: string
-                description: a RFC-4122-compliant UUID
-                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-              - type: 'null'
-            sourceTeamId:
-              type: string
-              description: a RFC-4122-compliant UUID
-              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-            startedAt:
-              anyOf:
-              - type: string
-              - type: 'null'
-            status:
-              type: string
-            targetTeamId:
-              anyOf:
-              - type: string
-                description: a RFC-4122-compliant UUID
-                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-              - type: 'null'
-            updatedAt:
-              type: string
-            stateReasons:
-              anyOf:
-              - type: array
-                items:
-                  $ref: '#/components/schemas/FabricStateChangeReason'
-              - type: 'null'
-          required:
-          - abandonedAt
-          - completedAt
-          - createdAt
-          - createdById
-          - description
-          - id
-          - kind
-          - metadata
-          - name
-          - primaryThreadId
-          - respondentId
-          - sourceTeamId
-          - startedAt
-          - status
-          - targetTeamId
-          - updatedAt
-        sourceThreadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        targetThreadId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-      required:
-      - linkId
-      - operation
-      - sourceThreadId
-      - targetThreadId
+      - message
+      - toState
+      - userEmail
+      - userId
     SliceCreateManyResponse:
       type: object
       properties:
@@ -932,6 +700,107 @@ components:
       required:
       - operation
       - results
+    CreateManySliceRequest:
+      type: object
+      properties:
+        targets:
+          type: array
+          items:
+            $ref: '#/components/schemas/SliceTargetInput'
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        copyThumbnail:
+          type: boolean
+          default: true
+        bundleId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        fields:
+          anyOf:
+          - type: array
+            items:
+              anyOf:
+              - type: string
+                description: a UUID
+                format: uuid
+                pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+              - const: 00000000-0000-0000-0000-000000000000
+                description: a UUID
+                format: uuid
+              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                description: a UUID
+                format: uuid
+              description: a UUID
+              format: uuid
+          - type: 'null'
+        linkOnly:
+          type: boolean
+        resources:
+          anyOf:
+          - type: array
+            items:
+              anyOf:
+              - type: string
+                description: a UUID
+                format: uuid
+                pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+              - const: 00000000-0000-0000-0000-000000000000
+                description: a UUID
+                format: uuid
+              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                description: a UUID
+                format: uuid
+              description: a UUID
+              format: uuid
+          - type: 'null'
+        sourceFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/SliceFieldValue'
+        tags:
+          anyOf:
+          - type: array
+            items:
+              anyOf:
+              - type: string
+                description: a UUID
+                format: uuid
+                pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+              - const: 00000000-0000-0000-0000-000000000000
+                description: a UUID
+                format: uuid
+              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                description: a UUID
+                format: uuid
+              description: a UUID
+              format: uuid
+          - type: 'null'
+      required:
+      - targets
+      - threadId
     SliceResult:
       type: object
       properties:
@@ -940,7 +809,7 @@ components:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -954,7 +823,7 @@ components:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -968,7 +837,7 @@ components:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -981,20 +850,211 @@ components:
       - linkId
       - sourceThreadId
       - targetThreadId
-    SliceTargetInput:
+    SliceCreateResponse:
       type: object
       properties:
-        description:
+        linkId:
           anyOf:
           - type: string
-          - type: 'null'
-        fields:
-          type: array
-          items:
-            $ref: '#/components/schemas/SliceFieldValue'
-        name:
-          type: string
-          maxLength: 255
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        operation:
+          type: object
+          properties:
+            abandonedAt:
+              anyOf:
+              - type: string
+              - type: 'null'
+            completedAt:
+              anyOf:
+              - type: string
+              - type: 'null'
+            createdAt:
+              type: string
+            createdById:
+              anyOf:
+              - type: string
+                description: a RFC-4122-compliant UUID
+                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+              - type: 'null'
+            description:
+              anyOf:
+              - type: string
+              - type: 'null'
+            id:
+              type: string
+              description: a RFC-4122-compliant UUID
+              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+            kind:
+              type: string
+            metadata:
+              anyOf:
+              - type: number
+              - type: object
+              - type: string
+              - type: boolean
+              - type: 'null'
+            name:
+              type: string
+            primaryThreadId:
+              anyOf:
+              - type: string
+                description: a RFC-4122-compliant UUID
+                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+              - type: 'null'
+            respondentId:
+              anyOf:
+              - type: string
+                description: a RFC-4122-compliant UUID
+                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+              - type: 'null'
+            sourceTeamId:
+              type: string
+              description: a RFC-4122-compliant UUID
+              pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+            startedAt:
+              anyOf:
+              - type: string
+              - type: 'null'
+            status:
+              type: string
+            targetTeamId:
+              anyOf:
+              - type: string
+                description: a RFC-4122-compliant UUID
+                pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+              - type: 'null'
+            updatedAt:
+              type: string
+            stateReasons:
+              anyOf:
+              - type: array
+                items:
+                  $ref: '#/components/schemas/FabricStateChangeReason'
+              - type: 'null'
+          required:
+          - abandonedAt
+          - completedAt
+          - createdAt
+          - createdById
+          - description
+          - id
+          - kind
+          - metadata
+          - name
+          - primaryThreadId
+          - respondentId
+          - sourceTeamId
+          - startedAt
+          - status
+          - targetTeamId
+          - updatedAt
+        sourceThreadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        targetThreadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - linkId
+      - operation
+      - sourceThreadId
+      - targetThreadId
+    SliceLink:
+      type: object
+      properties:
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        rootId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        sourceId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        targetId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - id
+      - rootId
+      - sourceId
+      - targetId
   securitySchemes:
     Bearer:
       type: http
@@ -1015,10 +1075,15 @@ x-tagTeams:
   tags:
   - Threads
   - Tags
+  - Tamper
   - Templates
+  - Fields
   - Files
   - Certificates
   - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
   - Sharing
   - Thread Links
   - Thread Relations

@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: DUST Org Admin API
   description: DUST Platform API
-  version: 2026.7.4
+  version: 2026.10.0
 servers:
 - url: https://apid.dustid.io
   description: DUST API for trusted provenance.
@@ -182,7 +182,7 @@ paths:
             - type: string
               description: a UUID
               format: uuid
-              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+              pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
             - const: 00000000-0000-0000-0000-000000000000
               description: a UUID
               format: uuid
@@ -207,16 +207,26 @@ paths:
         name: pageIndex
         schema:
           anyOf:
-          - type: number
+          - type: integer
+            description: Page index, an integer from 0 to 1000000
+            maximum: 1000000
+            minimum: 0
           - type: string
-            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+            description: Page index, an integer from 0 to 1000000
+            pattern: ^(?:0|[1-9]\d{0,5}|1000000)$
+        description: Page index, an integer from 0 to 1000000
       - in: query
         name: pageSize
         schema:
           anyOf:
-          - type: number
+          - type: integer
+            description: Page size, an integer from 1 to 1000
+            maximum: 1000
+            minimum: 1
           - type: string
-            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+            description: Page size, an integer from 1 to 1000
+            pattern: ^(?:[1-9]\d{0,2}|1000)$
+        description: Page size, an integer from 1 to 1000
       - in: query
         name: q
         schema:
@@ -227,6 +237,7 @@ paths:
           enum:
           - admin
           - member
+          - publisher
       - in: query
         name: rootId
         schema:
@@ -234,7 +245,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -415,7 +426,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -432,10 +443,6 @@ paths:
             schema:
               type: object
               properties:
-                childOfId:
-                  anyOf:
-                  - type: string
-                  - type: 'null'
                 description:
                   type: string
                 logo:
@@ -444,6 +451,7 @@ paths:
                   - type: 'null'
                 name:
                   type: string
+              additionalProperties: false
       summary: Update a team
       tags:
       - Org Admin
@@ -599,7 +607,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -775,6 +783,8 @@ paths:
                         enum:
                         - admin
                         - member
+                        - member,publisher
+                        - publisher
                       teamId:
                         type: string
                       userId:
@@ -1259,16 +1269,26 @@ paths:
         name: pageIndex
         schema:
           anyOf:
-          - type: number
+          - type: integer
+            description: Page index, an integer from 0 to 1000000
+            maximum: 1000000
+            minimum: 0
           - type: string
-            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+            description: Page index, an integer from 0 to 1000000
+            pattern: ^(?:0|[1-9]\d{0,5}|1000000)$
+        description: Page index, an integer from 0 to 1000000
       - in: query
         name: pageSize
         schema:
           anyOf:
-          - type: number
+          - type: integer
+            description: Page size, an integer from 1 to 1000
+            maximum: 1000
+            minimum: 1
           - type: string
-            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+            description: Page size, an integer from 1 to 1000
+            pattern: ^(?:[1-9]\d{0,2}|1000)$
+        description: Page size, an integer from 1 to 1000
       - in: query
         name: q
         schema:
@@ -1279,6 +1299,7 @@ paths:
           enum:
           - admin
           - member
+          - publisher
       - in: query
         name: teamId
         schema:
@@ -1286,7 +1307,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -1302,7 +1323,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -1577,7 +1598,7 @@ components:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -1593,7 +1614,7 @@ components:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -1614,6 +1635,25 @@ components:
       - profileId
       - updatedAt
       - userId
+    TeamCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        detail:
+          anyOf:
+          - type: string
+          - type: 'null'
+        logo:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - name
     User:
       type: object
       properties:
@@ -1720,25 +1760,6 @@ components:
       - twoFactorEnabled
       - updatedAt
       - userId
-    TeamCreate:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        detail:
-          anyOf:
-          - type: string
-          - type: 'null'
-        logo:
-          anyOf:
-          - type: string
-          - type: 'null'
-      required:
-      - name
   securitySchemes:
     Bearer:
       type: http
@@ -1759,10 +1780,15 @@ x-tagTeams:
   tags:
   - Threads
   - Tags
+  - Tamper
   - Templates
+  - Fields
   - Files
   - Certificates
   - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
   - Sharing
   - Thread Links
   - Thread Relations

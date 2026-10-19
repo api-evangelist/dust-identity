@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: DUST System API
   description: DUST Platform API
-  version: 2026.7.4
+  version: 2026.10.0
 servers:
 - url: https://apid.dustid.io
   description: DUST API for trusted provenance.
@@ -65,21 +65,21 @@ paths:
                 $ref: '#/components/schemas/HealthErrorResponse'
 components:
   schemas:
-    HealthResponse:
-      type: object
-      properties:
-        status:
-          const: ok
-        timestamp:
-          type: string
-      required:
-      - status
-      - timestamp
     HealthErrorResponse:
       type: object
       properties:
         status:
           const: error
+        timestamp:
+          type: string
+      required:
+      - status
+      - timestamp
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          const: ok
         timestamp:
           type: string
       required:
@@ -105,10 +105,15 @@ x-tagTeams:
   tags:
   - Threads
   - Tags
+  - Tamper
   - Templates
+  - Fields
   - Files
   - Certificates
   - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
   - Sharing
   - Thread Links
   - Thread Relations

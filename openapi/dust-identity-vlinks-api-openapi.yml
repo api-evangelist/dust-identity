@@ -1,0 +1,1217 @@
+openapi: 3.2.0
+info:
+  title: DUST Vlinks API
+  description: DUST Platform API
+  version: 2026.10.0
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Vlinks
+  description: Reserve and manage stable redirect links
+paths:
+  /api/v1/vlinks:
+    post:
+      operationId: vlinks.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VlinkCreateRequest'
+      summary: Create a vlink
+      tags:
+      - Vlinks
+      responses:
+        '201':
+          description: Created vlink
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VlinkCreateResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Feature is currently disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FEATURE_DISABLED
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Server configuration error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: CONFIG_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+    get:
+      operationId: vlinks.list
+      parameters:
+      - in: query
+        name: available
+        schema:
+          anyOf:
+          - type: string
+          - type: boolean
+      - in: query
+        name: collectionId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - const: unfiled
+      - in: query
+        name: cursor
+        schema:
+          type: string
+      - in: query
+        name: pageSize
+        schema:
+          anyOf:
+          - type: integer
+            description: Page size, an integer from 1 to 1000
+            maximum: 1000
+            minimum: 1
+          - type: string
+            description: Page size, an integer from 1 to 1000
+            pattern: ^(?:[1-9]\d{0,2}|1000)$
+        description: Page size, an integer from 1 to 1000
+      - in: query
+        name: status
+        schema:
+          enum:
+          - active
+          - draft
+          - inactive
+          - revoked
+      summary: List vlinks
+      tags:
+      - Vlinks
+      responses:
+        '200':
+          description: Vlinks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VlinkListResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Feature is currently disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FEATURE_DISABLED
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/vlinks/bulk:
+    post:
+      operationId: vlinks.bulk_create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VlinkBulkCreateRequest'
+      summary: Create vlinks in bulk
+      tags:
+      - Vlinks
+      responses:
+        '201':
+          description: Created vlinks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VlinkBulkCreateResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Feature is currently disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FEATURE_DISABLED
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '409':
+          description: This Thread was updated somewhere else. Refresh and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: THREAD_DATA_CONFLICT
+                  message:
+                    type: string
+                  status:
+                    const: 409
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Server configuration error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: CONFIG_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/vlinks/collections:
+    get:
+      operationId: vlinks.list_collections
+      summary: List vlink collection summaries
+      tags:
+      - Vlinks
+      responses:
+        '200':
+          description: Vlink collections
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VlinkCollectionListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Feature is currently disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FEATURE_DISABLED
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/vlinks/{vlinkId}/analytics:
+    get:
+      operationId: vlinks.analytics
+      parameters:
+      - in: path
+        name: vlinkId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      - in: query
+        name: bucket
+        schema:
+          enum:
+          - day
+          - hour
+          - month
+          - week
+        required: true
+      - in: query
+        name: from
+        schema:
+          type: string
+      - in: query
+        name: to
+        schema:
+          type: string
+      summary: Get vlink analytics
+      tags:
+      - Vlinks
+      responses:
+        '200':
+          description: Vlink analytics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VlinkAnalyticsResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Feature is currently disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FEATURE_DISABLED
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Server configuration error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: CONFIG_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+  /api/v1/vlinks/{vlinkId}:
+    get:
+      operationId: vlinks.get
+      parameters:
+      - in: path
+        name: vlinkId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Get a vlink
+      tags:
+      - Vlinks
+      responses:
+        '200':
+          description: Vlink
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VlinkGetResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Feature is currently disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FEATURE_DISABLED
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+    patch:
+      operationId: vlinks.update
+      parameters:
+      - in: path
+        name: vlinkId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VlinkUpdateRequest'
+      summary: Update a vlink
+      tags:
+      - Vlinks
+      responses:
+        '200':
+          description: Updated vlink
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VlinkUpdateResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Feature is currently disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FEATURE_DISABLED
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Server configuration error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: CONFIG_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: team-admin
+components:
+  schemas:
+    VlinkAnalyticsResponse:
+      type: object
+      properties:
+        vlinkAnalytics:
+          type: object
+          properties:
+            summary:
+              type: object
+              properties:
+                firstVisitAt:
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                lastVisitAt:
+                  anyOf:
+                  - type: string
+                  - type: 'null'
+                totalVisits:
+                  type: number
+              required:
+              - firstVisitAt
+              - lastVisitAt
+              - totalVisits
+            timeseries:
+              type: array
+              items:
+                type: object
+                properties:
+                  bucket:
+                    type: string
+                  totalVisits:
+                    type: number
+                required:
+                - bucket
+                - totalVisits
+            vlinkId:
+              anyOf:
+              - type: string
+                description: a UUID
+                format: uuid
+                pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+              - const: 00000000-0000-0000-0000-000000000000
+                description: a UUID
+                format: uuid
+              - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                description: a UUID
+                format: uuid
+              description: a UUID
+              format: uuid
+          required:
+          - summary
+          - timeseries
+          - vlinkId
+      required:
+      - vlinkAnalytics
+    Vlink:
+      type: object
+      properties:
+        alias:
+          anyOf:
+          - type: string
+          - type: 'null'
+        code:
+          type: string
+        collectionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        createdAt:
+          type: string
+        createdById:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        fallbackUrl:
+          anyOf:
+          - type: string
+          - type: 'null'
+        ownerId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        publicUrl:
+          type: string
+          format: uri
+        status:
+          enum:
+          - active
+          - draft
+          - inactive
+          - revoked
+        targetUrl:
+          anyOf:
+          - type: string
+          - type: 'null'
+        updatedAt:
+          type: string
+        vlinkId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - alias
+      - code
+      - collectionId
+      - createdAt
+      - createdById
+      - fallbackUrl
+      - ownerId
+      - publicUrl
+      - status
+      - targetUrl
+      - updatedAt
+      - vlinkId
+    VlinkListResponse:
+      type: object
+      properties:
+        nextCursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+        totalCount:
+          type: number
+        vlinks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vlink'
+      required:
+      - nextCursor
+      - totalCount
+      - vlinks
+    VlinkGetResponse:
+      type: object
+      properties:
+        certificateId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        vlink:
+          $ref: '#/components/schemas/Vlink'
+      required:
+      - certificateId
+      - vlink
+    VlinkUpdateRequest:
+      type: object
+      properties:
+        alias:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fallbackUrl:
+          anyOf:
+          - type: string
+            format: uri
+          - type: 'null'
+        status:
+          enum:
+          - active
+          - draft
+          - inactive
+          - revoked
+        targetUrl:
+          anyOf:
+          - type: string
+            format: uri
+          - type: 'null'
+      additionalProperties: false
+    VlinkCreateRequest:
+      type: object
+      properties:
+        alias:
+          anyOf:
+          - type: string
+          - type: 'null'
+        collectionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        collectionName:
+          type: string
+        fallbackUrl:
+          anyOf:
+          - type: string
+            format: uri
+          - type: 'null'
+        status:
+          enum:
+          - active
+          - draft
+          - inactive
+          - revoked
+        targetUrl:
+          anyOf:
+          - type: string
+            format: uri
+          - type: 'null'
+      additionalProperties: false
+    VlinkBulkCreateResponse:
+      type: object
+      properties:
+        vlinks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vlink'
+      required:
+      - vlinks
+    VlinkCreateResponse:
+      type: object
+      properties:
+        vlink:
+          $ref: '#/components/schemas/Vlink'
+      required:
+      - vlink
+    VlinkBulkCreateRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/VlinkCreateRequest'
+        collectionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        collectionName:
+          type: string
+      required:
+      - items
+      additionalProperties: false
+    VlinkUpdateResponse:
+      type: object
+      properties:
+        vlink:
+          $ref: '#/components/schemas/Vlink'
+      required:
+      - vlink
+    VlinkCollectionSummary:
+      type: object
+      properties:
+        activeCount:
+          type: number
+        collection:
+          anyOf:
+          - $ref: '#/components/schemas/VlinkCollection'
+          - type: 'null'
+        draftCount:
+          type: number
+        inactiveCount:
+          type: number
+        revokedCount:
+          type: number
+        updatedAt:
+          type: string
+        vlinkCount:
+          type: number
+      required:
+      - activeCount
+      - collection
+      - draftCount
+      - inactiveCount
+      - revokedCount
+      - updatedAt
+      - vlinkCount
+    VlinkCollection:
+      type: object
+      properties:
+        collectionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        createdAt:
+          type: string
+        name:
+          type: string
+        updatedAt:
+          type: string
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - collectionId
+      - createdAt
+      - name
+      - updatedAt
+    VlinkCollectionListResponse:
+      type: object
+      properties:
+        collectionSummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/VlinkCollectionSummary'
+        totalCount:
+          type: number
+      required:
+      - collectionSummaries
+      - totalCount
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Tamper
+  - Templates
+  - Fields
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

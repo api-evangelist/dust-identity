@@ -1,0 +1,253 @@
+openapi: 3.2.0
+info:
+  title: DUST Auth API
+  description: DUST Platform API
+  version: 2026.7.4
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Auth
+  description: Authentication and authorization
+paths:
+  /api/auth/token:
+    get:
+      operationId: AuthToken
+      summary: Get auth token
+      description: Exchange an API key (x-api-key header) for a short-lived bearer token. The response includes expiresIn (seconds) and expiresAt (ISO 8601) so clients can refresh proactively — re-exchange the key before expiry.
+      tags:
+      - Auth
+      responses: {}
+  /api/auth/jwks:
+    get:
+      operationId: AuthJWKS
+      summary: Get JWKS
+      description: Get JSON Web Key Set for verifying tokens.
+      tags:
+      - Auth
+      responses: {}
+  /api/v1/me/feature-flags:
+    get:
+      operationId: get_me_feature_flags
+      summary: Current feature flags
+      description: Returns the server-evaluated PostHog feature flag snapshot for the current request context.
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: Current feature flags
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeFeatureFlagsResponse'
+        '401':
+          description: Missing/invalid bearer token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/me:
+    get:
+      operationId: get_me
+      summary: Current user
+      description: Returns the current user context derived from the validated AuthD access token (DICE4 parity).
+      tags:
+      - Auth
+      responses:
+        '200':
+          description: Current user context
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeResponse'
+        '401':
+          description: Missing/invalid bearer token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+components:
+  schemas:
+    MeResponse:
+      type: object
+      properties:
+        activeOrganizationId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        email:
+          type: string
+        organizations:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+              name:
+                type: string
+              roles:
+                type: array
+                items:
+                  type: string
+              slug:
+                type: string
+            required:
+            - id
+            - name
+            - roles
+            - slug
+        sessionId:
+          type: string
+        userId:
+          type: string
+        familyName:
+          type: string
+        givenName:
+          type: string
+        name:
+          type: string
+      required:
+      - activeOrganizationId
+      - email
+      - organizations
+      - sessionId
+      - userId
+    MeFeatureFlagsResponse:
+      type: object
+      properties:
+        is_assemblies_module_enabled:
+          type: boolean
+        is_assembly_import_enabled:
+          type: boolean
+        is_categories_module_enabled:
+          type: boolean
+        is_certificates_module_enabled:
+          type: boolean
+        is_developer_tooling_enabled:
+          type: boolean
+        is_document_validation_enabled:
+          type: boolean
+        is_fabric_alt_views_enabled:
+          type: boolean
+        is_fusion_module_enabled:
+          type: boolean
+        is_group_connections_enabled:
+          type: boolean
+        is_identifiable_dust_enabled:
+          type: boolean
+        is_organization_management_enabled:
+          type: boolean
+        is_sharing_enabled:
+          type: boolean
+        is_show_uncategorized_threads_enabled:
+          type: boolean
+        is_slicing_module_enabled:
+          type: boolean
+        is_transfers_module_enabled:
+          type: boolean
+        is_verify_only_enabled:
+          type: boolean
+        is_workflows_quick_create_enabled:
+          type: boolean
+      required:
+      - is_assemblies_module_enabled
+      - is_assembly_import_enabled
+      - is_categories_module_enabled
+      - is_certificates_module_enabled
+      - is_developer_tooling_enabled
+      - is_document_validation_enabled
+      - is_fabric_alt_views_enabled
+      - is_fusion_module_enabled
+      - is_group_connections_enabled
+      - is_identifiable_dust_enabled
+      - is_organization_management_enabled
+      - is_sharing_enabled
+      - is_show_uncategorized_threads_enabled
+      - is_slicing_module_enabled
+      - is_transfers_module_enabled
+      - is_verify_only_enabled
+      - is_workflows_quick_create_enabled
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Templates
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

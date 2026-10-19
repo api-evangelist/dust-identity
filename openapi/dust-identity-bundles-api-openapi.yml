@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: DUST Bundles API
   description: DUST Platform API
-  version: 2026.7.4
+  version: 2026.10.0
 servers:
 - url: https://apid.dustid.io
   description: DUST API for trusted provenance.
@@ -12,6 +12,196 @@ tags:
 - name: Bundles
   description: Unordered teams of threads
 paths:
+  /api/v1/bundles/tree:
+    get:
+      operationId: bundles.tree
+      summary: Browse or search a lightweight bundle tree
+      description: Returns one name-sorted page of visible roots or children. With q, searches all visible bundles instead. Shared subfolders with inaccessible parents appear as roots. No thread counts are calculated; folders containing only archived threads remain navigable. Use next to append another page.
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: A page of tree nodes without thread counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleTreeResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      parameters:
+      - in: query
+        name: cursor
+        schema:
+          type: string
+      - in: query
+        name: kind
+        schema:
+          enum:
+          - category
+          - folder
+      - in: query
+        name: pageSize
+        schema:
+          anyOf:
+          - type: integer
+            description: Page size, an integer from 1 to 1000
+            maximum: 1000
+            minimum: 1
+          - type: string
+            description: Page size, an integer from 1 to 1000
+            pattern: ^(?:[1-9]\d{0,2}|1000)$
+        description: Page size, an integer from 1 to 1000
+      - in: query
+        name: parentId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        description: a UUID
+      - in: query
+        name: q
+        schema:
+          type: string
+          maxLength: 200
+  /api/v1/bundles/tree/{bundle_id}:
+    get:
+      operationId: bundles.tree_path
+      summary: Get a folder and its visible ancestors
+      description: Returns the visible path to a folder in root-to-leaf order without loading sibling folders or calculating thread counts. Inaccessible ancestor names and IDs are omitted.
+      tags:
+      - Bundles
+      responses:
+        '200':
+          description: The visible folder path
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleTreeResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      parameters:
+      - in: path
+        name: bundle_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
   /api/v1/bundles:
     get:
       operationId: bundles.list
@@ -66,6 +256,26 @@ paths:
                 - code
                 - message
                 - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
       parameters:
       - in: query
         name: createdBy
@@ -103,9 +313,14 @@ paths:
         name: pageSize
         schema:
           anyOf:
-          - type: number
+          - type: integer
+            description: Page size, an integer from 1 to 1000
+            maximum: 1000
+            minimum: 1
           - type: string
-            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+            description: Page size, an integer from 1 to 1000
+            pattern: ^(?:[1-9]\d{0,2}|1000)$
+        description: Page size, an integer from 1 to 1000
       - in: query
         name: q
         schema:
@@ -155,6 +370,26 @@ paths:
                     type: string
                   status:
                     const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
                   detail:
                     type: object
                     description: Extra context information specific to this error
@@ -222,6 +457,26 @@ paths:
                 - code
                 - message
                 - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
       parameters:
       - in: query
         name: depth
@@ -249,7 +504,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -305,6 +560,26 @@ paths:
                     type: string
                   status:
                     const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
                   detail:
                     type: object
                     description: Extra context information specific to this error
@@ -386,6 +661,26 @@ paths:
                 - code
                 - message
                 - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
         '404':
           description: Folder not found
           content:
@@ -428,7 +723,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -494,6 +789,26 @@ paths:
                 - code
                 - message
                 - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
         '404':
           description: Folder not found
           content:
@@ -524,7 +839,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -577,6 +892,26 @@ paths:
                     type: string
                   status:
                     const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
                   detail:
                     type: object
                     description: Extra context information specific to this error
@@ -664,6 +999,26 @@ paths:
                 - code
                 - message
                 - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
         '404':
           description: Parent bundle not found
           content:
@@ -695,7 +1050,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -717,7 +1072,7 @@ paths:
                   - type: string
                     description: a UUID
                     format: uuid
-                    pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                    pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                   - const: 00000000-0000-0000-0000-000000000000
                     description: a UUID
                     format: uuid
@@ -778,6 +1133,26 @@ paths:
                 - code
                 - message
                 - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
         '404':
           description: Not Found
           content:
@@ -809,7 +1184,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -833,7 +1208,7 @@ paths:
                     - type: string
                       description: a UUID
                       format: uuid
-                      pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                      pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                     - const: 00000000-0000-0000-0000-000000000000
                       description: a UUID
                       format: uuid
@@ -895,6 +1270,26 @@ paths:
                 - code
                 - message
                 - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
   /api/v1/bundles/{bundle_id}/threads/{thread_id}:
     delete:
       operationId: bundles.remove_thread
@@ -906,7 +1301,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -923,7 +1318,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -983,6 +1378,26 @@ paths:
                 - code
                 - message
                 - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
         '404':
           description: Not Found
           content:
@@ -1014,7 +1429,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -1039,7 +1454,7 @@ paths:
                     - type: string
                       description: a UUID
                       format: uuid
-                      pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                      pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                     - const: 00000000-0000-0000-0000-000000000000
                       description: a UUID
                       format: uuid
@@ -1100,6 +1515,26 @@ paths:
                 - code
                 - message
                 - status
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
         '404':
           description: Folder not found
           content:
@@ -1122,50 +1557,24 @@ paths:
                 - status
 components:
   schemas:
-    BundleChildrenResponse:
+    BundleCreateResponse:
       type: object
       properties:
-        bundles:
-          type: array
-          items:
-            $ref: '#/components/schemas/BundleResponse'
+        created:
+          $ref: '#/components/schemas/BundleResponse'
       required:
-      - bundles
-    BundleSetParentRequest:
+      - created
+    BundleUpdateRequest:
       type: object
       properties:
-        bundleIds:
-          type: array
-          items:
-            anyOf:
-            - type: string
-              description: a UUID
-              format: uuid
-              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-            - const: 00000000-0000-0000-0000-000000000000
-              description: a UUID
-              format: uuid
-            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-              description: a UUID
-              format: uuid
-            description: a UUID
-            format: uuid
-        parentId:
+        description:
           anyOf:
           - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
           - type: 'null'
-      required:
-      - bundleIds
-      - parentId
+        name:
+          type: string
+          minLength: 1
+      additionalProperties: false
     BundleSetParentResponse:
       type: object
       properties:
@@ -1175,6 +1584,42 @@ components:
             $ref: '#/components/schemas/BundleResponse'
       required:
       - updated
+    BundleUpdateResponse:
+      type: object
+      properties:
+        updated:
+          $ref: '#/components/schemas/BundleResponse'
+      required:
+      - updated
+    BundleCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        childOfId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+        kind:
+          enum:
+          - category
+          - folder
+      required:
+      - name
     BundleCountResponse:
       type: object
       properties:
@@ -1182,6 +1627,30 @@ components:
           type: number
       required:
       - total
+    BundleChildrenResponse:
+      type: object
+      properties:
+        bundles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleResponse'
+      required:
+      - bundles
+    BundleListResponse:
+      type: object
+      properties:
+        bundles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleResponse'
+        next:
+          type: string
+          description: Next cursor if available
+        prev:
+          type: string
+          description: Previous cursor if available
+      required:
+      - bundles
     BundleResponse:
       type: object
       properties:
@@ -1211,6 +1680,8 @@ components:
           pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
         updatedAt:
           type: string
+        childFolderCount:
+          type: number
         depth:
           type: number
         hasChildren:
@@ -1254,42 +1725,31 @@ components:
       - name
       - ownerId
       - updatedAt
-    BundleUpdateResponse:
+    BundleSetParentRequest:
       type: object
       properties:
-        updated:
-          $ref: '#/components/schemas/BundleResponse'
-      required:
-      - updated
-    BundleUpdateRequest:
-      type: object
-      properties:
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        name:
-          type: string
-          minLength: 1
-    BundleCreateResponse:
-      type: object
-      properties:
-        created:
-          $ref: '#/components/schemas/BundleResponse'
-      required:
-      - created
-    BundleCreateRequest:
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 1
-        childOfId:
+        bundleIds:
+          type: array
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+        parentId:
           anyOf:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -1297,17 +1757,10 @@ components:
             description: a UUID
             format: uuid
           - type: 'null'
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-        kind:
-          enum:
-          - category
-          - folder
       required:
-      - name
-    BundleListResponse:
+      - bundleIds
+      - parentId
+    BundleTreeResponse:
       type: object
       properties:
         bundles:
@@ -1316,10 +1769,6 @@ components:
             $ref: '#/components/schemas/BundleResponse'
         next:
           type: string
-          description: Next cursor if available
-        prev:
-          type: string
-          description: Previous cursor if available
       required:
       - bundles
   securitySchemes:
@@ -1342,10 +1791,15 @@ x-tagTeams:
   tags:
   - Threads
   - Tags
+  - Tamper
   - Templates
+  - Fields
   - Files
   - Certificates
   - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
   - Sharing
   - Thread Links
   - Thread Relations

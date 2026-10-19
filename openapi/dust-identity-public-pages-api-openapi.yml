@@ -1,0 +1,4294 @@
+openapi: 3.2.0
+info:
+  title: DUST Public Pages API
+  description: DUST Platform API
+  version: 2026.10.0
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Public Pages
+  description: Reserve, bind, and resolve public product pages
+paths:
+  /api/public/pages/{publicPageId}:
+    get:
+      operationId: public_pages.resolve
+      parameters:
+      - $ref: '#/components/parameters/PublicPageResolverParams'
+      summary: Resolve a Public Page
+      description: Resolve a bound Public Page without authentication. Returns the composed render document — the page's pinned Design Version blocks with their pinned Data Snapshot values attached — or an unpublished status.
+      tags:
+      - Public Pages
+      security: []
+      responses:
+        '200':
+          description: The resolved Public Page.
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/PublicPagePublished'
+                - $ref: '#/components/schemas/PublicPageUnpublished'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/public/pages/{publicPageId}/resources/{resId}:
+    get:
+      operationId: public_pages.resource
+      parameters:
+      - in: path
+        name: publicPageId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - $ref: '#/components/schemas/PublicPageCode'
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+        required: true
+      - in: path
+        name: resId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Fetch a resource published on a Public Page
+      description: Redirect to short-lived storage access for a resource the page's current publication actually shows (including the pinned Design Version's logo). Anything else is not served.
+      tags:
+      - Public Pages
+      security: []
+      responses:
+        '302':
+          description: Redirect to a short-lived resource URL.
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/public/pages/{publicPageId}/verify:
+    post:
+      operationId: public_pages.verify_dust
+      parameters:
+      - $ref: '#/components/parameters/PublicPageResolverParams'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PublicPageDustVerify'
+      summary: Verify the DUST Identifier attached to a Public Page
+      description: Accepts an anonymous DUST scan and returns only a verification outcome. Thread, Team, and Identifier details are resolved internally and are never exposed.
+      tags:
+      - Public Pages
+      security: []
+      responses:
+        '200':
+          description: The anonymous verification outcome.
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/PublicPageNotVerified'
+                - $ref: '#/components/schemas/PublicPageVerificationUnavailable'
+                - $ref: '#/components/schemas/PublicPageVerified'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '429':
+          description: Too many requests — try again shortly
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: RATE_LIMITED
+                  message:
+                    type: string
+                  status:
+                    const: 429
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/public/pages/{publicPageId}/verify/identifier:
+    post:
+      operationId: public_pages.verify_identifier
+      parameters:
+      - $ref: '#/components/parameters/PublicPageResolverParams'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicPageIdentifierVerify'
+      summary: Verify a non-DUST Identifier attached to a Public Page
+      description: Compare an anonymously scanned QR/barcode/Data Matrix/NFC value against the page's bound public Identifiers of that kind. Returns only a verification outcome.
+      tags:
+      - Public Pages
+      security: []
+      responses:
+        '200':
+          description: The anonymous verification outcome.
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/PublicPageNotVerified'
+                - $ref: '#/components/schemas/PublicPageVerificationUnavailable'
+                - $ref: '#/components/schemas/PublicPageVerified'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '429':
+          description: Too many requests — try again shortly
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: RATE_LIMITED
+                  message:
+                    type: string
+                  status:
+                    const: 429
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+  /api/v1/public-pages:
+    post:
+      operationId: public_pages.create
+      summary: Reserve a Public Page ID
+      description: Reserve a permanent Public Page ID for the active Team. The ID is initially unbound.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The reserved Public Page ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-pages/stale:
+    get:
+      operationId: public_pages.list_stale
+      summary: List published pages whose record changed since publish
+      description: The active Team's published Public Pages with at least one publishable-relevant event created after their pinned publication — the pages a reader of the live page is behind on. Bounded; `truncated` reports overflow. Clear the list in bulk with the republish-stale endpoint.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: Stale pages, oldest publication first.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageStaleList'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-pages/republish-stale:
+    post:
+      operationId: public_pages.republish_stale
+      summary: Republish every stale page against its pinned design version
+      description: Freeze a fresh publication for each stale page WITHOUT moving its pinned design version — data only, never a design rollout. Pages whose pinned version no longer resolves against the Thread are skipped and keep serving their existing publication. Requires the publisher grant.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: How many pages were republished and skipped.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageRepublishResult'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+  /api/v1/public-pages/thread/{threadId}:
+    get:
+      operationId: public_pages.get_for_thread
+      parameters:
+      - $ref: '#/components/parameters/PublicPageBind'
+      summary: Get a Thread's Public Page
+      description: Get the active Team's Public Page binding for a Thread.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The bound Public Page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+    put:
+      operationId: public_pages.get_or_create_for_thread
+      parameters:
+      - $ref: '#/components/parameters/PublicPageBind'
+      summary: Get or create a Thread's Public Page
+      description: Atomically claim a Public Page for a Thread owned by the active Team, or return the existing binding. Idempotent and safe under concurrency.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The Thread's Public Page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '409':
+          description: This Thread was updated somewhere else. Refresh and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: THREAD_DATA_CONFLICT
+                  message:
+                    type: string
+                  status:
+                    const: 409
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-pages/thread/{threadId}/activity:
+    get:
+      operationId: public_pages.list_activity
+      parameters:
+      - $ref: '#/components/parameters/PublicPageBind'
+      summary: List a Public Page's anonymous activity
+      description: Anonymous views and successful verifications recorded on the Thread's Public Page, newest first. Visible only to the owning Team — these interactions are never part of the anonymous public response.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The Public Page's anonymous activity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageActivity'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-pages/{publicPageId}/bind:
+    post:
+      operationId: public_pages.bind
+      parameters:
+      - $ref: '#/components/parameters/PublicPageId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicPageBind'
+      summary: Bind a Public Page ID
+      description: Permanently bind an unbound Public Page ID to a Thread owned by the active Team.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The bound Public Page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPage'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-pages/{publicPageId}/publish:
+    post:
+      operationId: public_pages.publish
+      parameters:
+      - $ref: '#/components/parameters/PublicPageId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicPagePublishWithDesign'
+      summary: Publish a Public Page snapshot
+      description: 'Publish the bound Thread as an immutable Data Snapshot by resolving the design''s latest published version against it (`publish = resolve(Design x Thread)`, ADR-0053). There is no per-page curation: pass `designId` to (re)point the page at a design, or omit it to republish with the design the page already carries.'
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The published Public Page snapshot.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageSnapshot'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+  /api/v1/public-pages/{publicPageId}:
+    patch:
+      operationId: public_pages.update
+      parameters:
+      - $ref: '#/components/parameters/PublicPageId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicPageUpdate'
+      summary: Update a Public Page
+      description: Activate or archive a bound Public Page without changing its permanent URL or snapshots.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The updated Public Page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+  /api/v1/public-pages/{publicPageId}/publications:
+    get:
+      operationId: public_pages.list_publications
+      parameters:
+      - $ref: '#/components/parameters/PublicPageId'
+      summary: List a Public Page's publications
+      description: List immutable Public Page publications (Data Snapshots) for the authenticated owning Team, newest first. A publication is identified by its `snapshotId` and dated by `publishedAt` — it carries no number, because *version* names a Design Version only (ADR-0056).
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The Public Page publication summaries.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPagePublications'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-pages/{publicPageId}/publications/{snapshotId}:
+    get:
+      operationId: public_pages.get_publication
+      parameters:
+      - in: path
+        name: publicPageId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      - in: path
+        name: snapshotId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Get a Public Page publication
+      description: Load one immutable Public Page publication for the authenticated owning Team.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The requested Public Page publication.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPagePublication'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-pages/preflight:
+    post:
+      operationId: public_pages.preflight
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicPagePreflightRequest'
+      summary: Preflight a design against a Thread
+      description: Report what `publish = resolve(Design x Thread)` would produce for one Thread, without writing anything. Each of the design's bindings comes back as `resolved`, `missing`, `empty`, `type_mismatch`, or `ambiguous`; only a `required` binding that fails to resolve makes the Thread unpublishable (ADR-0053).
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The Thread's per-binding preflight result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPagePreflightResult'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+  /api/v1/public-pages/preflight/batch:
+    post:
+      operationId: public_pages.preflight_batch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicPagePreflightBatchRequest'
+      summary: Preflight a design against many Threads
+      description: 'Scope-friendly preflight. Results are not positional: duplicate Thread IDs collapse to one result, and Threads the active Team does not own are omitted rather than reported as an error (they could never be part of a wave it runs). Join each result to its request by its `threadId`, not by index.'
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The per-Thread preflight results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPagePreflightBatchResult'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+  /api/v1/public-pages/designs/{designId}/roll-out:
+    post:
+      operationId: public_pages.roll_out
+      parameters:
+      - $ref: '#/components/parameters/PublicPageDesignId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicPageDesignRollOutRequest'
+      summary: Roll a design's latest version out
+      description: 'Make the design''s latest published version live, optionally narrowed to a scope. Rollout is forward-only and there is no rollback (ADR-0056): the correction for a bad version is a newer one. The server chooses the mechanism from the stored documents and reports it as `kind` — `repointed` means the rollout is already finished (a presentation-only change moved by a single bulk update, and `repointedCount` says how many pages moved), `wave` means it is running in the background and the returned Publish Wave is the poll target. `expectedDesignVersionId` is required: if the design has been published again since you were shown that version, the request fails with `detail.reason = "version_moved"` instead of shipping a version you never previewed.'
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: Whether the rollout finished or is running as a wave.
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/PublicPageRollOutRepointed'
+                - $ref: '#/components/schemas/PublicPageRollOutWave'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+  /api/v1/public-pages/waves:
+    post:
+      operationId: public_pages.wave_create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicPageWaveCreateRequest'
+      summary: Start a Publish Wave
+      description: 'Re-publish a design''s latest published version across a scope — a Folder, Category, Thread Template, the whole design, or an explicit selection (ADR-0054). Returns immediately: the scope is expanded in the background, so `queuedCount` starts at 0 and only becomes the true denominator once `expansionComplete` is true. Every page publishes against the version resolved at creation time, never a newer one. Send `expectedDesignVersionId` to bind that exact version or fail with `detail.reason = "version_moved"`. Prefer `POST /designs/{designId}/roll-out`, which picks this or the instant path for you.'
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The created Publish Wave run record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageWave'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+    get:
+      operationId: public_pages.wave_list
+      parameters:
+      - in: query
+        name: designId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        description: a UUID
+      - in: query
+        name: status
+        schema:
+          enum:
+          - canceled
+          - completed
+          - failed
+          - pending
+          - running
+      summary: List Publish Waves
+      description: The active Team's Publish Wave run records, newest first. Optionally filtered by design or status.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The Team's Publish Waves.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageWaveList'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-pages/waves/{waveId}:
+    get:
+      operationId: public_pages.wave_get
+      parameters:
+      - $ref: '#/components/parameters/PublicPageWaveId'
+      summary: Get a Publish Wave
+      description: 'One Publish Wave''s run record — the poll target for a wave progress view. Read `expansionComplete` before treating `queuedCount` as the total: while it is false the scope is still being queued. Another Team''s wave reads as NOT_FOUND.'
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The Publish Wave run record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageWave'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-pages/waves/{waveId}/items:
+    get:
+      operationId: public_pages.wave_list_items
+      parameters:
+      - $ref: '#/components/parameters/PublicPageWaveId'
+      - in: query
+        name: cursor
+        schema:
+          type: string
+      - in: query
+        name: pageSize
+        schema:
+          anyOf:
+          - type: integer
+            description: Page size, an integer from 1 to 1000
+            maximum: 1000
+            minimum: 1
+          - type: string
+            description: Page size, an integer from 1 to 1000
+            pattern: ^(?:[1-9]\d{0,2}|1000)$
+        description: Page size, an integer from 1 to 1000
+      - in: query
+        name: status
+        schema:
+          enum:
+          - failed
+          - pending
+          - running
+          - succeeded
+      summary: List a Publish Wave's items
+      description: One row per Thread in the wave, with its status, attempt count, and — for a failed item — the reason it did not publish (ADR-0054 keeps wave failures queryable). Cursor-paged in the order the scope was queued; filter by `status` to fetch just the failures.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The Publish Wave's items.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageWaveItemList'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-pages/waves/{waveId}/retry-failed:
+    post:
+      operationId: public_pages.wave_retry_failed
+      parameters:
+      - $ref: '#/components/parameters/PublicPageWaveId'
+      summary: Retry a Publish Wave's failed items
+      description: Re-queue only the items that failed, against the wave's ORIGINAL Design Version. Succeeded items are never republished or re-counted, and `failedCount` drops by exactly the number of slots reopened.
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The reopened Publish Wave run record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageWave'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+  /api/v1/public-pages/waves/{waveId}/cancel:
+    post:
+      operationId: public_pages.wave_cancel
+      parameters:
+      - $ref: '#/components/parameters/PublicPageWaveId'
+      summary: Cancel a Publish Wave
+      description: 'Stop a `pending` or `running` wave: every item not yet decided is retired as failed and the run record becomes `canceled`. Pages the wave already published KEEP their new version and Data Snapshot — cancelling stops the remaining work, it does not roll anything back (rollout is forward-only). A wave that has already finished is rejected.'
+      tags:
+      - Public Pages
+      responses:
+        '200':
+          description: The canceled Publish Wave run record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageWave'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: Team context access is denied or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+components:
+  schemas:
+    PublicPagePreflightRequest:
+      type: object
+      properties:
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - designId
+      - threadId
+      additionalProperties: false
+    PublicPageSnapshot:
+      type: object
+      properties:
+        document:
+          $ref: '#/components/schemas/PublicPageDataSnapshotDocument'
+        publicPageId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        publicPath:
+          type: string
+        publishedAt:
+          type: string
+        snapshotId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - document
+      - publicPageId
+      - publicPath
+      - publishedAt
+      - snapshotId
+      additionalProperties: false
+    PublicPageVerificationUnavailable:
+      type: object
+      properties:
+        outcome:
+          const: unavailable
+      required:
+      - outcome
+      additionalProperties: false
+    PublicPageWaveItem:
+      type: object
+      properties:
+        attempts:
+          type: integer
+          minimum: 0
+        createdAt:
+          type: string
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+        status:
+          enum:
+          - failed
+          - pending
+          - running
+          - succeeded
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        updatedAt:
+          type: string
+        waveId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        waveItemId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - attempts
+      - createdAt
+      - error
+      - status
+      - threadId
+      - updatedAt
+      - waveId
+      - waveItemId
+      additionalProperties: false
+    PublicPagePreflightBinding:
+      type: object
+      properties:
+        bindingKey:
+          type: string
+        blockKey:
+          type: string
+        matchedFieldName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+        required:
+          type: boolean
+        status:
+          enum:
+          - ambiguous
+          - empty
+          - missing
+          - resolved
+          - type_mismatch
+      required:
+      - bindingKey
+      - blockKey
+      - matchedFieldName
+      - message
+      - required
+      - status
+      additionalProperties: false
+    PublicPageAccentColor:
+      type: string
+      pattern: ^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$
+    PublicPageWaveItemList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageWaveItem'
+        next:
+          type: string
+          description: Next cursor if available
+      required:
+      - items
+      additionalProperties: false
+    PublicPageWaveList:
+      type: object
+      properties:
+        waves:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageWave'
+      required:
+      - waves
+      additionalProperties: false
+    PublicPageIdentifierVerify:
+      type: object
+      properties:
+        tagType:
+          enum:
+          - BAR_CODE
+          - DATA_MATRIX
+          - NFC
+          - QR
+          - TEXT
+        value:
+          type: string
+          maxLength: 2000
+          minLength: 1
+      required:
+      - tagType
+      - value
+      additionalProperties: false
+    PublicPageActivity:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageActivityEvent'
+      required:
+      - events
+      additionalProperties: false
+    PublicPageDesignStyling:
+      type: object
+      properties:
+        accentColor:
+          $ref: '#/components/schemas/PublicPageAccentColor'
+        fontFamily:
+          enum:
+          - mono
+          - sans
+          - serif
+        footerColor:
+          $ref: '#/components/schemas/PublicPageAccentColor'
+        headerColor:
+          $ref: '#/components/schemas/PublicPageAccentColor'
+        logoResId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        pageColor:
+          $ref: '#/components/schemas/PublicPageAccentColor'
+      additionalProperties: false
+    PublicPage:
+      type: object
+      properties:
+        dataPublishedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        designName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        pinnedSnapshotId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        pinnedVersionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        pinnedVersionNumber:
+          anyOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+        publicPageId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        publicPath:
+          type: string
+        status:
+          enum:
+          - active
+          - archived
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        stale:
+          type: boolean
+      required:
+      - dataPublishedAt
+      - designId
+      - designName
+      - pinnedSnapshotId
+      - pinnedVersionId
+      - pinnedVersionNumber
+      - publicPageId
+      - publicPath
+      - status
+      - threadId
+      additionalProperties: false
+    PublicPageEventClaimWhen:
+      type: object
+      properties:
+        approximate:
+          type: boolean
+        display:
+          type: string
+        earliest:
+          anyOf:
+          - type: string
+          - type: 'null'
+        edtf:
+          type: string
+        latest:
+          anyOf:
+          - type: string
+          - type: 'null'
+        mode:
+          enum:
+          - after
+          - before
+          - between
+          - 'on'
+        precision:
+          enum:
+          - day
+          - month
+          - time
+          - year
+        uncertain:
+          type: boolean
+      required:
+      - approximate
+      - display
+      - earliest
+      - edtf
+      - latest
+      - mode
+      - precision
+      - uncertain
+      additionalProperties: false
+    PublicPageNotVerified:
+      type: object
+      properties:
+        outcome:
+          const: not_verified
+      required:
+      - outcome
+      additionalProperties: false
+    PublicPageIdentityRender:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: identity
+        description:
+          type: string
+        name:
+          type: string
+      required:
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageUnpublished:
+      type: object
+      properties:
+        publicPath:
+          type: string
+        status:
+          const: unpublished
+      required:
+      - publicPath
+      - status
+      additionalProperties: false
+    PublicPageBind:
+      type: object
+      properties:
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - threadId
+      additionalProperties: false
+    PublicPageActivityEvent:
+      type: object
+      properties:
+        action:
+          type: string
+        eventId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        occurred:
+          type: string
+      required:
+      - action
+      - eventId
+      - occurred
+      additionalProperties: false
+    PublicPagePublished:
+      type: object
+      properties:
+        blocks:
+          type: array
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/PublicPageSpecsRender'
+            - $ref: '#/components/schemas/PublicPageProvenanceRender'
+            - $ref: '#/components/schemas/PublicPageLinksRender'
+            - $ref: '#/components/schemas/PublicPageDocumentsRender'
+            - $ref: '#/components/schemas/PublicPageHeroRender'
+            - $ref: '#/components/schemas/PublicPageIdentityRender'
+            - $ref: '#/components/schemas/PublicPageTextRender'
+            - $ref: '#/components/schemas/PublicPageVerificationRender'
+        publicPath:
+          type: string
+        record:
+          $ref: '#/components/schemas/PublicPageRecordStrip'
+        styling:
+          $ref: '#/components/schemas/PublicPageDesignStyling'
+        verification:
+          $ref: '#/components/schemas/PublicPageVerification'
+      required:
+      - blocks
+      - publicPath
+      - record
+      - styling
+      - verification
+      additionalProperties: false
+    PublicPageStaleEntry:
+      type: object
+      properties:
+        dataPublishedAt:
+          type: string
+        publicPageId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        publicPath:
+          type: string
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        threadName:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - dataPublishedAt
+      - publicPageId
+      - publicPath
+      - threadId
+      - threadName
+      additionalProperties: false
+    PublicPageVerification:
+      type: object
+      properties:
+        dust:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+          required:
+          - enabled
+          additionalProperties: false
+      required:
+      - dust
+      additionalProperties: false
+    PublicPageStaleList:
+      type: object
+      properties:
+        pages:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageStaleEntry'
+        truncated:
+          type: boolean
+      required:
+      - pages
+      - truncated
+      additionalProperties: false
+    PublicPageEventClaimLocation:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+      - name
+      additionalProperties: false
+    PublicPageDesignRollOutRequest:
+      type: object
+      properties:
+        expectedDesignVersionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        scope:
+          anyOf:
+          - $ref: '#/components/schemas/PublicPageWaveScopeById'
+          - $ref: '#/components/schemas/PublicPageWaveScopeSelection'
+      required:
+      - expectedDesignVersionId
+      additionalProperties: false
+    PublicPagePublications:
+      type: object
+      properties:
+        publications:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPagePublicationSummary'
+      required:
+      - publications
+      additionalProperties: false
+    PublicPageRenderImage:
+      type: object
+      properties:
+        kind:
+          const: image
+        resource:
+          $ref: '#/components/schemas/PublicPageResource'
+      required:
+      - kind
+      - resource
+      additionalProperties: false
+    PublicPageDocumentsRender:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: documents
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageResource'
+        heading:
+          type: string
+      required:
+      - key
+      - kind
+      - resources
+      additionalProperties: false
+    PublicPagePublicationSummary:
+      type: object
+      properties:
+        publishedAt:
+          type: string
+        snapshotId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - publishedAt
+      - snapshotId
+      additionalProperties: false
+    PublicPageSpecEntry:
+      type: object
+      properties:
+        bindingKey:
+          type: string
+        label:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/PublicPageRenderImage'
+          - $ref: '#/components/schemas/PublicPageRenderText'
+      required:
+      - bindingKey
+      - label
+      - value
+      additionalProperties: false
+    PublicPageDataSnapshotDocument:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageEvent'
+        identity:
+          type: object
+          properties:
+            description:
+              type: string
+            name:
+              type: string
+          additionalProperties: false
+        resolved:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PublicPageResolvedValue'
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageResource'
+        schemaVersion:
+          const: 2
+      required:
+      - events
+      - identity
+      - resolved
+      - resources
+      - schemaVersion
+      additionalProperties: false
+    PublicPageEventSubject:
+      type: object
+      properties:
+        kind:
+          enum:
+          - field
+          - resource
+        label:
+          type: string
+      required:
+      - kind
+      - label
+      additionalProperties: false
+    PublicPageHeroRender:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: hero
+        media:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageResource'
+      required:
+      - key
+      - kind
+      - media
+      additionalProperties: false
+    PublicPageWaveScopeById:
+      type: object
+      properties:
+        id:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        kind:
+          enum:
+          - category
+          - design
+          - folder
+          - template
+      required:
+      - id
+      - kind
+      additionalProperties: false
+    PublicPageTextRender:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: text
+        markdown:
+          type: string
+        heading:
+          type: string
+      required:
+      - key
+      - kind
+      - markdown
+      additionalProperties: false
+    PublicPageRollOutWave:
+      type: object
+      properties:
+        kind:
+          const: wave
+        wave:
+          $ref: '#/components/schemas/PublicPageWave'
+      required:
+      - kind
+      - wave
+      additionalProperties: false
+    PublicPageCode:
+      type: string
+      pattern: ^[A-Za-z0-9_-]{16}$
+    PublicPagePreflightBatchResult:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPagePreflightResult'
+      required:
+      - results
+      additionalProperties: false
+    PublicPageRollOutRepointed:
+      type: object
+      properties:
+        kind:
+          const: repointed
+        repointedCount:
+          type: integer
+          minimum: 0
+      required:
+      - kind
+      - repointedCount
+      additionalProperties: false
+    PublicPagePreflightResult:
+      type: object
+      properties:
+        bindings:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPagePreflightBinding'
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        publishable:
+          type: boolean
+        requiredResolved:
+          type: integer
+          minimum: 0
+        requiredTotal:
+          type: integer
+          minimum: 0
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - bindings
+      - designId
+      - publishable
+      - requiredResolved
+      - requiredTotal
+      - threadId
+      additionalProperties: false
+    PublicPagePreflightBatchRequest:
+      type: object
+      properties:
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        threadIds:
+          type: array
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+      required:
+      - designId
+      - threadIds
+      additionalProperties: false
+    PublicPageVerificationRender:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: verification
+      required:
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageSpecsRender:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageSpecEntry'
+        key:
+          type: string
+        kind:
+          const: specs
+        heading:
+          type: string
+      required:
+      - entries
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageDustVerifyOptions:
+      type: object
+      description: In multipart submissions, provide a JSON string of PublicPageDustVerifyOptions; otherwise, a direct object is also accepted.
+      properties:
+        settings:
+          $ref: '#/components/schemas/PublicPageDustScanSettings'
+      additionalProperties: false
+    PublicPageRenderText:
+      type: object
+      properties:
+        kind:
+          const: text
+        text:
+          type: string
+      required:
+      - kind
+      - text
+      additionalProperties: false
+    PublicPageLinksRender:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              url:
+                type: string
+            required:
+            - label
+            - url
+            additionalProperties: false
+        key:
+          type: string
+        kind:
+          const: links
+        heading:
+          type: string
+      required:
+      - items
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageRecordStrip:
+      type: object
+      properties:
+        code:
+          type: string
+        publishedAt:
+          type: string
+      required:
+      - code
+      - publishedAt
+      additionalProperties: false
+    PublicPageWaveScopeSelection:
+      type: object
+      properties:
+        kind:
+          const: selection
+        threadIds:
+          type: array
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+      required:
+      - kind
+      - threadIds
+      additionalProperties: false
+    PublicPageWaveCreateRequest:
+      type: object
+      properties:
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        scope:
+          anyOf:
+          - $ref: '#/components/schemas/PublicPageWaveScopeById'
+          - $ref: '#/components/schemas/PublicPageWaveScopeSelection'
+        expectedDesignVersionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - designId
+      - scope
+      additionalProperties: false
+    PublicPageEventOrigin:
+      type: object
+      properties:
+        system:
+          enum:
+          - dice3
+          - f2f
+      required:
+      - system
+      additionalProperties: false
+    PublicPageEventClaim:
+      type: object
+      properties:
+        kind:
+          type: string
+        location:
+          anyOf:
+          - $ref: '#/components/schemas/PublicPageEventClaimLocation'
+          - type: 'null'
+        note:
+          anyOf:
+          - type: string
+          - type: 'null'
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+        when:
+          $ref: '#/components/schemas/PublicPageEventClaimWhen'
+        withdrawn:
+          type: boolean
+      required:
+      - kind
+      - location
+      - note
+      - title
+      - when
+      additionalProperties: false
+    PublicPagePublishWithDesign:
+      type: object
+      properties:
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        expectedDesignVersionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      additionalProperties: false
+    PublicPagePublication:
+      type: object
+      properties:
+        document:
+          $ref: '#/components/schemas/PublicPageDataSnapshotDocument'
+        publicPageId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        publicPath:
+          type: string
+        publishedAt:
+          type: string
+        snapshotId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - document
+      - publicPageId
+      - publicPath
+      - publishedAt
+      - snapshotId
+      additionalProperties: false
+    PublicPageRepublishResult:
+      type: object
+      properties:
+        republished:
+          type: integer
+          minimum: 0
+        skipped:
+          type: integer
+          minimum: 0
+      required:
+      - republished
+      - skipped
+      additionalProperties: false
+    PublicPageDustScanSettings:
+      type: object
+      properties:
+        autoFocusRangeRestriction:
+          anyOf:
+          - const: far
+          - const: near
+          - const: none
+          - type: 'null'
+        calibrationConfidence:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+        calibrationId:
+          anyOf:
+          - type: string
+          - type: 'null'
+        calibrationVersion:
+          anyOf:
+          - type: string
+          - type: 'null'
+        calibrationZoom:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+        dragonBackend:
+          anyOf:
+          - type: string
+          - type: 'null'
+        dragonErrorCode:
+          anyOf:
+          - type: string
+          - type: 'null'
+        exposureDuration:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+        exposureValue:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+        flashMode:
+          anyOf:
+          - const: auto
+          - const: 'off'
+          - const: 'on'
+          - const: torch
+          - type: 'null'
+        focusDepth:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+        focusMode:
+          anyOf:
+          - type: string
+          - type: 'null'
+        focusSetPoint:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+        focusX:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+        focusY:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+        iso:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+        lensPosition:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+        selectedLens:
+          anyOf:
+          - type: string
+          - type: 'null'
+        tapToFocusCount:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+        zoom:
+          anyOf:
+          - type: number
+            description: A number or a string that can be parsed into a number
+          - type: string
+            description: A number or a string that can be parsed into a number
+            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+          - type: 'null'
+    PublicPageResource:
+      type: object
+      properties:
+        checksum:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+        filename:
+          anyOf:
+          - type: string
+          - type: 'null'
+        mimeType:
+          anyOf:
+          - type: string
+          - type: 'null'
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        resId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        size:
+          anyOf:
+          - type: integer
+            maximum: 9007199254740991
+            minimum: -9007199254740991
+          - type: 'null'
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+        thumbnail: {}
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - checksum
+      - filename
+      - mimeType
+      - name
+      - resId
+      - size
+      - status
+      - thumbnail
+      - type
+    PublicPageProvenanceRender:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageEvent'
+        key:
+          type: string
+        kind:
+          const: provenance
+        heading:
+          type: string
+      required:
+      - events
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageWave:
+      type: object
+      properties:
+        createdAt:
+          type: string
+        createdById:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        designName:
+          type: string
+        designVersionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        designVersionNumber:
+          type: integer
+          minimum: 1
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+        expansionComplete:
+          type: boolean
+        failedCount:
+          type: integer
+          minimum: 0
+        ownerTeamId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        queuedCount:
+          type: integer
+          minimum: 0
+        scope:
+          anyOf:
+          - $ref: '#/components/schemas/PublicPageWaveScopeById'
+          - $ref: '#/components/schemas/PublicPageWaveScopeSelection'
+        status:
+          enum:
+          - canceled
+          - completed
+          - failed
+          - pending
+          - running
+        succeededCount:
+          type: integer
+          minimum: 0
+        updatedAt:
+          type: string
+        waveId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      required:
+      - createdAt
+      - createdById
+      - designId
+      - designName
+      - designVersionId
+      - designVersionNumber
+      - error
+      - expansionComplete
+      - failedCount
+      - ownerTeamId
+      - queuedCount
+      - scope
+      - status
+      - succeededCount
+      - updatedAt
+      - waveId
+      additionalProperties: false
+    PublicPageDustVerify:
+      type: object
+      properties:
+        data:
+          anyOf:
+          - type: string
+            description: Image file or base64-encoded image data URL of the DUST Identifier.
+            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
+          - type: string
+            format: binary
+            description: Image file or base64-encoded image data URL of the DUST Identifier.
+          description: Image file or base64-encoded image data URL of the DUST Identifier.
+        options:
+          anyOf:
+          - type: string
+            description: In multipart submissions, provide a JSON string of PublicPageDustVerifyOptions; otherwise, a direct object is also accepted.
+          - $ref: '#/components/schemas/PublicPageDustVerifyOptions'
+          description: In multipart submissions, provide a JSON string of PublicPageDustVerifyOptions; otherwise, a direct object is also accepted.
+      required:
+      - data
+      additionalProperties: false
+    PublicPageVerified:
+      type: object
+      properties:
+        outcome:
+          const: verified
+        verifiedAt:
+          type: string
+      required:
+      - outcome
+      - verifiedAt
+      additionalProperties: false
+    PublicPageUpdate:
+      type: object
+      properties:
+        status:
+          enum:
+          - active
+          - archived
+      required:
+      - status
+      additionalProperties: false
+    PublicPageEvent:
+      type: object
+      properties:
+        action:
+          type: string
+        eventId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        occurred:
+          type: string
+        actorOrgName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        actorTeamName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        claim:
+          $ref: '#/components/schemas/PublicPageEventClaim'
+        origin:
+          $ref: '#/components/schemas/PublicPageEventOrigin'
+        subjects:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageEventSubject'
+        upstream:
+          type: boolean
+      required:
+      - action
+      - eventId
+      - occurred
+      additionalProperties: false
+    PublicPageResolvedValue:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        value: {}
+      required:
+      - name
+      - type
+      - value
+      additionalProperties: false
+  parameters:
+    PublicPageDesignId:
+      in: path
+      name: designId
+      schema:
+        anyOf:
+        - type: string
+          description: a UUID
+          format: uuid
+          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+        - const: 00000000-0000-0000-0000-000000000000
+          description: a UUID
+          format: uuid
+        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+          description: a UUID
+          format: uuid
+        format: uuid
+      required: true
+      description: a UUID
+    PublicPageWaveId:
+      in: path
+      name: waveId
+      schema:
+        anyOf:
+        - type: string
+          description: a UUID
+          format: uuid
+          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+        - const: 00000000-0000-0000-0000-000000000000
+          description: a UUID
+          format: uuid
+        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+          description: a UUID
+          format: uuid
+        format: uuid
+      required: true
+      description: a UUID
+    PublicPageId:
+      in: path
+      name: publicPageId
+      schema:
+        anyOf:
+        - type: string
+          description: a UUID
+          format: uuid
+          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+        - const: 00000000-0000-0000-0000-000000000000
+          description: a UUID
+          format: uuid
+        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+          description: a UUID
+          format: uuid
+        format: uuid
+      required: true
+      description: a UUID
+    PublicPageBind:
+      in: path
+      name: threadId
+      schema:
+        anyOf:
+        - type: string
+          description: a UUID
+          format: uuid
+          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+        - const: 00000000-0000-0000-0000-000000000000
+          description: a UUID
+          format: uuid
+        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+          description: a UUID
+          format: uuid
+        format: uuid
+      required: true
+      description: a UUID
+    PublicPageResolverParams:
+      in: path
+      name: publicPageId
+      schema:
+        anyOf:
+        - type: string
+          description: a UUID
+          format: uuid
+          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+        - $ref: '#/components/schemas/PublicPageCode'
+        - const: 00000000-0000-0000-0000-000000000000
+          description: a UUID
+          format: uuid
+        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+          description: a UUID
+          format: uuid
+      required: true
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Tamper
+  - Templates
+  - Fields
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

@@ -1,0 +1,1009 @@
+openapi: 3.2.0
+info:
+  title: DUST Tamper API
+  description: DUST Platform API
+  version: 2026.10.0
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Tamper
+  description: Compare an identifier's current scan against the reference captured when it was bound, and record what a person concluded. The platform reports measurements only — it never states, scores, or implies whether tampering occurred.
+paths:
+  /api/v1/tamper/analyses:
+    post:
+      operationId: tags.tamper_analyze
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              anyOf:
+              - $ref: '#/components/schemas/TamperAnalyzeImage'
+              - $ref: '#/components/schemas/TamperAnalyzeFingerprint'
+      summary: Run a tamper analysis
+      description: 'Compare a fresh scan of a DUST identifier against the reference captured when it was bound, and record the measurements as an immutable analysis. Submit the scan itself as `data`, or `queryFingerprintId` if you already extracted one — exactly one of the two, never both. The response reports what was measured and carries no conclusion: `alignmentOutcome` states only whether the two scans could be compared at all, and a failure to align is not a statement about tampering. To record a conclusion, create a tamper observation.'
+      tags:
+      - Tamper
+      responses:
+        '200':
+          description: The recorded tamper analysis and its measurements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TamperAnalysis'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+    get:
+      operationId: tags.tamper_list
+      parameters:
+      - in: query
+        name: threadId
+        schema:
+          anyOf:
+          - type: string
+            description: Thread whose analyses to list
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: Thread whose analyses to list
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: Thread whose analyses to list
+            format: uuid
+          format: uuid
+        required: true
+        description: Thread whose analyses to list
+      - in: query
+        name: limit
+        schema:
+          type: number
+        description: Maximum analyses to return (1-100, default 50)
+      - in: query
+        name: tagId
+        schema:
+          anyOf:
+          - type: string
+            description: Restrict to a single identifier on that thread
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: Restrict to a single identifier on that thread
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: Restrict to a single identifier on that thread
+            format: uuid
+          format: uuid
+        description: Restrict to a single identifier on that thread
+      summary: List tamper analyses
+      description: List a thread's tamper analyses, newest first, optionally narrowed to one identifier. Each analysis carries its complete observation series; the list is never reduced to a single current result.
+      tags:
+      - Tamper
+      responses:
+        '200':
+          description: Tamper analyses with their observation series.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TamperAnalysisWithObservations'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/tamper/observations:
+    post:
+      operationId: tags.tamper_observe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TamperObserveRequest'
+      summary: Record a tamper observation
+      description: 'Record one person''s conclusion drawn from one tamper analysis. The result is one of `consistent`, `inconsistent`, or `unknown`, chosen actively — there is no default, and `unknown` is a first-class answer when the scans could not be compared or the scan is too poor to read. Observations are immutable and attributed: a changed mind is a new observation, and the whole series is retained.'
+      tags:
+      - Tamper
+      responses:
+        '200':
+          description: The recorded tamper observation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TamperObservation'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/tamper/analyses/{analysis_id}:
+    get:
+      operationId: tags.tamper_get
+      parameters:
+      - in: path
+        name: analysis_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Get a tamper analysis
+      description: Retrieve one tamper analysis with its measurements, marker coordinates, and its complete attributed observation series. Marker coordinate sets are returned in their own scan's pixel space; compose them in one frame using `metrics.transformation_matrix`.
+      tags:
+      - Tamper
+      responses:
+        '200':
+          description: The tamper analysis and its observation series.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TamperAnalysisWithObservations'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/tamper/analyses/{analysis_id}/artifacts/{name}:
+    get:
+      operationId: tags.tamper_artifact
+      parameters:
+      - in: path
+        name: analysis_id
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+      summary: Get a tamper result image
+      description: 'Stream one image recorded with a tamper analysis: a result bitmap, or a scan the analysis compared. Only names listed in the analysis'' `artifactNames` are addressable. These bytes are protected content: the response is never cacheable, and access is re-authorized on every request.'
+      tags:
+      - Tamper
+      responses:
+        '200':
+          description: The image bytes.
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+components:
+  schemas:
+    TamperAnalysisWithObservations:
+      type: object
+      properties:
+        alignmentOutcome:
+          type: string
+        analysisId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        artifactNames:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+        createdById:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        markerPoints:
+          anyOf:
+          - type: object
+            properties:
+              query:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+              reference:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+            required:
+            - query
+            - reference
+          - type: 'null'
+        metrics:
+          type: object
+        observations:
+          type: array
+          items:
+            $ref: '#/components/schemas/TamperObservation'
+        tagId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        scan:
+          $ref: '#/components/schemas/ScanReceipt'
+      required:
+      - alignmentOutcome
+      - analysisId
+      - artifactNames
+      - createdAt
+      - createdById
+      - markerPoints
+      - metrics
+      - observations
+      - tagId
+      - threadId
+    TamperAnalyzeFingerprint:
+      type: object
+      properties:
+        queryFingerprintId:
+          anyOf:
+          - type: string
+            description: Fingerprint id of the scan being compared against the reference captured at Bind. An ordinary identifier scan is valid input.
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: Fingerprint id of the scan being compared against the reference captured at Bind. An ordinary identifier scan is valid input.
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: Fingerprint id of the scan being compared against the reference captured at Bind. An ordinary identifier scan is valid input.
+            format: uuid
+          description: Fingerprint id of the scan being compared against the reference captured at Bind. An ordinary identifier scan is valid input.
+          format: uuid
+        tagId:
+          anyOf:
+          - type: string
+            description: ID of the DUST identifier to analyze
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: ID of the DUST identifier to analyze
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: ID of the DUST identifier to analyze
+            format: uuid
+          description: ID of the DUST identifier to analyze
+          format: uuid
+        threadId:
+          anyOf:
+          - type: string
+            description: ID of the thread the identifier is bound to
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: ID of the thread the identifier is bound to
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: ID of the thread the identifier is bound to
+            format: uuid
+          description: ID of the thread the identifier is bound to
+          format: uuid
+      required:
+      - queryFingerprintId
+      - tagId
+      - threadId
+      additionalProperties: false
+    TamperAnalyzeImage:
+      type: object
+      properties:
+        data:
+          anyOf:
+          - type: string
+            description: File or base64-encoded image data of the DUST identifier scan to compare against the reference captured at Bind.
+            pattern: ^data:image\/(png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$
+          - type: string
+            format: binary
+            description: File or base64-encoded image data of the DUST identifier scan to compare against the reference captured at Bind.
+          description: File or base64-encoded image data of the DUST identifier scan to compare against the reference captured at Bind.
+        tagId:
+          anyOf:
+          - type: string
+            description: ID of the DUST identifier to analyze
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: ID of the DUST identifier to analyze
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: ID of the DUST identifier to analyze
+            format: uuid
+          description: ID of the DUST identifier to analyze
+          format: uuid
+        threadId:
+          anyOf:
+          - type: string
+            description: ID of the thread the identifier is bound to
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: ID of the thread the identifier is bound to
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: ID of the thread the identifier is bound to
+            format: uuid
+          description: ID of the thread the identifier is bound to
+          format: uuid
+      required:
+      - data
+      - tagId
+      - threadId
+      additionalProperties: false
+    TamperAnalysis:
+      type: object
+      properties:
+        alignmentOutcome:
+          type: string
+        analysisId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        artifactNames:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+        createdById:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        markerPoints:
+          anyOf:
+          - type: object
+            properties:
+              query:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+              reference:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+            required:
+            - query
+            - reference
+          - type: 'null'
+        metrics:
+          type: object
+        tagId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        scan:
+          $ref: '#/components/schemas/ScanReceipt'
+      required:
+      - alignmentOutcome
+      - analysisId
+      - artifactNames
+      - createdAt
+      - createdById
+      - markerPoints
+      - metrics
+      - tagId
+      - threadId
+    TamperObserveRequest:
+      type: object
+      description: 'Record a Tamper Observation: one person''s immutable, attributed conclusion drawn from one Tamper Analysis. Prior observations are never replaced — the whole series is retained.'
+      properties:
+        analysisId:
+          anyOf:
+          - type: string
+            description: ID of the Tamper Analysis this observation was read from
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: ID of the Tamper Analysis this observation was read from
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: ID of the Tamper Analysis this observation was read from
+            format: uuid
+          description: ID of the Tamper Analysis this observation was read from
+          format: uuid
+        result:
+          enum:
+          - consistent
+          - expected
+          - inconsistent
+          - unknown
+      required:
+      - analysisId
+      - result
+    ScanReceipt:
+      type: object
+      properties:
+        dustId:
+          anyOf:
+          - type: string
+          - type: 'null'
+        fingerprintId:
+          anyOf:
+          - type: string
+          - type: 'null'
+        scanId:
+          type: string
+      required:
+      - dustId
+      - fingerprintId
+      - scanId
+    TamperObservation:
+      type: object
+      properties:
+        analysisId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        createdAt:
+          type: string
+        createdById:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        observationId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        result:
+          enum:
+          - consistent
+          - expected
+          - inconsistent
+          - unknown
+      required:
+      - analysisId
+      - createdAt
+      - createdById
+      - observationId
+      - result
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Tamper
+  - Templates
+  - Fields
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

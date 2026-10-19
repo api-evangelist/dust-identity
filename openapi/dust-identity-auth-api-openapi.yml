@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: DUST Auth API
   description: DUST Platform API
-  version: 2026.7.4
+  version: 2026.10.0
 servers:
 - url: https://apid.dustid.io
   description: DUST API for trusted provenance.
@@ -32,7 +32,7 @@ paths:
     get:
       operationId: get_me_feature_flags
       summary: Current feature flags
-      description: Returns the server-evaluated PostHog feature flag snapshot for the current request context.
+      description: Returns the server-evaluated feature flag snapshot for the current request context (the active organization).
       tags:
       - Auth
       responses:
@@ -106,7 +106,7 @@ components:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -126,7 +126,7 @@ components:
                 - type: string
                   description: a UUID
                   format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                  pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                 - const: 00000000-0000-0000-0000-000000000000
                   description: a UUID
                   format: uuid
@@ -148,8 +148,6 @@ components:
             - name
             - roles
             - slug
-        sessionId:
-          type: string
         userId:
           type: string
         familyName:
@@ -158,11 +156,12 @@ components:
           type: string
         name:
           type: string
+        sessionId:
+          type: string
       required:
       - activeOrganizationId
       - email
       - organizations
-      - sessionId
       - userId
     MeFeatureFlagsResponse:
       type: object
@@ -175,9 +174,15 @@ components:
           type: boolean
         is_certificates_module_enabled:
           type: boolean
+        is_composite_tags_module_enabled:
+          type: boolean
         is_developer_tooling_enabled:
           type: boolean
         is_document_validation_enabled:
+          type: boolean
+        is_dragon_focus_control_enabled:
+          type: boolean
+        is_dustgo_scan_context_enabled:
           type: boolean
         is_fabric_alt_views_enabled:
           type: boolean
@@ -187,7 +192,15 @@ components:
           type: boolean
         is_identifiable_dust_enabled:
           type: boolean
+        is_label_qa_enabled:
+          type: boolean
+        is_loupeless_bind_enabled:
+          type: boolean
         is_organization_management_enabled:
+          type: boolean
+        is_public_pages_module_enabled:
+          type: boolean
+        is_qualification_module_enabled:
           type: boolean
         is_sharing_enabled:
           type: boolean
@@ -195,9 +208,15 @@ components:
           type: boolean
         is_slicing_module_enabled:
           type: boolean
+        is_support_chat_enabled:
+          type: boolean
+        is_tamper_module_enabled:
+          type: boolean
         is_transfers_module_enabled:
           type: boolean
         is_verify_only_enabled:
+          type: boolean
+        is_vlinks_module_enabled:
           type: boolean
         is_workflows_quick_create_enabled:
           type: boolean
@@ -206,18 +225,28 @@ components:
       - is_assembly_import_enabled
       - is_categories_module_enabled
       - is_certificates_module_enabled
+      - is_composite_tags_module_enabled
       - is_developer_tooling_enabled
       - is_document_validation_enabled
+      - is_dragon_focus_control_enabled
+      - is_dustgo_scan_context_enabled
       - is_fabric_alt_views_enabled
       - is_fusion_module_enabled
       - is_group_connections_enabled
       - is_identifiable_dust_enabled
+      - is_label_qa_enabled
+      - is_loupeless_bind_enabled
       - is_organization_management_enabled
+      - is_public_pages_module_enabled
+      - is_qualification_module_enabled
       - is_sharing_enabled
       - is_show_uncategorized_threads_enabled
       - is_slicing_module_enabled
+      - is_support_chat_enabled
+      - is_tamper_module_enabled
       - is_transfers_module_enabled
       - is_verify_only_enabled
+      - is_vlinks_module_enabled
       - is_workflows_quick_create_enabled
   securitySchemes:
     Bearer:
@@ -239,10 +268,15 @@ x-tagTeams:
   tags:
   - Threads
   - Tags
+  - Tamper
   - Templates
+  - Fields
   - Files
   - Certificates
   - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
   - Sharing
   - Thread Links
   - Thread Relations

@@ -1,0 +1,154 @@
+openapi: 3.2.0
+info:
+  title: DUST Metrics API
+  description: DUST Platform API
+  version: 2026.7.4
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Metrics
+  description: Organization and team metrics.
+paths:
+  /api/v1/summary:
+    get:
+      operationId: metrics.Summary
+      parameters:
+      - in: query
+        name: include
+        schema:
+          anyOf:
+          - type: array
+            items:
+              enum:
+              - files.failed
+              - files.passed
+              - files.processed
+              - files.total
+              - tags
+              - templates
+              - threads
+          - type: 'null'
+      summary: Get summary count metrics
+      description: Get a summary of thread, template, tag, and file counts for the current organization-team context. This is used to populate the dashboard and give users a quick overview of their threads and associated metadata.
+      tags:
+      - Metrics
+      responses:
+        '200':
+          description: Summary of threads, templates, tags, and files
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    count:
+                      type: number
+                    name:
+                      enum:
+                      - files.failed
+                      - files.passed
+                      - files.processed
+                      - files.total
+                      - tags
+                      - templates
+                      - threads
+                  required:
+                  - count
+                  - name
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Unknown error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNKNOWN_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Templates
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

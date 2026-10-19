@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: DUST Sharing API
   description: DUST Platform API
-  version: 2026.7.4
+  version: 2026.10.0
 servers:
 - url: https://apid.dustid.io
   description: DUST API for trusted provenance.
@@ -29,7 +29,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -48,16 +48,26 @@ paths:
         name: pageIndex
         schema:
           anyOf:
-          - type: number
+          - type: integer
+            description: Page index, an integer from 0 to 1000000
+            maximum: 1000000
+            minimum: 0
           - type: string
-            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+            description: Page index, an integer from 0 to 1000000
+            pattern: ^(?:0|[1-9]\d{0,5}|1000000)$
+        description: Page index, an integer from 0 to 1000000
       - in: query
         name: pageSize
         schema:
           anyOf:
-          - type: number
+          - type: integer
+            description: Page size, an integer from 1 to 1000
+            maximum: 1000
+            minimum: 1
           - type: string
-            pattern: ^(?:(?!^-0\.?0*$)(?:-?(?:(?:0|[1-9]\d*)(?:\.\d+)?)|\.\d+?))$
+            description: Page size, an integer from 1 to 1000
+            pattern: ^(?:[1-9]\d{0,2}|1000)$
+        description: Page size, an integer from 1 to 1000
       - in: query
         name: q
         schema:
@@ -282,7 +292,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -381,7 +391,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -473,7 +483,7 @@ paths:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -562,375 +572,6 @@ paths:
                 - status
 components:
   schemas:
-    ShareUpdateRequest:
-      type: object
-      properties:
-        relation:
-          enum:
-          - admin
-          - attached
-          - container
-          - creator
-          - editor
-          - member
-          - owner
-          - parent
-          - private
-          - protected
-          - publish
-          - sender
-          - share
-          - transfer
-          - viewer
-      required:
-      - relation
-    PartnerInventoryResponse:
-      type: object
-      properties:
-        counts:
-          type: object
-          properties:
-            grants:
-              type: number
-            inFlightTransfers:
-              type: number
-            suspended:
-              type: number
-          required:
-          - grants
-          - inFlightTransfers
-          - suspended
-        items:
-          type: array
-          items:
-            type: object
-            properties:
-              direction:
-                enum:
-                - in
-                - out
-              name:
-                anyOf:
-                - type: string
-                - type: 'null'
-              objectId:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                description: a UUID
-                format: uuid
-              objectType:
-                enum:
-                - bundle
-                - thread
-              relation:
-                enum:
-                - editor
-                - viewer
-              suspendedAt:
-                anyOf:
-                - type: string
-                - type: 'null'
-              tupleId:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                description: a UUID
-                format: uuid
-              dormantCause:
-                anyOf:
-                - const: connection_paused
-                - const: direction_disallowed
-                - type: 'null'
-            required:
-            - direction
-            - name
-            - objectId
-            - objectType
-            - relation
-            - suspendedAt
-            - tupleId
-      required:
-      - counts
-      - items
-    ShareRequest:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                description: a UUID
-                format: uuid
-              item:
-                enum:
-                - bundle
-                - thread
-              relation:
-                enum:
-                - editor
-                - viewer
-              teamId:
-                anyOf:
-                - type: string
-                  description: a UUID
-                  format: uuid
-                  pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                - const: 00000000-0000-0000-0000-000000000000
-                  description: a UUID
-                  format: uuid
-                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                  description: a UUID
-                  format: uuid
-                description: a UUID
-                format: uuid
-            required:
-            - id
-            - item
-            - relation
-            - teamId
-      required:
-      - items
-    ShareRemoveRequest:
-      type: object
-      properties:
-        ids:
-          type: array
-          description: Sharing instance ids
-          items:
-            anyOf:
-            - type: string
-              description: a UUID
-              format: uuid
-              pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-            - const: 00000000-0000-0000-0000-000000000000
-              description: a UUID
-              format: uuid
-            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-              description: a UUID
-              format: uuid
-            description: a UUID
-            format: uuid
-      required:
-      - ids
-    AccessSummaryResponse:
-      type: object
-      properties:
-        canManage:
-          type: boolean
-        entries:
-          type: array
-          items:
-            type: object
-            properties:
-              role:
-                enum:
-                - editor
-                - viewer
-              sources:
-                type: array
-                items:
-                  anyOf:
-                  - type: object
-                    properties:
-                      folderId:
-                        anyOf:
-                        - type: string
-                          description: a UUID
-                          format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                        - const: 00000000-0000-0000-0000-000000000000
-                          description: a UUID
-                          format: uuid
-                        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                          description: a UUID
-                          format: uuid
-                        description: a UUID
-                        format: uuid
-                      folderName:
-                        type: string
-                      kind:
-                        const: inherited
-                      relation:
-                        enum:
-                        - editor
-                        - viewer
-                      via:
-                        enum:
-                        - assembly
-                        - category
-                        - folder
-                      dormantCause:
-                        enum:
-                        - connection_paused
-                        - direction_disallowed
-                      suspended:
-                        type: boolean
-                    required:
-                    - folderId
-                    - folderName
-                    - kind
-                    - relation
-                    - via
-                  - type: object
-                    properties:
-                      kind:
-                        const: direct
-                      relation:
-                        enum:
-                        - editor
-                        - viewer
-                      tupleId:
-                        anyOf:
-                        - type: string
-                          description: a UUID
-                          format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-                        - const: 00000000-0000-0000-0000-000000000000
-                          description: a UUID
-                          format: uuid
-                        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-                          description: a UUID
-                          format: uuid
-                        description: a UUID
-                        format: uuid
-                      dormantCause:
-                        enum:
-                        - connection_paused
-                        - direction_disallowed
-                      suspended:
-                        type: boolean
-                    required:
-                    - kind
-                    - relation
-                    - tupleId
-                  - type: object
-                    properties:
-                      kind:
-                        const: owner
-                    required:
-                    - kind
-              team:
-                type: object
-                properties:
-                  createdAt:
-                    type: string
-                  description:
-                    anyOf:
-                    - type: string
-                    - type: 'null'
-                  detail:
-                    anyOf:
-                    - type: string
-                    - type: 'null'
-                  logo:
-                    anyOf:
-                    - type: string
-                    - type: 'null'
-                  name:
-                    anyOf:
-                    - type: string
-                    - type: 'null'
-                  orgId:
-                    type: string
-                    description: a RFC-4122-compliant UUID
-                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                  teamId:
-                    type: string
-                    description: a RFC-4122-compliant UUID
-                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                  updatedAt:
-                    type: string
-                  depth:
-                    type: number
-                  num_members:
-                    type: number
-                  org:
-                    type: object
-                    properties:
-                      createdAt:
-                        type: string
-                      logo:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      name:
-                        type: string
-                      orgId:
-                        type: string
-                        description: a RFC-4122-compliant UUID
-                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
-                      slug:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                      updatedAt:
-                        type: string
-                      website:
-                        anyOf:
-                        - type: string
-                        - type: 'null'
-                    required:
-                    - createdAt
-                    - logo
-                    - name
-                    - orgId
-                    - slug
-                    - updatedAt
-                    - website
-                  path:
-                    type: string
-                required:
-                - createdAt
-                - description
-                - detail
-                - logo
-                - name
-                - orgId
-                - teamId
-                - updatedAt
-              dormantCause:
-                enum:
-                - connection_paused
-                - direction_disallowed
-              suspended:
-                type: boolean
-            required:
-            - role
-            - sources
-            - team
-      required:
-      - canManage
-      - entries
     ListTuplesResponse:
       type: object
       properties:
@@ -971,6 +612,8 @@ components:
                       pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
                     updatedAt:
                       type: string
+                    childFolderCount:
+                      type: number
                     depth:
                       type: number
                     hasChildren:
@@ -1173,7 +816,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1221,7 +864,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1235,7 +878,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1249,7 +892,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1331,7 +974,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1379,7 +1022,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1393,7 +1036,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1461,7 +1104,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1759,7 +1402,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1807,7 +1450,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1821,7 +1464,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1835,7 +1478,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1917,7 +1560,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1965,7 +1608,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -1979,7 +1622,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -2047,7 +1690,7 @@ components:
                         - type: string
                           description: a UUID
                           format: uuid
-                          pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
                         - const: 00000000-0000-0000-0000-000000000000
                           description: a UUID
                           format: uuid
@@ -2093,6 +1736,375 @@ components:
       required:
       - total
       - tuples
+    ShareRemoveRequest:
+      type: object
+      properties:
+        ids:
+          type: array
+          description: Sharing instance ids
+          items:
+            anyOf:
+            - type: string
+              description: a UUID
+              format: uuid
+              pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+            - const: 00000000-0000-0000-0000-000000000000
+              description: a UUID
+              format: uuid
+            - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+              description: a UUID
+              format: uuid
+            description: a UUID
+            format: uuid
+      required:
+      - ids
+    ShareRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+              item:
+                enum:
+                - bundle
+                - thread
+              relation:
+                enum:
+                - editor
+                - viewer
+              teamId:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+            required:
+            - id
+            - item
+            - relation
+            - teamId
+      required:
+      - items
+    AccessSummaryResponse:
+      type: object
+      properties:
+        canManage:
+          type: boolean
+        entries:
+          type: array
+          items:
+            type: object
+            properties:
+              role:
+                enum:
+                - editor
+                - viewer
+              sources:
+                type: array
+                items:
+                  anyOf:
+                  - type: object
+                    properties:
+                      folderId:
+                        anyOf:
+                        - type: string
+                          description: a UUID
+                          format: uuid
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+                        - const: 00000000-0000-0000-0000-000000000000
+                          description: a UUID
+                          format: uuid
+                        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                          description: a UUID
+                          format: uuid
+                        description: a UUID
+                        format: uuid
+                      folderName:
+                        type: string
+                      kind:
+                        const: inherited
+                      relation:
+                        enum:
+                        - editor
+                        - viewer
+                      via:
+                        enum:
+                        - assembly
+                        - category
+                        - folder
+                      dormantCause:
+                        enum:
+                        - connection_paused
+                        - direction_disallowed
+                      suspended:
+                        type: boolean
+                    required:
+                    - folderId
+                    - folderName
+                    - kind
+                    - relation
+                    - via
+                  - type: object
+                    properties:
+                      kind:
+                        const: direct
+                      relation:
+                        enum:
+                        - editor
+                        - viewer
+                      tupleId:
+                        anyOf:
+                        - type: string
+                          description: a UUID
+                          format: uuid
+                          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+                        - const: 00000000-0000-0000-0000-000000000000
+                          description: a UUID
+                          format: uuid
+                        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                          description: a UUID
+                          format: uuid
+                        description: a UUID
+                        format: uuid
+                      dormantCause:
+                        enum:
+                        - connection_paused
+                        - direction_disallowed
+                      suspended:
+                        type: boolean
+                    required:
+                    - kind
+                    - relation
+                    - tupleId
+                  - type: object
+                    properties:
+                      kind:
+                        const: owner
+                    required:
+                    - kind
+              team:
+                type: object
+                properties:
+                  createdAt:
+                    type: string
+                  description:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  detail:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  logo:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  name:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  orgId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  teamId:
+                    type: string
+                    description: a RFC-4122-compliant UUID
+                    pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                  updatedAt:
+                    type: string
+                  depth:
+                    type: number
+                  num_members:
+                    type: number
+                  org:
+                    type: object
+                    properties:
+                      createdAt:
+                        type: string
+                      logo:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      name:
+                        type: string
+                      orgId:
+                        type: string
+                        description: a RFC-4122-compliant UUID
+                        pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+                      slug:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                      updatedAt:
+                        type: string
+                      website:
+                        anyOf:
+                        - type: string
+                        - type: 'null'
+                    required:
+                    - createdAt
+                    - logo
+                    - name
+                    - orgId
+                    - slug
+                    - updatedAt
+                    - website
+                  path:
+                    type: string
+                required:
+                - createdAt
+                - description
+                - detail
+                - logo
+                - name
+                - orgId
+                - teamId
+                - updatedAt
+              dormantCause:
+                enum:
+                - connection_paused
+                - direction_disallowed
+              suspended:
+                type: boolean
+            required:
+            - role
+            - sources
+            - team
+      required:
+      - canManage
+      - entries
+    ShareUpdateRequest:
+      type: object
+      properties:
+        relation:
+          enum:
+          - admin
+          - attached
+          - container
+          - creator
+          - editor
+          - member
+          - owner
+          - parent
+          - private
+          - protected
+          - publish
+          - sender
+          - share
+          - transfer
+          - viewer
+      required:
+      - relation
+    PartnerInventoryResponse:
+      type: object
+      properties:
+        counts:
+          type: object
+          properties:
+            grants:
+              type: number
+            inFlightTransfers:
+              type: number
+            suspended:
+              type: number
+          required:
+          - grants
+          - inFlightTransfers
+          - suspended
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              direction:
+                enum:
+                - in
+                - out
+              name:
+                anyOf:
+                - type: string
+                - type: 'null'
+              objectId:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+              objectType:
+                enum:
+                - bundle
+                - thread
+              relation:
+                enum:
+                - editor
+                - viewer
+              suspendedAt:
+                anyOf:
+                - type: string
+                - type: 'null'
+              tupleId:
+                anyOf:
+                - type: string
+                  description: a UUID
+                  format: uuid
+                  pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+                - const: 00000000-0000-0000-0000-000000000000
+                  description: a UUID
+                  format: uuid
+                - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+                  description: a UUID
+                  format: uuid
+                description: a UUID
+                format: uuid
+              dormantCause:
+                anyOf:
+                - const: connection_paused
+                - const: direction_disallowed
+                - type: 'null'
+            required:
+            - direction
+            - name
+            - objectId
+            - objectType
+            - relation
+            - suspendedAt
+            - tupleId
+      required:
+      - counts
+      - items
   securitySchemes:
     Bearer:
       type: http
@@ -2113,10 +2125,15 @@ x-tagTeams:
   tags:
   - Threads
   - Tags
+  - Tamper
   - Templates
+  - Fields
   - Files
   - Certificates
   - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
   - Sharing
   - Thread Links
   - Thread Relations

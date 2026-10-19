@@ -1,0 +1,2327 @@
+openapi: 3.2.0
+info:
+  title: DUST Public Page Designs API
+  description: DUST Platform API
+  version: 2026.10.0
+servers:
+- url: https://apid.dustid.io
+  description: DUST API for trusted provenance.
+security:
+- Bearer: []
+tags:
+- name: Public Page Designs
+  description: Author reusable public page layouts and freeze them as immutable Design Versions
+paths:
+  /api/v1/public-page-designs:
+    post:
+      operationId: public_page_designs.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicPageDesignCreateRequest'
+      summary: Create a Public Page Design
+      description: Create a reusable Public Page Design owned by the active Team. New designs start `active` with no published version; the optional initial `draft` is validated and sanitized like every draft save.
+      tags:
+      - Public Page Designs
+      responses:
+        '200':
+          description: The created Public Page Design.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageDesign'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: The caller is not a member of the selected Team, its Organization does not match, or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+    get:
+      operationId: public_page_designs.list
+      parameters:
+      - in: query
+        name: q
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          enum:
+          - active
+          - archived
+      summary: List Public Page Designs
+      description: List the active Team's Public Page Designs, most recently updated first. Active-only by default — archived designs are reachable via the explicit `status` filter. `q` is a case-insensitive name substring match.
+      tags:
+      - Public Page Designs
+      responses:
+        '200':
+          description: The Team's Public Page Designs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageDesignList'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: The caller is not a member of the selected Team, its Organization does not match, or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-page-designs/preview:
+    post:
+      operationId: public_page_designs.preview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicPageDesignPreviewRequest'
+      summary: Preview a Public Page Design
+      description: 'Render a design through the SAME resolver and composer the publish path uses, without writing anything: the response `render` is the exact document an anonymous visitor would receive. Name exactly one design source — an inline unsaved `draft`, a saved design''s current draft (`designId`), or a frozen version (`designId` + `versionId`). `threadId` is the transient Design Context: with it, bindings resolve against that Team-owned Thread and `preflight` reports each binding as `resolved`, `missing`, `empty`, `type_mismatch`, or `ambiguous`; without it the preview renders in placeholder mode (`{Label}` tokens, no images, no provenance) and `preflight` is null.'
+      tags:
+      - Public Page Designs
+      responses:
+        '200':
+          description: The composed preview document and its preflight gaps.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageDesignPreviewResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: The caller is not a member of the selected Team, its Organization does not match, or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+  /api/v1/public-page-designs/{designId}:
+    get:
+      operationId: public_page_designs.get
+      parameters:
+      - $ref: '#/components/parameters/PublicPageDesignId'
+      summary: Get a Public Page Design
+      description: Load one Public Page Design with its current draft document. Designs owned by another Team are NOT_FOUND.
+      tags:
+      - Public Page Designs
+      responses:
+        '200':
+          description: The Public Page Design.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageDesign'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: The caller is not a member of the selected Team, its Organization does not match, or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+    patch:
+      operationId: public_page_designs.update
+      parameters:
+      - $ref: '#/components/parameters/PublicPageDesignId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicPageDesignUpdateRequest'
+      summary: Update a Public Page Design
+      description: 'Rename a design, save its draft, or archive/restore it. Draft saves never mint a version (ADR-0054) but are validated and sanitized on every write: markdown link syntax is stripped from text blocks, links-block URLs must be https, and block keys and binding keys must be unique. `status` is visibility only — it never affects already-published pages.'
+      tags:
+      - Public Page Designs
+      responses:
+        '200':
+          description: The updated Public Page Design.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageDesign'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: The caller is not a member of the selected Team, its Organization does not match, or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+  /api/v1/public-page-designs/{designId}/versions:
+    post:
+      operationId: public_page_designs.publish_version
+      parameters:
+      - $ref: '#/components/parameters/PublicPageDesignId'
+      summary: Publish a Design Version
+      description: 'Freeze the design''s current draft as an immutable Design Version and classify the rollout against the previous version (ADR-0054): `repoint_eligible` when the data signatures match (a presentation-only change, so pinned pages can be bulk-repointed), `wave_required` when resolved data may change, or `null` for a design''s first version. The classification is computed server-side and is never accepted from the client.'
+      tags:
+      - Public Page Designs
+      responses:
+        '200':
+          description: The published Design Version and its rollout classification.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageDesignPublishVersionResponse'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: The caller is not a member of the selected Team, its Organization does not match, or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: publisher
+    get:
+      operationId: public_page_designs.list_versions
+      parameters:
+      - $ref: '#/components/parameters/PublicPageDesignId'
+      summary: List a design's published versions
+      description: List a design's immutable Design Versions, newest first. Summaries carry the `dataSignature` so a client can anticipate repoint-vs-wave without fetching whole documents.
+      tags:
+      - Public Page Designs
+      responses:
+        '200':
+          description: The Design Version summaries.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageDesignVersions'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: The caller is not a member of the selected Team, its Organization does not match, or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+  /api/v1/public-page-designs/{designId}/versions/{versionId}:
+    get:
+      operationId: public_page_designs.get_version
+      parameters:
+      - in: path
+        name: designId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      - in: path
+        name: versionId
+        schema:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          format: uuid
+        required: true
+        description: a UUID
+      summary: Get a Design Version
+      description: Load one immutable Design Version with its full frozen document — the exact blocks and styling every page pinned to it renders.
+      tags:
+      - Public Page Designs
+      responses:
+        '200':
+          description: The requested Design Version.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPageDesignVersion'
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: INVALID_REQUEST
+                  message:
+                    type: string
+                  status:
+                    const: 400
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: UNAUTHORIZED
+                  message:
+                    type: string
+                  status:
+                    const: 401
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '403':
+          description: The caller is not a member of the selected Team, its Organization does not match, or the feature is disabled.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    enum:
+                    - FEATURE_DISABLED
+                    - FORBIDDEN
+                  message:
+                    type: string
+                  status:
+                    const: 403
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: NOT_FOUND
+                  message:
+                    type: string
+                  status:
+                    const: 404
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+        '500':
+          description: Database error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    const: DB_ERROR
+                  message:
+                    type: string
+                  status:
+                    const: 500
+                  detail:
+                    type: object
+                    description: Extra context information specific to this error
+                required:
+                - code
+                - message
+                - status
+      x-required-role: member
+components:
+  schemas:
+    PublicPageEvent:
+      type: object
+      properties:
+        action:
+          type: string
+        eventId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        occurred:
+          type: string
+        actorOrgName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        actorTeamName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        claim:
+          $ref: '#/components/schemas/PublicPageEventClaim'
+        origin:
+          $ref: '#/components/schemas/PublicPageEventOrigin'
+        subjects:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageEventSubject'
+        upstream:
+          type: boolean
+      required:
+      - action
+      - eventId
+      - occurred
+      additionalProperties: false
+    PublicPageDesignCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        draft:
+          $ref: '#/components/schemas/PublicPageDesignDraftDocument'
+      required:
+      - name
+      additionalProperties: false
+    PublicPagePreflightBinding:
+      type: object
+      properties:
+        bindingKey:
+          type: string
+        blockKey:
+          type: string
+        matchedFieldName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        message:
+          anyOf:
+          - type: string
+          - type: 'null'
+        required:
+          type: boolean
+        status:
+          enum:
+          - ambiguous
+          - empty
+          - missing
+          - resolved
+          - type_mismatch
+      required:
+      - bindingKey
+      - blockKey
+      - matchedFieldName
+      - message
+      - required
+      - status
+      additionalProperties: false
+    PublicPageAccentColor:
+      type: string
+      pattern: ^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$
+    PublicPageLinkItem:
+      type: object
+      properties:
+        label:
+          type: string
+        url:
+          $ref: '#/components/schemas/PublicPageHttpsUrl'
+      required:
+      - label
+      - url
+      additionalProperties: false
+    PublicPageDesignStyling:
+      type: object
+      properties:
+        accentColor:
+          $ref: '#/components/schemas/PublicPageAccentColor'
+        fontFamily:
+          enum:
+          - mono
+          - sans
+          - serif
+        footerColor:
+          $ref: '#/components/schemas/PublicPageAccentColor'
+        headerColor:
+          $ref: '#/components/schemas/PublicPageAccentColor'
+        logoResId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        pageColor:
+          $ref: '#/components/schemas/PublicPageAccentColor'
+      additionalProperties: false
+    PublicPageDesignVersions:
+      type: object
+      properties:
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageDesignVersionSummary'
+      required:
+      - versions
+      additionalProperties: false
+    PublicPageDesignVersionSummary:
+      type: object
+      properties:
+        dataSignature:
+          type: string
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        pagesInUse:
+          type: integer
+          minimum: 0
+        publishedAt:
+          type: string
+        publishedById:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        publishedByName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        versionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        versionNumber:
+          type: integer
+          minimum: 1
+      required:
+      - dataSignature
+      - designId
+      - pagesInUse
+      - publishedAt
+      - publishedById
+      - publishedByName
+      - versionId
+      - versionNumber
+      additionalProperties: false
+    PublicPageImageBinding:
+      type: object
+      properties:
+        bindingKey:
+          type: string
+        kind:
+          const: image
+        primaryName:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        label:
+          type: string
+        required:
+          type: boolean
+      required:
+      - bindingKey
+      - kind
+      - primaryName
+      additionalProperties: false
+    PublicPageIdentityRender:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: identity
+        description:
+          type: string
+        name:
+          type: string
+      required:
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageEventClaimWhen:
+      type: object
+      properties:
+        approximate:
+          type: boolean
+        display:
+          type: string
+        earliest:
+          anyOf:
+          - type: string
+          - type: 'null'
+        edtf:
+          type: string
+        latest:
+          anyOf:
+          - type: string
+          - type: 'null'
+        mode:
+          enum:
+          - after
+          - before
+          - between
+          - 'on'
+        precision:
+          enum:
+          - day
+          - month
+          - time
+          - year
+        uncertain:
+          type: boolean
+      required:
+      - approximate
+      - display
+      - earliest
+      - edtf
+      - latest
+      - mode
+      - precision
+      - uncertain
+      additionalProperties: false
+    PublicPagePublished:
+      type: object
+      properties:
+        blocks:
+          type: array
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/PublicPageSpecsRender'
+            - $ref: '#/components/schemas/PublicPageProvenanceRender'
+            - $ref: '#/components/schemas/PublicPageLinksRender'
+            - $ref: '#/components/schemas/PublicPageDocumentsRender'
+            - $ref: '#/components/schemas/PublicPageHeroRender'
+            - $ref: '#/components/schemas/PublicPageIdentityRender'
+            - $ref: '#/components/schemas/PublicPageTextRender'
+            - $ref: '#/components/schemas/PublicPageVerificationRender'
+        publicPath:
+          type: string
+        record:
+          $ref: '#/components/schemas/PublicPageRecordStrip'
+        styling:
+          $ref: '#/components/schemas/PublicPageDesignStyling'
+        verification:
+          $ref: '#/components/schemas/PublicPageVerification'
+      required:
+      - blocks
+      - publicPath
+      - record
+      - styling
+      - verification
+      additionalProperties: false
+    PublicPageHttpsUrl:
+      type: string
+      pattern: ^https:\/\/
+    PublicPageDesignUpdateRequest:
+      type: object
+      properties:
+        draft:
+          $ref: '#/components/schemas/PublicPageDesignDraftDocument'
+        livingPassport:
+          type: boolean
+        name:
+          type: string
+        status:
+          enum:
+          - active
+          - archived
+      additionalProperties: false
+    PublicPageVerification:
+      type: object
+      properties:
+        dust:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+          required:
+          - enabled
+          additionalProperties: false
+      required:
+      - dust
+      additionalProperties: false
+    PublicPageRenderImage:
+      type: object
+      properties:
+        kind:
+          const: image
+        resource:
+          $ref: '#/components/schemas/PublicPageResource'
+      required:
+      - kind
+      - resource
+      additionalProperties: false
+    PublicPageEventClaimLocation:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+      - name
+      additionalProperties: false
+    PublicPageDocumentsRender:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: documents
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageResource'
+        heading:
+          type: string
+      required:
+      - key
+      - kind
+      - resources
+      additionalProperties: false
+    PublicPageSpecEntry:
+      type: object
+      properties:
+        bindingKey:
+          type: string
+        label:
+          type: string
+        value:
+          anyOf:
+          - $ref: '#/components/schemas/PublicPageRenderImage'
+          - $ref: '#/components/schemas/PublicPageRenderText'
+      required:
+      - bindingKey
+      - label
+      - value
+      additionalProperties: false
+    PublicPageEventSubject:
+      type: object
+      properties:
+        kind:
+          enum:
+          - field
+          - resource
+        label:
+          type: string
+      required:
+      - kind
+      - label
+      additionalProperties: false
+    PublicPageDesignSummary:
+      type: object
+      properties:
+        createdAt:
+          type: string
+        createdById:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        fullyRolledOut:
+          type: boolean
+        latestPublishedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        latestVersionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        latestVersionNumber:
+          anyOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+        livingPassport:
+          type: boolean
+        name:
+          type: string
+        ownerTeamId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        schemaVersion:
+          type: integer
+        status:
+          enum:
+          - active
+          - archived
+        updatedAt:
+          type: string
+      required:
+      - createdAt
+      - createdById
+      - designId
+      - fullyRolledOut
+      - latestPublishedAt
+      - latestVersionId
+      - latestVersionNumber
+      - livingPassport
+      - name
+      - ownerTeamId
+      - schemaVersion
+      - status
+      - updatedAt
+      additionalProperties: false
+    PublicPageDesignVersionDocument:
+      type: object
+      properties:
+        blocks:
+          type: array
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/PublicPageSpecsBlock'
+            - $ref: '#/components/schemas/PublicPageProvenanceBlock'
+            - $ref: '#/components/schemas/PublicPageIdentityBlock'
+            - $ref: '#/components/schemas/PublicPageLinksBlock'
+            - $ref: '#/components/schemas/PublicPageDocumentsBlock'
+            - $ref: '#/components/schemas/PublicPageHeroBlock'
+            - $ref: '#/components/schemas/PublicPageTextBlock'
+            - $ref: '#/components/schemas/PublicPageVerificationBlock'
+        dataSignature:
+          type: string
+        schemaVersion:
+          const: 1
+        styling:
+          $ref: '#/components/schemas/PublicPageDesignStyling'
+      required:
+      - blocks
+      - dataSignature
+      - schemaVersion
+      - styling
+      additionalProperties: false
+    PublicPageDesign:
+      type: object
+      properties:
+        createdAt:
+          type: string
+        createdById:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        draft:
+          anyOf:
+          - $ref: '#/components/schemas/PublicPageDesignDraftDocument'
+          - type: 'null'
+        fullyRolledOut:
+          type: boolean
+        latestPublishedAt:
+          anyOf:
+          - type: string
+          - type: 'null'
+        latestVersionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        latestVersionNumber:
+          anyOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+        livingPassport:
+          type: boolean
+        name:
+          type: string
+        ownerTeamId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        schemaVersion:
+          type: integer
+        status:
+          enum:
+          - active
+          - archived
+        updatedAt:
+          type: string
+      required:
+      - createdAt
+      - createdById
+      - designId
+      - draft
+      - fullyRolledOut
+      - latestPublishedAt
+      - latestVersionId
+      - latestVersionNumber
+      - livingPassport
+      - name
+      - ownerTeamId
+      - schemaVersion
+      - status
+      - updatedAt
+      additionalProperties: false
+    PublicPageTextBlock:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: text
+        markdown:
+          type: string
+        heading:
+          type: string
+      required:
+      - key
+      - kind
+      - markdown
+      additionalProperties: false
+    PublicPageDesignPreviewRequest:
+      type: object
+      properties:
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        draft:
+          $ref: '#/components/schemas/PublicPageDesignDraftDocument'
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        versionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+      additionalProperties: false
+    PublicPageHeroRender:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: hero
+        media:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageResource'
+      required:
+      - key
+      - kind
+      - media
+      additionalProperties: false
+    PublicPageDesignPreviewPreflight:
+      type: object
+      properties:
+        bindings:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPagePreflightBinding'
+        publishable:
+          type: boolean
+        requiredResolved:
+          type: integer
+          minimum: 0
+        requiredTotal:
+          type: integer
+          minimum: 0
+      required:
+      - bindings
+      - publishable
+      - requiredResolved
+      - requiredTotal
+      additionalProperties: false
+    PublicPageTextRender:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: text
+        markdown:
+          type: string
+        heading:
+          type: string
+      required:
+      - key
+      - kind
+      - markdown
+      additionalProperties: false
+    PublicPageSpecsRender:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageSpecEntry'
+        key:
+          type: string
+        kind:
+          const: specs
+        heading:
+          type: string
+      required:
+      - entries
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageVerificationRender:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: verification
+      required:
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageRecordStrip:
+      type: object
+      properties:
+        code:
+          type: string
+        publishedAt:
+          type: string
+      required:
+      - code
+      - publishedAt
+      additionalProperties: false
+    PublicPageLinksRender:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              url:
+                type: string
+            required:
+            - label
+            - url
+            additionalProperties: false
+        key:
+          type: string
+        kind:
+          const: links
+        heading:
+          type: string
+      required:
+      - items
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageRenderText:
+      type: object
+      properties:
+        kind:
+          const: text
+        text:
+          type: string
+      required:
+      - kind
+      - text
+      additionalProperties: false
+    PublicPageDesignList:
+      type: object
+      properties:
+        designs:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageDesignSummary'
+      required:
+      - designs
+      additionalProperties: false
+    PublicPageDesignPreviewResponse:
+      type: object
+      properties:
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        placeholder:
+          type: boolean
+        preflight:
+          anyOf:
+          - $ref: '#/components/schemas/PublicPageDesignPreviewPreflight'
+          - type: 'null'
+        render:
+          $ref: '#/components/schemas/PublicPagePublished'
+        source:
+          enum:
+          - design_draft
+          - draft
+          - version
+        threadId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        versionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+      required:
+      - designId
+      - placeholder
+      - preflight
+      - render
+      - source
+      - threadId
+      - versionId
+      additionalProperties: false
+    PublicPageHeroBlock:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: hero
+        source:
+          enum:
+          - allImages
+          - binding
+          - imagesOnly
+          - videosOnly
+        binding:
+          $ref: '#/components/schemas/PublicPageImageBinding'
+      required:
+      - key
+      - kind
+      - source
+      additionalProperties: false
+    PublicPageDesignDraftDocument:
+      type: object
+      properties:
+        blocks:
+          type: array
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/PublicPageSpecsBlock'
+            - $ref: '#/components/schemas/PublicPageProvenanceBlock'
+            - $ref: '#/components/schemas/PublicPageIdentityBlock'
+            - $ref: '#/components/schemas/PublicPageLinksBlock'
+            - $ref: '#/components/schemas/PublicPageDocumentsBlock'
+            - $ref: '#/components/schemas/PublicPageHeroBlock'
+            - $ref: '#/components/schemas/PublicPageTextBlock'
+            - $ref: '#/components/schemas/PublicPageVerificationBlock'
+        schemaVersion:
+          const: 1
+        styling:
+          $ref: '#/components/schemas/PublicPageDesignStyling'
+      required:
+      - blocks
+      - schemaVersion
+      - styling
+      additionalProperties: false
+    PublicPageEventOrigin:
+      type: object
+      properties:
+        system:
+          enum:
+          - dice3
+          - f2f
+      required:
+      - system
+      additionalProperties: false
+    PublicPageEventClaim:
+      type: object
+      properties:
+        kind:
+          type: string
+        location:
+          anyOf:
+          - $ref: '#/components/schemas/PublicPageEventClaimLocation'
+          - type: 'null'
+        note:
+          anyOf:
+          - type: string
+          - type: 'null'
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+        when:
+          $ref: '#/components/schemas/PublicPageEventClaimWhen'
+        withdrawn:
+          type: boolean
+      required:
+      - kind
+      - location
+      - note
+      - title
+      - when
+      additionalProperties: false
+    PublicPageIdentityBlock:
+      type: object
+      properties:
+        includeDescription:
+          type: boolean
+        includeName:
+          type: boolean
+        key:
+          type: string
+        kind:
+          const: identity
+      required:
+      - includeDescription
+      - includeName
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageProvenanceBlock:
+      type: object
+      properties:
+        excludeFailed:
+          type: boolean
+        key:
+          type: string
+        kind:
+          const: provenance
+        excludedActions:
+          type: array
+          items:
+            type: string
+        heading:
+          type: string
+        includedCategories:
+          type: array
+          items:
+            enum:
+            - assembly
+            - attestation
+            - custody
+            - declared
+            - record
+            - witnessed
+      required:
+      - excludeFailed
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageVerificationBlock:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: verification
+      required:
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageDocumentsBlock:
+      type: object
+      properties:
+        key:
+          type: string
+        kind:
+          const: documents
+        source:
+          enum:
+          - allEligible
+          - bindings
+        bindings:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageSpecBinding'
+        heading:
+          type: string
+      required:
+      - key
+      - kind
+      - source
+      additionalProperties: false
+    PublicPageSpecBinding:
+      type: object
+      properties:
+        bindingKey:
+          type: string
+        kind:
+          enum:
+          - boolean
+          - date
+          - image
+          - number
+          - text
+        primaryName:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        label:
+          type: string
+        required:
+          type: boolean
+      required:
+      - bindingKey
+      - kind
+      - primaryName
+      additionalProperties: false
+    PublicPageDesignPublishVersionResponse:
+      type: object
+      properties:
+        classification:
+          anyOf:
+          - const: repoint_eligible
+          - const: wave_required
+          - type: 'null'
+        version:
+          $ref: '#/components/schemas/PublicPageDesignVersion'
+      required:
+      - classification
+      - version
+      additionalProperties: false
+    PublicPageResource:
+      type: object
+      properties:
+        checksum:
+          anyOf:
+          - type: string
+            maxLength: 64
+          - type: 'null'
+        filename:
+          anyOf:
+          - type: string
+          - type: 'null'
+        mimeType:
+          anyOf:
+          - type: string
+          - type: 'null'
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+        resId:
+          type: string
+          description: a RFC-4122-compliant UUID
+          pattern: ^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$
+        size:
+          anyOf:
+          - type: integer
+            maximum: 9007199254740991
+            minimum: -9007199254740991
+          - type: 'null'
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+        thumbnail: {}
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - checksum
+      - filename
+      - mimeType
+      - name
+      - resId
+      - size
+      - status
+      - thumbnail
+      - type
+    PublicPageLinksBlock:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageLinkItem'
+        key:
+          type: string
+        kind:
+          const: links
+        heading:
+          type: string
+      required:
+      - items
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageProvenanceRender:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageEvent'
+        key:
+          type: string
+        kind:
+          const: provenance
+        heading:
+          type: string
+      required:
+      - events
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageSpecsBlock:
+      type: object
+      properties:
+        bindings:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicPageSpecBinding'
+        key:
+          type: string
+        kind:
+          const: specs
+        heading:
+          type: string
+      required:
+      - bindings
+      - key
+      - kind
+      additionalProperties: false
+    PublicPageDesignVersion:
+      type: object
+      properties:
+        dataSignature:
+          type: string
+        designId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        document:
+          $ref: '#/components/schemas/PublicPageDesignVersionDocument'
+        pagesInUse:
+          type: integer
+          minimum: 0
+        publishedAt:
+          type: string
+        publishedById:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        publishedByName:
+          anyOf:
+          - type: string
+          - type: 'null'
+        versionId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        versionNumber:
+          type: integer
+          minimum: 1
+      required:
+      - dataSignature
+      - designId
+      - document
+      - pagesInUse
+      - publishedAt
+      - publishedById
+      - publishedByName
+      - versionId
+      - versionNumber
+      additionalProperties: false
+  parameters:
+    PublicPageDesignId:
+      in: path
+      name: designId
+      schema:
+        anyOf:
+        - type: string
+          description: a UUID
+          format: uuid
+          pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+        - const: 00000000-0000-0000-0000-000000000000
+          description: a UUID
+          format: uuid
+        - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+          description: a UUID
+          format: uuid
+        format: uuid
+      required: true
+      description: a UUID
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT issued by the DUST auth service. Obtain one by exchanging a Service Account API key (`GET /api/auth/token` with the key header) or via the OAuth2 `client_credentials` grant. Tokens are short-lived; re-exchange on expiry.
+x-tagTeams:
+- name:   Core
+  tags:
+  - System
+  - Users
+  - Teams
+  - Connections
+  - Org Admin
+  - Organizations
+  - Auth
+- name:   Content
+  tags:
+  - Threads
+  - Tags
+  - Tamper
+  - Templates
+  - Fields
+  - Files
+  - Certificates
+  - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
+  - Sharing
+  - Thread Links
+  - Thread Relations
+  - Notifications
+  - Bundles
+  - Events
+  - Metrics
+  - Transfers

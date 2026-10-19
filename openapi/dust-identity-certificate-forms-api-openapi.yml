@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: DUST Certificate Forms API
   description: DUST Platform API
-  version: 2026.7.4
+  version: 2026.10.0
 servers:
 - url: https://apid.dustid.io
   description: DUST API for trusted provenance.
@@ -410,17 +410,25 @@ components:
                       type: string
                     barColor:
                       type: string
+                    bold:
+                      type: boolean
                     fontColor:
                       type: string
                     fontName:
                       type: string
                     fontSize:
                       type: number
+                    italic:
+                      type: boolean
+                    logo:
+                      type: string
                     opacity:
                       type: number
                     rotate:
                       type: number
                     showText:
+                      type: boolean
+                    underline:
                       type: boolean
                 renderAs:
                   enum:
@@ -434,6 +442,7 @@ components:
                   items:
                     enum:
                     - certificate.issueDate
+                    - certificate.vlink
                     - issuer.familyName
                     - issuer.firstName
                     - issuer.fullName
@@ -473,17 +482,25 @@ components:
                       type: string
                     barColor:
                       type: string
+                    bold:
+                      type: boolean
                     fontColor:
                       type: string
                     fontName:
                       type: string
                     fontSize:
                       type: number
+                    italic:
+                      type: boolean
+                    logo:
+                      type: string
                     opacity:
                       type: number
                     rotate:
                       type: number
                     showText:
+                      type: boolean
+                    underline:
                       type: boolean
                 renderAs:
                   enum:
@@ -507,6 +524,7 @@ components:
                 systemKey:
                   enum:
                   - certificate.issueDate
+                  - certificate.vlink
                   - issuer.familyName
                   - issuer.firstName
                   - issuer.fullName
@@ -532,17 +550,25 @@ components:
                       type: string
                     barColor:
                       type: string
+                    bold:
+                      type: boolean
                     fontColor:
                       type: string
                     fontName:
                       type: string
                     fontSize:
                       type: number
+                    italic:
+                      type: boolean
+                    logo:
+                      type: string
                     opacity:
                       type: number
                     rotate:
                       type: number
                     showText:
+                      type: boolean
+                    underline:
                       type: boolean
                 renderAs:
                   enum:
@@ -563,7 +589,7 @@ components:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -627,10 +653,14 @@ components:
                         type: number
                       includetext:
                         type: boolean
+                      logo:
+                        type: string
                       opacity:
                         type: number
                       rotate:
                         type: number
+                      underline:
+                        type: boolean
                     required:
                     - height
                     - name
@@ -641,6 +671,369 @@ components:
             - basePdf
             - schemas
           - type: 'null'
+    CertificateFormResponse:
+      type: object
+      properties:
+        bindings:
+          type: array
+          items:
+            anyOf:
+            - type: object
+              properties:
+                kind:
+                  enum:
+                  - boolean
+                  - date
+                  - image
+                  - number
+                  - text
+                primaryName:
+                  type: string
+                required:
+                  type: boolean
+                source:
+                  const: field
+                zoneId:
+                  type: string
+                aliases:
+                  type: array
+                  items:
+                    type: string
+                dateFormat:
+                  type: string
+                format:
+                  type: object
+                  properties:
+                    align:
+                      enum:
+                      - center
+                      - left
+                      - right
+                    backgroundColor:
+                      type: string
+                    barColor:
+                      type: string
+                    bold:
+                      type: boolean
+                    fontColor:
+                      type: string
+                    fontName:
+                      type: string
+                    fontSize:
+                      type: number
+                    italic:
+                      type: boolean
+                    logo:
+                      type: string
+                    opacity:
+                      type: number
+                    rotate:
+                      type: number
+                    showText:
+                      type: boolean
+                    underline:
+                      type: boolean
+                renderAs:
+                  enum:
+                  - code128
+                  - code39
+                  - pdf417
+                  - qrcode
+                  - text
+                systemAliases:
+                  type: array
+                  items:
+                    enum:
+                    - certificate.issueDate
+                    - certificate.vlink
+                    - issuer.familyName
+                    - issuer.firstName
+                    - issuer.fullName
+                    - issuer.teamName
+                    - thread.description
+                    - thread.identifiers
+                    - thread.name
+                    - thread.thumbnail
+                    - thread.uuid
+              required:
+              - kind
+              - primaryName
+              - required
+              - source
+              - zoneId
+            - type: object
+              properties:
+                required:
+                  type: boolean
+                source:
+                  const: static
+                staticKind:
+                  const: text
+                text:
+                  type: string
+                zoneId:
+                  type: string
+                format:
+                  type: object
+                  properties:
+                    align:
+                      enum:
+                      - center
+                      - left
+                      - right
+                    backgroundColor:
+                      type: string
+                    barColor:
+                      type: string
+                    bold:
+                      type: boolean
+                    fontColor:
+                      type: string
+                    fontName:
+                      type: string
+                    fontSize:
+                      type: number
+                    italic:
+                      type: boolean
+                    logo:
+                      type: string
+                    opacity:
+                      type: number
+                    rotate:
+                      type: number
+                    showText:
+                      type: boolean
+                    underline:
+                      type: boolean
+                renderAs:
+                  enum:
+                  - code128
+                  - code39
+                  - pdf417
+                  - qrcode
+                  - text
+              required:
+              - required
+              - source
+              - staticKind
+              - text
+              - zoneId
+            - type: object
+              properties:
+                required:
+                  type: boolean
+                source:
+                  const: system
+                systemKey:
+                  enum:
+                  - certificate.issueDate
+                  - certificate.vlink
+                  - issuer.familyName
+                  - issuer.firstName
+                  - issuer.fullName
+                  - issuer.teamName
+                  - thread.description
+                  - thread.identifiers
+                  - thread.name
+                  - thread.thumbnail
+                  - thread.uuid
+                zoneId:
+                  type: string
+                dateFormat:
+                  type: string
+                format:
+                  type: object
+                  properties:
+                    align:
+                      enum:
+                      - center
+                      - left
+                      - right
+                    backgroundColor:
+                      type: string
+                    barColor:
+                      type: string
+                    bold:
+                      type: boolean
+                    fontColor:
+                      type: string
+                    fontName:
+                      type: string
+                    fontSize:
+                      type: number
+                    italic:
+                      type: boolean
+                    logo:
+                      type: string
+                    opacity:
+                      type: number
+                    rotate:
+                      type: number
+                    showText:
+                      type: boolean
+                    underline:
+                      type: boolean
+                renderAs:
+                  enum:
+                  - code128
+                  - code39
+                  - pdf417
+                  - qrcode
+                  - text
+              required:
+              - required
+              - source
+              - systemKey
+              - zoneId
+        createdAt:
+          type: string
+        createdById:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        formId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        name:
+          type: string
+        ownerTeamId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          description: a UUID
+          format: uuid
+        schemaVersion:
+          type: number
+        sourceResourceId:
+          anyOf:
+          - type: string
+            description: a UUID
+            format: uuid
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
+          - const: 00000000-0000-0000-0000-000000000000
+            description: a UUID
+            format: uuid
+          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
+            description: a UUID
+            format: uuid
+          - type: 'null'
+        status:
+          enum:
+          - active
+          - archived
+        template:
+          anyOf:
+          - type: object
+            properties:
+              basePdf:
+                type: string
+              schemas:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      height:
+                        type: number
+                      name:
+                        type: string
+                      position:
+                        type: object
+                        properties:
+                          x:
+                            type: number
+                          y:
+                            type: number
+                        required:
+                        - x
+                        - y
+                      type:
+                        enum:
+                        - checkbox
+                        - code128
+                        - code39
+                        - image
+                        - pdf417
+                        - qrcode
+                        - text
+                      width:
+                        type: number
+                      alignment:
+                        type: string
+                      backgroundColor:
+                        type: string
+                      barColor:
+                        type: string
+                      fontColor:
+                        type: string
+                      fontName:
+                        type: string
+                      fontSize:
+                        type: number
+                      includetext:
+                        type: boolean
+                      logo:
+                        type: string
+                      opacity:
+                        type: number
+                      rotate:
+                        type: number
+                      underline:
+                        type: boolean
+                    required:
+                    - height
+                    - name
+                    - position
+                    - type
+                    - width
+            required:
+            - basePdf
+            - schemas
+          - type: 'null'
+        updatedAt:
+          type: string
+      required:
+      - bindings
+      - createdAt
+      - createdById
+      - formId
+      - name
+      - ownerTeamId
+      - schemaVersion
+      - sourceResourceId
+      - status
+      - template
+      - updatedAt
     CertificateFormCreateRequest:
       type: object
       properties:
@@ -685,17 +1078,25 @@ components:
                       type: string
                     barColor:
                       type: string
+                    bold:
+                      type: boolean
                     fontColor:
                       type: string
                     fontName:
                       type: string
                     fontSize:
                       type: number
+                    italic:
+                      type: boolean
+                    logo:
+                      type: string
                     opacity:
                       type: number
                     rotate:
                       type: number
                     showText:
+                      type: boolean
+                    underline:
                       type: boolean
                 renderAs:
                   enum:
@@ -709,6 +1110,7 @@ components:
                   items:
                     enum:
                     - certificate.issueDate
+                    - certificate.vlink
                     - issuer.familyName
                     - issuer.firstName
                     - issuer.fullName
@@ -748,17 +1150,25 @@ components:
                       type: string
                     barColor:
                       type: string
+                    bold:
+                      type: boolean
                     fontColor:
                       type: string
                     fontName:
                       type: string
                     fontSize:
                       type: number
+                    italic:
+                      type: boolean
+                    logo:
+                      type: string
                     opacity:
                       type: number
                     rotate:
                       type: number
                     showText:
+                      type: boolean
+                    underline:
                       type: boolean
                 renderAs:
                   enum:
@@ -782,6 +1192,7 @@ components:
                 systemKey:
                   enum:
                   - certificate.issueDate
+                  - certificate.vlink
                   - issuer.familyName
                   - issuer.firstName
                   - issuer.fullName
@@ -807,17 +1218,25 @@ components:
                       type: string
                     barColor:
                       type: string
+                    bold:
+                      type: boolean
                     fontColor:
                       type: string
                     fontName:
                       type: string
                     fontSize:
                       type: number
+                    italic:
+                      type: boolean
+                    logo:
+                      type: string
                     opacity:
                       type: number
                     rotate:
                       type: number
                     showText:
+                      type: boolean
+                    underline:
                       type: boolean
                 renderAs:
                   enum:
@@ -836,7 +1255,7 @@ components:
           - type: string
             description: a UUID
             format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
+            pattern: ^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$
           - const: 00000000-0000-0000-0000-000000000000
             description: a UUID
             format: uuid
@@ -900,10 +1319,14 @@ components:
                       type: number
                     includetext:
                       type: boolean
+                    logo:
+                      type: string
                     opacity:
                       type: number
                     rotate:
                       type: number
+                    underline:
+                      type: boolean
                   required:
                   - height
                   - name
@@ -915,339 +1338,6 @@ components:
           - schemas
       required:
       - name
-    CertificateFormResponse:
-      type: object
-      properties:
-        bindings:
-          type: array
-          items:
-            anyOf:
-            - type: object
-              properties:
-                kind:
-                  enum:
-                  - boolean
-                  - date
-                  - image
-                  - number
-                  - text
-                primaryName:
-                  type: string
-                required:
-                  type: boolean
-                source:
-                  const: field
-                zoneId:
-                  type: string
-                aliases:
-                  type: array
-                  items:
-                    type: string
-                dateFormat:
-                  type: string
-                format:
-                  type: object
-                  properties:
-                    align:
-                      enum:
-                      - center
-                      - left
-                      - right
-                    backgroundColor:
-                      type: string
-                    barColor:
-                      type: string
-                    fontColor:
-                      type: string
-                    fontName:
-                      type: string
-                    fontSize:
-                      type: number
-                    opacity:
-                      type: number
-                    rotate:
-                      type: number
-                    showText:
-                      type: boolean
-                renderAs:
-                  enum:
-                  - code128
-                  - code39
-                  - pdf417
-                  - qrcode
-                  - text
-                systemAliases:
-                  type: array
-                  items:
-                    enum:
-                    - certificate.issueDate
-                    - issuer.familyName
-                    - issuer.firstName
-                    - issuer.fullName
-                    - issuer.teamName
-                    - thread.description
-                    - thread.identifiers
-                    - thread.name
-                    - thread.thumbnail
-                    - thread.uuid
-              required:
-              - kind
-              - primaryName
-              - required
-              - source
-              - zoneId
-            - type: object
-              properties:
-                required:
-                  type: boolean
-                source:
-                  const: static
-                staticKind:
-                  const: text
-                text:
-                  type: string
-                zoneId:
-                  type: string
-                format:
-                  type: object
-                  properties:
-                    align:
-                      enum:
-                      - center
-                      - left
-                      - right
-                    backgroundColor:
-                      type: string
-                    barColor:
-                      type: string
-                    fontColor:
-                      type: string
-                    fontName:
-                      type: string
-                    fontSize:
-                      type: number
-                    opacity:
-                      type: number
-                    rotate:
-                      type: number
-                    showText:
-                      type: boolean
-                renderAs:
-                  enum:
-                  - code128
-                  - code39
-                  - pdf417
-                  - qrcode
-                  - text
-              required:
-              - required
-              - source
-              - staticKind
-              - text
-              - zoneId
-            - type: object
-              properties:
-                required:
-                  type: boolean
-                source:
-                  const: system
-                systemKey:
-                  enum:
-                  - certificate.issueDate
-                  - issuer.familyName
-                  - issuer.firstName
-                  - issuer.fullName
-                  - issuer.teamName
-                  - thread.description
-                  - thread.identifiers
-                  - thread.name
-                  - thread.thumbnail
-                  - thread.uuid
-                zoneId:
-                  type: string
-                dateFormat:
-                  type: string
-                format:
-                  type: object
-                  properties:
-                    align:
-                      enum:
-                      - center
-                      - left
-                      - right
-                    backgroundColor:
-                      type: string
-                    barColor:
-                      type: string
-                    fontColor:
-                      type: string
-                    fontName:
-                      type: string
-                    fontSize:
-                      type: number
-                    opacity:
-                      type: number
-                    rotate:
-                      type: number
-                    showText:
-                      type: boolean
-                renderAs:
-                  enum:
-                  - code128
-                  - code39
-                  - pdf417
-                  - qrcode
-                  - text
-              required:
-              - required
-              - source
-              - systemKey
-              - zoneId
-        createdAt:
-          type: string
-        createdById:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        formId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        name:
-          type: string
-        ownerTeamId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          description: a UUID
-          format: uuid
-        schemaVersion:
-          type: number
-        sourceResourceId:
-          anyOf:
-          - type: string
-            description: a UUID
-            format: uuid
-            pattern: '[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}'
-          - const: 00000000-0000-0000-0000-000000000000
-            description: a UUID
-            format: uuid
-          - const: ffffffff-ffff-ffff-ffff-ffffffffffff
-            description: a UUID
-            format: uuid
-          - type: 'null'
-        status:
-          enum:
-          - active
-          - archived
-        template:
-          anyOf:
-          - type: object
-            properties:
-              basePdf:
-                type: string
-              schemas:
-                type: array
-                items:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      height:
-                        type: number
-                      name:
-                        type: string
-                      position:
-                        type: object
-                        properties:
-                          x:
-                            type: number
-                          y:
-                            type: number
-                        required:
-                        - x
-                        - y
-                      type:
-                        enum:
-                        - checkbox
-                        - code128
-                        - code39
-                        - image
-                        - pdf417
-                        - qrcode
-                        - text
-                      width:
-                        type: number
-                      alignment:
-                        type: string
-                      backgroundColor:
-                        type: string
-                      barColor:
-                        type: string
-                      fontColor:
-                        type: string
-                      fontName:
-                        type: string
-                      fontSize:
-                        type: number
-                      includetext:
-                        type: boolean
-                      opacity:
-                        type: number
-                      rotate:
-                        type: number
-                    required:
-                    - height
-                    - name
-                    - position
-                    - type
-                    - width
-            required:
-            - basePdf
-            - schemas
-          - type: 'null'
-        updatedAt:
-          type: string
-      required:
-      - bindings
-      - createdAt
-      - createdById
-      - formId
-      - name
-      - ownerTeamId
-      - schemaVersion
-      - sourceResourceId
-      - status
-      - template
-      - updatedAt
   securitySchemes:
     Bearer:
       type: http
@@ -1268,10 +1358,15 @@ x-tagTeams:
   tags:
   - Threads
   - Tags
+  - Tamper
   - Templates
+  - Fields
   - Files
   - Certificates
   - Certificate Forms
+  - Composite Tags
+  - Public Pages
+  - Public Page Designs
   - Sharing
   - Thread Links
   - Thread Relations
