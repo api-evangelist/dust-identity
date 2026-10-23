@@ -9339,3 +9339,9 @@ x-tagTeams:
   - Events
   - Metrics
   - Transfers
+x-provenance:
+  method: harvested
+  publisher: Dust Identity
+  source: https://apid.dustid.io/api/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
